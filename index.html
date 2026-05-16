@@ -53,7 +53,6 @@
             padding: 8px 0;
         }
         
-        /* 核心修改：下划线从左到右滑出动画 */
         .nav-btn::after {
             content: '';
             position: absolute;
@@ -68,7 +67,6 @@
             transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        /* 悬停与激活状态表现 */
         .nav-btn:hover, .nav-btn.active { color: #fff; }
         .nav-btn:hover::after, .nav-btn.active::after {
             transform: scaleX(1);
@@ -113,7 +111,6 @@
         }
         .fullview-overlay.active-page { opacity: 1; pointer-events: auto !important; }
 
-        /* 统一精致滚动条 */
         .fullview-overlay::-webkit-scrollbar, 
         .noti-sidebar-list::-webkit-scrollbar, 
         .generic-detail-panel::-webkit-scrollbar,
@@ -123,7 +120,6 @@
         .generic-detail-panel::-webkit-scrollbar-thumb,
         .media-grid-container::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.12); border-radius: 2px; }
         
-        /* 页面顶部标题与返回 */
         .page-header-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 15px; margin-bottom: 25px; flex-shrink: 0; }
         .page-main-title { font-size: clamp(1.4rem, 2.2vw, 2.2rem); font-weight: 300; margin: 0; letter-spacing: 3px; }
         .page-sub-title { font-size: 0.75rem; color: var(--accent); letter-spacing: 2px; margin-top: 5px; font-family: monospace; }
@@ -174,8 +170,6 @@
         /* ================= 媒体页面专属浅色科幻层 ================= */
         .media-page-override {
             background: radial-gradient(circle at 50% 30%, rgba(245, 247, 250, 0.96) 0%, rgba(230, 235, 243, 0.98) 100%) !important;
-            background-image: url('https://pub-c5e31b5cdafb419a82e69d040106134a.r2.dev/mock-map-bg.svg'), 
-                              radial-gradient(circle at 50% 30%, rgba(245, 247, 250, 0.95) 0%, rgba(232, 237, 245, 0.98) 100%) !important;
             background-size: cover !important; background-position: center !important; color: #1e293b !important;
         }
         .media-page-override .page-main-title { color: #0f172a; font-weight: 600; }
@@ -193,28 +187,6 @@
             background: #11131a; color: #fff; border-color: #11131a; font-weight: 600;
             box-shadow: 0 4px 12px rgba(17,19,26,0.15);
         }
-        .media-capsule-btn.capsule-active::before, .media-capsule-btn.capsule-active::after {
-            content: '+'; position: absolute; font-size: 0.65rem; color: rgba(255,255,255,0.4); font-family: sans-serif; top: 50%; transform: translateY(-50%);
-        }
-        .media-capsule-btn.capsule-active::before { left: 8px; }
-        .media-capsule-btn.capsule-active::after { right: 8px; }
-
-        .media-grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 25px; overflow-y: auto; flex-grow: 1; padding-bottom: 40px; width: 100%; }
-        .media-matrix-card {
-            background: #fff; border: 1px solid rgba(15,23,42,0.06); padding: 5px; border-radius: 4px; box-shadow: 0 4px 14px rgba(15,23,42,0.03);
-            clip-path: polygon(0 0, calc(100% - 24px) 0, 100% 24px, 100% 100%, 24px 100%, 0 calc(100% - 24px)); cursor: pointer; position: relative; width: 100%; opacity: 0; transform: translateX(-20px) scale(0.96);
-        }
-        .media-matrix-card.reveal-manifest { opacity: 1; transform: translateX(0) scale(1); transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1), transform 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
-        .media-matrix-card:hover { border-color: #11131a; box-shadow: 0 6px 20px rgba(17,19,26,0.1); }
-
-        .matrix-video-cover-wrap { width: 100%; aspect-ratio: 16 / 9; background-size: cover; background-position: center; position: relative; overflow: hidden; clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 22px, 100% 100%, 22px 100%, 0 calc(100% - 22px)); }
-        .matrix-play-indicator { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.15); transition: 0.3s; }
-        .matrix-play-icon {
-            width: 44px; height: 44px; background: rgba(255,255,255,0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #11131a;
-            font-size: 1.1rem; padding-left: 3px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); transition: 0.25s;
-        }
-        .media-matrix-card:hover .matrix-play-icon { transform: scale(1.1); background: #11131a; color: #fff; }
-        .matrix-card-title { font-size: 0.85rem; font-weight: 600; color: #1e293b; margin: 12px 6px 8px 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: 0.5px; }
     </style>
 </head>
 <body>
@@ -345,12 +317,13 @@
     <script>
         let currentActiveNotiIdx = 0;
 
+        // 核心修复点 1：补齐了 info 与 db 属性之间的逗号
         const sliderData = {
             info: [
                 { title: "概要", quote: "「梦想与奇迹」", body: "在一个平平无奇的假期里里，奇迹城诞生了，奇迹城是创意市升级后的作品，在奇迹城诞生后创意市因未知原因消失。<br>怀着希望与梦想的「梦想家」，与其他的「梦想家」共同让奇迹城走向未来。<br>但，危机也一次次的降临奇迹城。" },
                 { title: "骇客", quote: "「梦想的毁灭者」", body: "骇客会使用旧核心的已知&lt;漏洞&gt;进行攻击。<br>自一周目以来，「梦想家」使用&lt;骇客&gt;这一概念作为理解破坏世界的凶手，并统称为&lt;毁灭者&gt;。<br>最终使得安全系统只能以一些体验为代价以保安全。<br><br>新城（虚拟）、云梦（虚拟）……是奇迹城的第一批城市。而彼此之间的冲突也在一周目得到解决。" },
-                { title: "奇迹成城", quote: "「拥有梦想的城市」", body: "每一位「梦想家」的意识流在这里高频交汇，凝聚成了坚不可摧的数字城建网络。在此构成城市的完整轮廓。" }
-            ]
+                { title: "奇迹城", quote: "「拥有梦想的城市」", body: "每一位「梦想家」的意识流在这里高频交汇，凝聚成了坚不可摧的数字城建网络。在此构成城市的完整轮廓。" }
+            ],
             db: [
                 { title: "铁道枢纽人员编制", quote: "「梦想铁道：一号中央主干线」", body: "梦想铁道一号主干线运行极其平稳。设计师与旅居市民在此分配专属的数字密钥。作为主干线的巡读员或区域轻铁网络的构筑者，每个实体的底层行为轨迹都将深度同步到量子防卫矩阵之中。" },
                 { title: "轨道交通网络", quote: "「浩泽轨交：次区域级轻铁网」", body: "作为覆盖城市群边缘及枢纽外围的次区域轨道供给链，浩泽轨交通过自动化无人列车，将源源不断的离散态数字流安全回传至中央干线进行协议收束。" },
@@ -625,11 +598,19 @@
         }
 
         window.addEventListener('resize', initCanvas);
+        
+        // 核心修复点 2：将混乱无序的初始化语法规范重写
         window.addEventListener('DOMContentLoaded', () => {
             buildNotificationList();
             buildMediaLayout();
-            ['info', 'db'].forEach(key => { initSliderDots(key); renderSlider(key); });
-            initCanvas(); animate();
+            
+            ['info', 'db'].forEach(key => { 
+                initSliderDots(key); 
+                renderSlider(key); 
+            });
+            
+            initCanvas(); 
+            animate();
         });
     </script>
 </body>
