@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MX server | Future & Miracles</title>
+    <style>
+        :root {
+            --accent: #00e5ff;
+            --accent-glow: rgba(0, 229, 255, 0.4);
+            --bg-dark: #03050d;
+            --glass-border: rgba(255, 255, 255, 0.08);
+        }
+
+        * { 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent !important;
+            outline: none !important;
+        }
+        
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background-color: var(--bg-dark) !important;
+            overflow: hidden; 
+            color: #fff; font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            user-select: none;
+        }
+
+        button, input, select, textarea, a, div {
+            -webkit-tap-highlight-color: transparent !important;
+            outline: none !important;
+        }
+        button:focus, div:focus, a:focus {
+            outline: none !important;
+            box-shadow: none !important;
+        }
+
+        /* --- Top Header Navigation --- */
+        .top-header {
+            position: fixed; top: 0; left: 0; width: 100%; height: 64px;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 4%; background: rgba(3, 5, 13, 0.9);
+            backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255,255,255,0.05);
+            z-index: 3000;
+        }
+        .header-left { display: flex; align-items: center; gap: clamp(20px, 3vw, 40px); }
+        .header-logo { font-size: clamp(0.95rem, 1.2vw, 1.1rem); letter-spacing: 4px; font-weight: 600; color: #fff; white-space: nowrap; }
+        
+        .nav-menu { display: flex; gap: clamp(15px, 2.5vw, 35px); }
+        .nav-btn {
+            font-size: clamp(0.8rem, 1vw, 0.9rem); color: rgba(255,255,255,0.7); cursor: pointer;
+            transition: 0.3s; position: relative; letter-spacing: 1px; white-space: nowrap;
+        }
+        .nav-btn.active, .nav-btn:hover { color: #fff; }
+        .nav-btn.active::before {
+            content: '+'; position: absolute; left: -12px; color: var(--accent); font-weight: bold;
+        }
+
+        .header-right { display: flex; gap: 24px; color: rgba(255,255,255,0.6); font-size: 0.95rem; align-items: center; }
+        .icon-btn { cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 4px; position: relative; }
+        .icon-btn:hover { color: #fff; }
+        .lang-text { font-size: 0.75rem; letter-spacing: 1px; font-weight: bold; border: 1px solid rgba(255,255,255,0.3); padding: 2px 6px; border-radius: 3px; }
+
+        /* --- Main Stage (Home View) --- */
+        #main-stage { 
+            position: relative; width: 100%; height: 100%; z-index: 10; 
+            background-color: var(--bg-dark); 
+            opacity: 1; transition: opacity 0.3s ease-in-out;
+            pointer-events: auto; 
+        }
+        #main-stage.stage-hidden { opacity: 0; pointer-events: none !important; }
+        #star-canvas { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+        .character-split-layer {
+            position: absolute; inset: 0; z-index: 2;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.75) 0%, rgba(30, 41, 59, 0.5) 50%, transparent 50.01%);
+            backdrop-filter: blur(2px); pointer-events: none;
+        }
+
+        .view-homepage-content { width: 100%; height: 100%; position: absolute; inset: 0; display: flex; justify-content: center; align-items: center; }
+        .center-hero { text-align: center; z-index: 5; pointer-events: none; }
+        .title-large { font-size: clamp(2.5rem, 5vw, 4.5rem); letter-spacing: 12px; font-weight: 300; margin: 0; text-shadow: 0 0 40px rgba(0,0,0,0.8); }
+        .title-sub { font-size: clamp(0.9rem, 1.5vw, 1.2rem); letter-spacing: 8px; color: rgba(255,255,255,0.6); margin: 15px 0 0 0; }
+        .quote-text { margin-top: 5vh; font-size: clamp(0.75rem, 0.9vw, 0.85rem); color: rgba(255,255,255,0.4); letter-spacing: 3px; line-height: 1.8; max-width: 600px; }
+
+        /* --- Fullview Overlay View --- */
+        .fullview-overlay {
+            position: fixed; inset: 0; width: 100%; height: 100%; z-index: 1500; 
+            padding: 90px 6% 40px 6%;
+            background: rgba(3, 5, 13, 0.98); backdrop-filter: blur(30px);
+            display: flex; flex-direction: column; 
+            opacity: 0; 
+            pointer-events: none !important; 
+            transition: opacity 0.3s ease-in-out;
+            overflow-y: auto; 
+        }
+        .fullview-overlay.active-page { opacity: 1; pointer-events: auto !important; }
+
+        .fullview-overlay::-webkit-scrollbar, 
+        .noti-sidebar-list::-webkit-scrollbar, 
+        .generic-detail-panel::-webkit-scrollbar,
+        .media-grid-container::-webkit-scrollbar { width: 4px; }
+        .fullview-overlay::-webkit-scrollbar-thumb, 
+        .noti-sidebar-list::-webkit-scrollbar-thumb, 
+        .generic-detail-panel::-webkit-scrollbar-thumb,
+        .media-grid-container::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.12); border-radius: 2px; }
+        
+        .page-header-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 15px; margin-bottom: 25px; flex-shrink: 0; }
+        .page-main-title { font-size: clamp(1.4rem, 2.2vw, 2.2rem); font-weight: 300; margin: 0; letter-spacing: 3px; }
+        .page-sub-title { font-size: 0.75rem; color: var(--accent); letter-spacing: 2px; margin-top: 5px; font-family: monospace; }
+        .page-back-btn {
+            display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: rgba(255,255,255,0.6);
+            cursor: pointer; transition: 0.3s; border: 1px solid rgba(255,255,255,0.15); padding: 6px 16px; border-radius: 20px;
+        }
+        .page-back-btn:hover { color: #fff; border-color: var(--accent); box-shadow: 0 0 15px rgba(0,229,255,0.15); }
+
+        /* ================= Carousel Sliders ================= */
+        .slider-showcase-container { display: flex; align-items: center; justify-content: center; width: 100%; gap: 30px; position: relative; margin-top: 10px; flex-shrink: 0; }
+        .cards-viewport { display: flex; align-items: center; justify-content: center; width: 85%; height: clamp(240px, 32vh, 380px); position: relative; overflow: hidden; }
+        .showcase-card {
+            position: absolute; width: 55%; height: 100%; background-size: cover; background-position: center; border: 1px solid rgba(255,255,255,0.1);
+            clip-path: polygon(0 0, calc(100% - 40px) 0, 100% 40px, 100% 100%, 40px 100%, 0 calc(100% - 40px)); transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1); opacity: 0; pointer-events: none; z-index: 1;
+        }
+        .showcase-card.active { opacity: 1; pointer-events: auto; transform: scale(1) translateX(0); z-index: 3; border-color: var(--accent); }
+        .showcase-card.prev { opacity: 0.25; transform: scale(0.85) translateX(-70%); z-index: 2; }
+        .showcase-card.next { opacity: 0.25; transform: scale(0.85) translateX(70%); z-index: 2; }
+        .slide-arrow { font-size: 2rem; color: rgba(255,255,255,0.3); cursor: pointer; transition: 0.3s; padding: 10px; z-index: 10; user-select: none; }
+        .slide-arrow:hover { color: #fff; text-shadow: 0 0 10px var(--accent); }
+        .indicator-dots { display: flex; justify-content: center; gap: 12px; margin: 20px 0; align-items: center; flex-shrink: 0; }
+        .indicator-dot { width: 6px; height: 6px; background: rgba(255,255,255,0.25); border-radius: 50%; transition: 0.3s; cursor: pointer; }
+        .indicator-dot.active { background: #fff; transform: scale(1.3); box-shadow: 0 0 10px #fff, 0 0 4px var(--accent); }
+
+        .content-display-panel { width: 100%; max-width: 900px; margin: 10px auto 0 auto; text-align: left; }
+        .dynamic-title-group { margin-bottom: 16px; }
+        .dynamic-main-title { font-size: 1.7rem; font-weight: 500; margin: 0 0 8px 0; color: #fff; letter-spacing: 1px; }
+        .dynamic-sub-quote { font-size: 0.95rem; color: var(--accent); font-weight: bold; letter-spacing: 1px; margin-bottom: 20px; display: block; }
+        .dynamic-body-text { font-size: 0.95rem; color: rgba(255,255,255,0.7); line-height: 1.9; text-align: justify; padding-bottom: 60px; }
+
+        /* ================= Bulletin Split View ================= */
+        .page-layout-container { display: flex; gap: 30px; flex-grow: 1; height: calc(100vh - 220px); min-height: 400px; overflow: hidden; }
+        .noti-sidebar-list { width: 32%; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; padding-right: 6px; height: 100%; padding-bottom: 40px; }
+        .noti-item-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); padding: 15px; border-radius: 6px; cursor: pointer; transition: 0.25s; flex-shrink: 0; }
+        .noti-item-card:hover { background: rgba(255,255,255,0.05); border-color: rgba(0, 229, 255, 0.4); }
+        .noti-item-card.item-active { background: rgba(0, 229, 255, 0.05); border-color: var(--accent); box-shadow: inset 0 0 15px rgba(0, 229, 255, 0.05); }
+        .noti-item-date { font-size: 0.75rem; color: rgba(255,255,255,0.35); font-family: monospace; letter-spacing: 0.5px; }
+        .noti-item-title { font-size: 0.88rem; margin: 6px 0 0 0; font-weight: 400; color: rgba(255,255,255,0.7); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .noti-item-card.item-active .noti-item-title { color: #fff; font-weight: 500; }
+        
+        .generic-detail-panel { width: 68%; background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.03); border-radius: 8px; padding: 35px; overflow-y: auto; height: 100%; padding-bottom: 40px; }
+        .detail-title { font-size: 1.4rem; font-weight: 400; margin: 0 0 10px 0; color: #fff; letter-spacing: 0.5px; line-height: 1.4; }
+        .detail-meta { font-size: 0.8rem; color: rgba(255,255,255,0.4); font-family: monospace; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 14px; margin-bottom: 22px; }
+        .detail-content { line-height: 1.85; color: rgba(255,255,255,0.75); font-size: 0.92rem; text-align: justify; }
+        .detail-content p { margin: 0 0 16px 0; }
+
+        /* ================= Media Sci-Fi Light Override ================= */
+        .media-page-override {
+            background: radial-gradient(circle at 50% 30%, rgba(245, 247, 250, 0.96) 0%, rgba(230, 235, 243, 0.98) 100%) !important;
+            background-image: url('https://pub-c5e31b5cdafb419a82e69d040106134a.r2.dev/mock-map-bg.svg'), 
+                              radial-gradient(circle at 50% 30%, rgba(245, 247, 250, 0.95) 0%, rgba(232, 237, 245, 0.98) 100%) !important;
+            background-size: cover !important; background-position: center !important; color: #1e293b !important;
+        }
+        .media-page-override .page-main-title { color: #0f172a; font-weight: 600; }
+        .media-page-override .page-back-btn { color: #475569; border-color: rgba(15,23,42,0.15); }
+        .media-page-override .page-back-btn:hover { color: #0f172a; border-color: #0f172a; box-shadow: 0 0 15px rgba(0,0,0,0.05); }
+
+        .media-capsule-container { display: flex; gap: 14px; margin: 5px 0 25px 0; flex-shrink: 0; list-style: none; padding: 0; }
+        .media-capsule-btn {
+            padding: 8px 24px; font-size: 0.88rem; font-weight: 500; color: #475569;
+            background: #fff; border: 1px solid rgba(15,23,42,0.08); border-radius: 30px;
+            cursor: pointer; transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+            letter-spacing: 2px; position: relative; box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+        }
+        .media-capsule-btn.capsule-active {
+            background: #11131a; color: #fff; border-color: #11131a; font-weight: 600;
+            box-shadow: 0 4px 12px rgba(17,19,26,0.15);
+        }
+        .media-capsule-btn.capsule-active::before, .media-capsule-btn.capsule-active::after {
+            content: '+'; position: absolute; font-size: 0.65rem; color: rgba(255,255,255,0.4); font-family: sans-serif; top: 50%; transform: translateY(-50%);
+        }
+        .media-capsule-btn.capsule-active::before { left: 8px; }
+        .media-capsule-btn.capsule-active::after { right: 8px; }
+
+        .media-grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 25px; overflow-y: auto; flex-grow: 1; padding-bottom: 40px; width: 100%; }
+        .media-matrix-card {
+            background: #fff; border: 1px solid rgba(15,23,42,0.06); padding: 5px; border-radius: 4px; box-shadow: 0 4px 14px rgba(15,23,42,0.03);
+            clip-path: polygon(0 0, calc(100% - 24px) 0, 100% 24px, 100% 100%, 24px 100%, 0 calc(100% - 24px)); cursor: pointer; position: relative; width: 100%; opacity: 0; transform: translateX(-20px) scale(0.96);
+        }
+        .media-matrix-card.reveal-manifest { opacity: 1; transform: translateX(0) scale(1); transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1), transform 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
+        .media-matrix-card:hover { border-color: #11131a; box-shadow: 0 6px 20px rgba(17,19,26,0.1); }
+
+        .matrix-video-cover-wrap { width: 100%; aspect-ratio: 16 / 9; background-size: cover; background-position: center; position: relative; overflow: hidden; clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 22px, 100% 100%, 22px 100%, 0 calc(100% - 22px)); }
+        .matrix-play-indicator { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.15); transition: 0.3s; }
+        .matrix-play-icon {
+            width: 44px; height: 44px; background: rgba(255,255,255,0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #11131a;
+            font-size: 1.1rem; padding-left: 3px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); transition: 0.25s;
+        }
+        .media-matrix-card:hover .matrix-play-icon { transform: scale(1.1); background: #11131a; color: #fff; }
+        .matrix-card-title { font-size: 0.85rem; font-weight: 600; color: #1e293b; margin: 12px 6px 8px 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: 0.5px; }
+    </style>
+</head>
+<body>
+
+    <header class="top-header">
+        <div class="header-left">
+            <div class="header-logo">MIRACLE CITY × DREAM</div>
+            <nav class="nav-menu">
+                <div class="nav-btn active" id="nav-home" onclick="navigateToPage('home')">HOME</div>
+                <div class="nav-btn" id="nav-info" onclick="navigateToPage('info')">WORLD</div>
+                <div class="nav-btn" id="nav-db" onclick="navigateToPage('db')">SETTINGS</div>
+                <div class="nav-btn" id="nav-news" onclick="navigateToPage('news')">BULLETIN</div>
+                <div class="nav-btn" id="nav-media" onclick="navigateToPage('media')">MEDIA</div>
+            </nav>
+        </div>
+        <div class="header-right">
+            <div class="icon-btn" onclick="location.href='index.html'">
+                <span>🌐</span><span class="lang-text">中文</span>
+            </div>
+            <span class="icon-btn" onclick="window.open('https://www.bing.com', '_blank')">🔗</span>
+        </div>
+    </header>
+
+    <div id="main-stage">
+        <canvas id="star-canvas"></canvas>
+        <div class="character-split-layer"></div>
+        <div class="view-homepage-content">
+            <div class="center-hero">
+                <h1 class="title-large">MIRACLE CITY</h1>
+                <div class="title-sub">M I R A C L E · C I T Y</div>
+                <p class="quote-text">'...So you really are the designer here.' — Connection established, the Dream Rail transit fleet is smoothly crossing the central hub line.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="view-info-page" class="fullview-overlay">
+        <div class="page-header-area">
+            <div>
+                <h2 class="page-main-title">WORLDVIEW MATRIX CORE</h2>
+                <div class="page-sub-title">// WORLDVIEW MATRIX CORE</div>
+            </div>
+            <div class="page-back-btn" onclick="navigateToPage('home')">
+                <span>BACK HOME</span>
+            </div>
+        </div>
+        <div class="slider-showcase-container">
+            <div class="slide-arrow" onclick="moveSlider('info', -1)">〈</div>
+            <div class="cards-viewport">
+                <div class="showcase-card" style="background-image: url('https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80');"></div>
+                <div class="showcase-card" style="background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80');"></div>
+                <div class="showcase-card" style="background-image: url('https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=1200&q=80');"></div>
+            </div>
+            <div class="slide-arrow" onclick="moveSlider('info', 1)">〉</div>
+        </div>
+        <div class="indicator-dots" id="dots-info"></div>
+        <div class="content-display-panel">
+            <div class="dynamic-title-group">
+                <h3 class="dynamic-main-title" id="info-render-title"></h3>
+                <span class="dynamic-sub-quote" id="info-render-quote"></span>
+            </div>
+            <div class="dynamic-body-text" id="info-render-body"></div>
+        </div>
+    </div>
+
+    <div id="view-db-page" class="fullview-overlay">
+        <div class="page-header-area">
+            <div>
+                <h2 class="page-main-title">SETTINGS</h2>
+                <div class="page-sub-title">// SETTINGS</div>
+            </div>
+            <div class="page-back-btn" onclick="navigateToPage('home')">
+                <span>BACK HOME</span>
+            </div>
+        </div>
+        <div class="slider-showcase-container">
+            <div class="slide-arrow" onclick="moveSlider('db', -1)">〈</div>
+            <div class="cards-viewport">
+                <div class="showcase-card" style="background-image: url('https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=1200&q=80');"></div>
+                <div class="showcase-card" style="background-image: url('https://images.unsplash.com/photo-1639322537228-f710d846310a?auto=format&fit=crop&w=1200&q=80');"></div>
+                <div class="showcase-card" style="background-image: url('https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=1200&q=80');"></div>
+            </div>
+            <div class="slide-arrow" onclick="moveSlider('db', 1)">〉</div>
+        </div>
+        <div class="indicator-dots" id="dots-db"></div>
+        <div class="content-display-panel">
+            <div class="dynamic-title-group">
+                <h3 class="dynamic-main-title" id="db-render-title"></h3>
+                <span class="dynamic-sub-quote" id="db-render-quote"></span>
+            </div>
+            <div class="dynamic-body-text" id="db-render-body"></div>
+        </div>
+    </div>
+
+    <div id="view-news-page" class="fullview-overlay" style="overflow-y: hidden;">
+        <div class="page-header-area">
+            <div>
+                <h2 class="page-main-title">BROADCAST CENTER</h2>
+                <div class="page-sub-title">// SYSTEM BROADCAST CORE</div>
+            </div>
+            <div class="page-back-btn" onclick="navigateToPage('home')">
+                <span>BACK HOME</span>
+            </div>
+        </div>
+        <div class="page-layout-container">
+            <div class="noti-sidebar-list" id="noti-list-container"></div>
+            <div class="generic-detail-panel">
+                <h3 class="detail-title" id="nd-title"></h3>
+                <div class="detail-meta" id="nd-meta"></div>
+                <div class="detail-content" id="nd-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="view-media-page" class="fullview-overlay media-page-override" style="overflow-y: hidden;">
+        <div class="page-header-area">
+            <div>
+                <h2 class="page-main-title">MEDIA BROADCAST CENTER</h2>
+                <div class="page-sub-title" style="color: #64748b;">// MEDIA BROADCAST CENTER</div>
+            </div>
+            <div class="page-back-btn" onclick="navigateToPage('home')">
+                <span>BACK HOME</span>
+            </div>
+        </div>
+        <ul class="media-capsule-container" id="media-capsules-wrap"></ul>
+        <div class="media-grid-container" id="media-matrix-grid"></div>
+    </div>
+
+    <script>
+        let currentActiveNotiIdx = 0;
+
+        const sliderData = {
+            info: [
+                { title: "Synopsis", quote: "'Cities, Stars, and Magic—'", body: "In this both familiar and strange world, Tokyo Tower has just been completed, and the Odaiba International Exhibition Center is still under active development.<br>A local civil servant, the 'Supervisor', is dispatched to a mysterious agency known as the &lt;Special District Office&gt;.<br>And he soon learns that it is actually an administrative system managing the contemporary magic network in Tokyo." },
+                { title: "Territory", quote: "'The foundation of life is the basis of magic'", body: "Magic reflects the lifestyle on the &lt;Land&gt; where mages reside.<br>Since the Fifth Era, mages have been accustomed to using the concept of &lt;Administration&gt; as a framework to understand the world, systematizing their needed lands into &lt;Mage Territories&gt;.<br>Eventually, the administrative system began to equal the mages' territorial structures.<br><br>Minato, Shinjuku, Shibuya, Shinagawa, Sumida... In modern Tokyo, mages' lands are divided by administrative districts. The conflicts between them also gradually transform into administrative disputes." },
+                { title: "High-Orbit Matrix", quote: "'1.19.2 Precision Architecture'", body: "A high-performance public core node built on void orbits running completely stable. The consciousness stream of every architect converges here at a high frequency, shaping an unbreakable digital network matrix to chart the future star trails." }
+            ],
+            db: [
+                { title: "Railway Fleet Staffing", quote: "'Dream Rail: Central Mainline No.1'", body: "Dream Rail Central Mainline No.1 operates smoothly. Designers and residents are assigned exclusive digital keys here. As supervisors or peripheral system builders, everyone's baseline behavioral trails will be synchronized deep within the quantum defense shield." },
+                { title: "Transit Network Architecture", quote: "'Haoze Transit: Sub-regional Network'", body: "Serving as the sub-regional infrastructure supplying outer urban fringes and transport hubs, Haoze Transit utilizes autonomous driverless drone trains to stream metadata securely back to the central base nodes for protocol收束." },
+                { title: "Quantum Shield Protocol", quote: "'Base System: Shielding & Isolation'", body: "The infrastructure guards pure vanilla gameplay logic based on the 1.19.2 precision framework with a non-profit mission. Security states are managed under high-orbit consensus mechanisms by the joint security council, completely shielding unknown overflows." }
+            ]
+        };
+
+        const newsData = [
+            { date: "2026-05-17", title: "01/ Quantum Matrix Synchronization Notes", meta: "Date: 2026-05-17 01:11 // Auth: High Security Dep.", content: `<p>Dear Architects and Residents:</p><p>The Quantum Defense Matrix has been successfully synchronized into the base 1.19.2 precision framework. This adjustment optimizes sub-regional throughput to keep tracking parameters perfectly stable.</p><p>Thank you for your continuous support towards nodes of Miracle City × MX Server.</p>` },
+            { date: "2026-05-10", title: "02/ Dream Rail Mainline No.1 Expansion Notice", meta: "Date: 2026-05-10 03:00 // Auth: Transit Hub Dep.", content: `<p>System Dispatch Log:</p><p>To prevent localized consciousness overlay drift, Central Mainline No.1 underwent dynamic hot-swap volume routing last night. Secondary channels hosted data transmission perfectly during maintenance windows.</p>` }
+        ];
+
+        const mediaConfig = {
+            tabs: ["VIDEO"],
+            items: [
+                { title: "Super Teaser Video PV", img: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=600&q=80" },
+                { title: "Special District Office Concept PV 1", img: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=600&q=80" },
+                { title: "Dream Rail Central Mainline Close-up", img: "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=1200&q=80" },
+                { title: "Quantum Shield Protocol Analysis", img: "https://images.unsplash.com/photo-1639322537228-f710d846310a?auto=format&fit=crop&w=1200&q=80" }
+            ]
+        };
+
+        let sliderIndices = { info: 0, db: 0 };
+
+        function navigateToPage(targetPageId) {
+            const stageEl = document.getElementById('main-stage');
+            if (targetPageId === 'home') {
+                document.querySelectorAll('.fullview-overlay').forEach(el => {
+                    el.classList.remove('active-page');
+                    el.style.setProperty('pointer-events', 'none', 'important'); 
+                });
+                document.querySelectorAll('.nav-menu .nav-btn').forEach(b => b.classList.remove('active'));
+                stageEl.classList.remove('stage-hidden'); 
+                stageEl.style.setProperty('pointer-events', 'auto', 'important'); 
+                document.getElementById('nav-home').classList.add('active');
+                return;
+            }
+
+            let overlayEl = document.getElementById(`view-${targetPageId}-page`);
+            let navBtnEl = document.getElementById(`nav-${targetPageId}`);
+
+            if (overlayEl) {
+                stageEl.classList.add('stage-hidden'); 
+                stageEl.style.setProperty('pointer-events', 'none', 'important'); 
+
+                document.querySelectorAll('.fullview-overlay').forEach(el => { 
+                    if (el !== overlayEl) {
+                        el.classList.remove('active-page');
+                        el.style.setProperty('pointer-events', 'none', 'important'); 
+                    }
+                });
+                document.querySelectorAll('.nav-menu .nav-btn').forEach(b => b.classList.remove('active'));
+
+                overlayEl.classList.add('active-page');
+                overlayEl.style.setProperty('pointer-events', 'auto', 'important'); 
+                
+                if (navBtnEl) navBtnEl.classList.add('active');
+                overlayEl.scrollTop = 0;
+
+                if (sliderIndices[targetPageId] !== undefined) {
+                    renderSlider(targetPageId);
+                }
+                if (targetPageId === 'media') {
+                    triggerMediaStaggerAnimation();
+                }
+            }
+        }
+
+        function initSliderDots(pageKey) {
+            const dotsContainer = document.getElementById(`dots-${pageKey}`);
+            if (!dotsContainer) return;
+            dotsContainer.innerHTML = '';
+            sliderData[pageKey].forEach((_, idx) => {
+                const dot = document.createElement('div');
+                dot.className = `indicator-dot ${idx === sliderIndices[pageKey] ? 'active' : ''}`;
+                dot.onclick = () => { sliderIndices[pageKey] = idx; renderSlider(pageKey); };
+                dotsContainer.appendChild(dot);
+            });
+        }
+
+        function moveSlider(pageKey, direction) {
+            const items = sliderData[pageKey];
+            let currentIdx = sliderIndices[pageKey];
+            currentIdx += direction;
+            if (currentIdx < 0) currentIdx = items.length - 1;
+            if (currentIdx >= items.length) currentIdx = 0;
+            sliderIndices[pageKey] = currentIdx;
+            renderSlider(pageKey);
+        }
+
+        function renderSlider(pageKey) {
+            const items = sliderData[pageKey];
+            const currentIdx = sliderIndices[pageKey];
+            const pageOverlay = document.getElementById(`view-${pageKey}-page`);
+            if (!pageOverlay) return;
+
+            const cards = pageOverlay.querySelectorAll('.showcase-card');
+            cards.forEach((card, idx) => {
+                card.className = 'showcase-card';
+                if (idx === currentIdx) card.classList.add('active');
+                else if (idx === (currentIdx - 1 + items.length) % items.length) card.classList.add('prev');
+                else if (idx === (currentIdx + 1) % items.length) card.classList.add('next');
+            });
+
+            const dots = pageOverlay.querySelectorAll('.indicator-dot');
+            dots.forEach((dot, idx) => {
+                if(idx === currentIdx) dot.classList.add('active');
+                else dot.classList.remove('active');
+            });
+
+            const data = items[currentIdx];
+            document.getElementById(`${pageKey}-render-title`).innerText = data.title;
+            document.getElementById(`${pageKey}-render-quote`).innerText = data.quote;
+            document.getElementById(`${pageKey}-render-body`).innerHTML = data.body;
+        }
+
+        function buildNotificationList() {
+            const listContainer = document.getElementById('noti-list-container');
+            if (!listContainer) return;
+            listContainer.innerHTML = ''; 
+
+            newsData.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = `noti-item-card ${index === currentActiveNotiIdx ? 'item-active' : ''}`;
+                card.onclick = () => switchNotiDetail(index, card);
+
+                const dateEl = document.createElement('div');
+                dateEl.className = 'noti-item-date';
+                dateEl.innerText = item.date;
+
+                const titleEl = document.createElement('div');
+                titleEl.className = 'noti-item-title';
+                titleEl.innerText = item.title;
+
+                card.appendChild(dateEl);
+                card.appendChild(titleEl);
+                listContainer.appendChild(card);
+            });
+            refreshNotiDetailText();
+        }
+
+        function switchNotiDetail(index, element) {
+            document.querySelectorAll('.noti-item-card').forEach(card => card.classList.remove('item-active'));
+            if(element) element.classList.add('item-active');
+            currentActiveNotiIdx = index;
+            refreshNotiDetailText();
+        }
+
+        function refreshNotiDetailText() {
+            const data = newsData[currentActiveNotiIdx];
+            if (!data) return;
+            document.getElementById('nd-title').innerText = data.title;
+            document.getElementById('nd-meta').innerText = data.meta;
+            document.getElementById('nd-content').innerHTML = data.content;
+        }
+
+        function buildMediaLayout() {
+            const capsuleContainer = document.getElementById('media-capsules-wrap');
+            const gridContainer = document.getElementById('media-matrix-grid');
+            if (!capsuleContainer || !gridContainer) return;
+
+            capsuleContainer.innerHTML = '';
+            mediaConfig.tabs.forEach((tabName) => {
+                const li = document.createElement('li');
+                li.className = 'media-capsule-btn capsule-active';
+                li.innerText = tabName;
+                capsuleContainer.appendChild(li);
+            });
+
+            gridContainer.innerHTML = '';
+            mediaConfig.items.forEach((item) => {
+                const card = document.createElement('div');
+                card.className = 'media-matrix-card';
+
+                const coverWrap = document.createElement('div');
+                coverWrap.className = 'matrix-video-cover-wrap';
+                coverWrap.style.backgroundImage = `url('${item.img}')`;
+
+                const playIndicator = document.createElement('div');
+                playIndicator.className = 'matrix-play-indicator';
+                
+                const playIcon = document.createElement('div');
+                playIcon.className = 'matrix-play-icon';
+                playIcon.innerText = '▶';
+
+                playIndicator.appendChild(playIcon);
+                coverWrap.appendChild(playIndicator);
+
+                const titleEl = document.createElement('div');
+                titleEl.className = 'matrix-card-title';
+                titleEl.innerText = item.title;
+
+                card.appendChild(coverWrap);
+                card.appendChild(titleEl);
+                gridContainer.appendChild(card);
+            });
+        }
+
+        function triggerMediaStaggerAnimation() {
+            const cards = document.querySelectorAll('.media-matrix-card');
+            cards.forEach((card, index) => {
+                card.classList.remove('reveal-manifest');
+                setTimeout(() => { card.classList.add('reveal-manifest'); }, index * 120); 
+            });
+        }
+
+        // --- Quantum Space Stars Canvas ---
+        const canvas = document.getElementById('star-canvas');
+        const ctx = canvas.getContext('2d');
+        let stars = [], meteors = [], trainX = -1000;
+        const colors = ['rgba(0, 229, 255, ', 'rgba(180, 100, 255, ', 'rgba(255, 255, 255, '];
+
+        class Meteor {
+            constructor() { this.reset(); }
+            reset() {
+                this.x = Math.random() * canvas.width * 0.7; this.y = Math.random() * (canvas.height * 0.3);
+                this.len = Math.random() * 100 + 60; this.speed = Math.random() * 6 + 3;
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+            }
+            update() { this.x += this.speed; this.y += this.speed * 0.4; if (this.x > canvas.width || this.y > canvas.height) this.reset(); }
+            draw() {
+                ctx.save(); ctx.beginPath();
+                let gradient = ctx.createLinearGradient(this.x, this.y, this.x - this.len, this.y - this.len * 0.4);
+                gradient.addColorStop(0, '#fff'); gradient.addColorStop(0.2, this.color + '0.4)'); gradient.addColorStop(1, 'transparent');
+                ctx.strokeStyle = gradient; ctx.lineWidth = 1.2;
+                ctx.moveTo(this.x, this.y); ctx.lineTo(this.x - this.len, this.y - this.len * 0.4);
+                ctx.stroke(); ctx.restore();
+            }
+        }
+
+        class Star {
+            constructor() { this.reset(); }
+            reset() {
+                this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height;
+                this.dist = Math.sqrt(Math.pow(this.x - canvas.width/2, 2) + Math.pow(this.y - canvas.height/2, 2));
+                this.angle = Math.atan2(this.y - canvas.height/2, this.x - canvas.width/2);
+                this.size = Math.random() * 1.2 + 0.4; this.speed = Math.random() * 0.0004 + 0.0001;
+                this.color = colors[Math.floor(Math.random() * colors.length)] + (Math.random() * 0.3 + 0.2) + ')';
+            }
+            update() { this.angle += this.speed; }
+            draw() {
+                const x = canvas.width/2 + Math.cos(this.angle) * this.dist;
+                const y = canvas.height/2 + Math.sin(this.angle) * this.dist;
+                ctx.beginPath(); ctx.fillStyle = this.color; ctx.arc(x, y, this.size, 0, Math.PI*2); ctx.fill();
+            }
+        }
+
+        function drawGhostTrain() {
+            ctx.save(); ctx.globalAlpha = 0.45; ctx.strokeStyle = "rgba(0, 229, 255, 0.9)"; ctx.lineWidth = 2; ctx.shadowBlur = 10; ctx.shadowColor = "rgba(0, 229, 255, 0.8)";
+            const trainY = canvas.height * 0.82; trainX += 1.2; if (trainX > canvas.width + 600) trainX = -800;
+            for(let i=0; i<6; i++) { 
+                let bx = trainX - (i * 125); ctx.strokeRect(bx, trainY, 115, 20);
+                for(let j=0; j<4; j++) { ctx.strokeRect(bx + 8 + (j*26), trainY + 4, 18, 6); }
+            }
+            ctx.restore();
+        }
+
+        function initCanvas() {
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+            stars = []; meteors = [];
+            for (let i = 0; i < 200; i++) stars.push(new Star());
+            for (let i = 0; i < 4; i++) meteors.push(new Meteor());
+        }
+
+        function animate() {
+            ctx.fillStyle = 'rgba(3, 5, 13, 0.06)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            drawGhostTrain(); stars.forEach(s => { s.update(); s.draw(); }); meteors.forEach(m => { m.update(); m.draw(); });
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', initCanvas);
+        window.addEventListener('DOMContentLoaded', () => {
+            buildNotificationList();
+            buildMediaLayout();
+            ['info', 'db'].forEach(key => { initSliderDots(key); renderSlider(key); });
+            initCanvas(); animate();
+        });
+    </script>
+</body>
+</html>
