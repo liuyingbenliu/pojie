@@ -18,7 +18,7 @@
         * { box-sizing: border-box; }
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
-            background-color: var(--bg-dark) !important; /* 强制网页最底层为纯黑，干掉一切浏览器自带白闪 */
+            background-color: var(--bg-dark) !important; /* 核心锁死纯黑 */
             overflow: hidden;
             color: #fff; font-family: "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
             user-select: none;
@@ -59,13 +59,13 @@
         .hero-banner-bg {
             position: absolute; inset: 0; z-index: 0;
             background-color: var(--bg-dark);
-            background-image: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1920');
+            /* 【核心修改】这里拒绝写入任何默认 url()，彻底斩断初次渲染时的色块突变和重绘闪烁 */
             background-size: cover; background-position: center;
-            opacity: 0; /* 默认完全透明，防止图片未加载完时露出色块 */
-            transition: opacity 0.5s ease-in-out, background-image 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+            opacity: 0; 
+            transition: opacity 0.8s ease-in-out; /* 稍稍拉长淡入时间，使其丝滑如丝 */
         }
         .hero-banner-bg.loaded {
-            opacity: 1; /* 图片加载或引擎就绪后丝滑淡入 */
+            opacity: 1; 
         }
 
         #star-canvas { position: absolute; inset: 0; z-index: 1; pointer-events: none; background-color: transparent; }
@@ -380,7 +380,7 @@
             }
         };
 
-        // --- 核心导航控制系统 ---
+        // --- 核心安全导航系统 ---
         function navigateToPage(targetPageId) {
             const stageEl = document.getElementById('main-stage');
 
@@ -434,10 +434,25 @@
         }
 
         function updateStageBackgroundAndDots() {
-            document.getElementById('hero-bg-layer').style.backgroundImage = `url('${bgImages[currentStageIdx]}')`;
+            // 切页时同样采用高级预载逻辑，防止切屏瞬时图裂
+            preloadAndApplyBg(bgImages[currentStageIdx]);
             const dots = document.querySelectorAll('.dot');
             dots.forEach(d => d.classList.remove('active'));
             if(dots[currentStageIdx]) dots[currentStageIdx].classList.add('active');
+        }
+
+        // 【超级修复器】幕后图像缓存加载器
+        function preloadAndApplyBg(url) {
+            const bgLayer = document.getElementById('hero-bg-layer');
+            bgLayer.classList.remove('loaded'); // 先隐去旧图
+            
+            const imgBuffer = new Image();
+            imgBuffer.src = url;
+            imgBuffer.onload = function() {
+                // 仅当图像文件在浏览器后台完全解密并缓冲好后，才无缝赋给主舞台并展示
+                bgLayer.style.backgroundImage = `url('${url}')`;
+                bgLayer.classList.add('loaded');
+            };
         }
 
         function toggleLanguage() {
@@ -573,13 +588,10 @@
         window.addEventListener('DOMContentLoaded', () => {
             updateLocalization();
             initCanvas(); 
-            
-            // 【首屏防闪烁终极修复】等DOM和Canvas环境初始化完毕后，再以全黑为底色，丝滑淡入大背景图
-            setTimeout(() => {
-                document.getElementById('hero-bg-layer').classList.add('loaded');
-            }, 50);
-
             animate();
+            
+            // 【无闪烁必杀技】开启异步幕后缓冲，首屏绝对不抢占主线程
+            preloadAndApplyBg(bgImages[0]);
         });
     </script>
 </body>
