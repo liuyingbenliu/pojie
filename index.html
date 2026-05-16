@@ -18,7 +18,7 @@
         * { box-sizing: border-box; }
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
-            background-color: var(--bg-dark) !important; /* 核心锁死纯黑 */
+            background-color: var(--bg-dark) !important; /* 锁死纯黑 */
             overflow: hidden;
             color: #fff; font-family: "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
             user-select: none;
@@ -55,24 +55,14 @@
             position: relative; width: 100%; height: 100%; z-index: 10; 
             display: block; background-color: var(--bg-dark); 
         }
-        
-        .hero-banner-bg {
-            position: absolute; inset: 0; z-index: 0;
-            background-color: var(--bg-dark);
-            /* 【核心修改】这里拒绝写入任何默认 url()，彻底斩断初次渲染时的色块突变和重绘闪烁 */
-            background-size: cover; background-position: center;
-            opacity: 0; 
-            transition: opacity 0.8s ease-in-out; /* 稍稍拉长淡入时间，使其丝滑如丝 */
-        }
-        .hero-banner-bg.loaded {
-            opacity: 1; 
-        }
 
         #star-canvas { position: absolute; inset: 0; z-index: 1; pointer-events: none; background-color: transparent; }
+        
+        /* 保持左上角的科幻几何切角阴影，配合纯黑深邃背景 */
         .character-split-layer {
             position: absolute; inset: 0; z-index: 2;
-            background: linear-gradient(135deg, rgba(15, 23, 42, 0.75) 0%, rgba(30, 41, 59, 0.5) 50%, transparent 50.01%);
-            backdrop-filter: blur(2px); pointer-events: none;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.4) 0%, rgba(30, 41, 59, 0.1) 50%, transparent 50.01%);
+            backdrop-filter: blur(1px); pointer-events: none;
         }
 
         .view-homepage-content { width: 100%; height: 100%; position: absolute; inset: 0; }
@@ -206,7 +196,6 @@
     </header>
 
     <div id="main-stage">
-        <div class="hero-banner-bg" id="hero-bg-layer"></div>
         <canvas id="star-canvas"></canvas>
         <div class="character-split-layer"></div>
 
@@ -335,13 +324,6 @@
 
         const stageTabs = ['home', 'info', 'db', 'media'];
         let currentStageIdx = 0;
-
-        const bgImages = [
-            "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1920",
-            "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1920",
-            "https://images.unsplash.com/photo-1542831371-29b0f74f9713?q=80&w=1920",
-            "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?q=80&w=1920"
-        ];
         
         const langData = {
             zh: {
@@ -380,7 +362,7 @@
             }
         };
 
-        // --- 核心安全导航系统 ---
+        // --- 核心导航系统 ---
         function navigateToPage(targetPageId) {
             const stageEl = document.getElementById('main-stage');
 
@@ -424,35 +406,19 @@
         function movePrevTab() {
             currentStageIdx--;
             if (currentStageIdx < 0) currentStageIdx = stageTabs.length - 1;
-            updateStageBackgroundAndDots();
+            updateStageDots();
         }
 
         function moveNextTab() {
             currentStageIdx++;
             if (currentStageIdx >= stageTabs.length) currentStageIdx = 0;
-            updateStageBackgroundAndDots();
+            updateStageDots();
         }
 
-        function updateStageBackgroundAndDots() {
-            // 切页时同样采用高级预载逻辑，防止切屏瞬时图裂
-            preloadAndApplyBg(bgImages[currentStageIdx]);
+        function updateStageDots() {
             const dots = document.querySelectorAll('.dot');
             dots.forEach(d => d.classList.remove('active'));
             if(dots[currentStageIdx]) dots[currentStageIdx].classList.add('active');
-        }
-
-        // 【超级修复器】幕后图像缓存加载器
-        function preloadAndApplyBg(url) {
-            const bgLayer = document.getElementById('hero-bg-layer');
-            bgLayer.classList.remove('loaded'); // 先隐去旧图
-            
-            const imgBuffer = new Image();
-            imgBuffer.src = url;
-            imgBuffer.onload = function() {
-                // 仅当图像文件在浏览器后台完全解密并缓冲好后，才无缝赋给主舞台并展示
-                bgLayer.style.backgroundImage = `url('${url}')`;
-                bgLayer.classList.add('loaded');
-            };
         }
 
         function toggleLanguage() {
@@ -512,7 +478,7 @@
             if(cEl) cEl.innerHTML = data.notiContents[currentActiveNotiIdx];
         }
 
-        // --- 粒子星空引擎 ---
+        // --- 纯净版：粒子星空引擎 ---
         const canvas = document.getElementById('star-canvas');
         const ctx = canvas.getContext('2d');
         let stars = [], meteors = [], trainX = -1000;
@@ -576,6 +542,7 @@
             for (let i = 0; i < 4; i++) meteors.push(new Meteor());
         }
 
+        // 使用 var(--bg-dark) 的色值擦除画布，确保持续的纯净黑色调
         function animate() {
             ctx.fillStyle = 'rgba(3, 5, 13, 0.06)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
             drawGhostTrain();
@@ -589,9 +556,6 @@
             updateLocalization();
             initCanvas(); 
             animate();
-            
-            // 【无闪烁必杀技】开启异步幕后缓冲，首屏绝对不抢占主线程
-            preloadAndApplyBg(bgImages[0]);
         });
     </script>
 </body>
