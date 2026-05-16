@@ -18,7 +18,7 @@
         * { box-sizing: border-box; }
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
-            background-color: var(--bg-dark); /* 确保网页最底层在任何时候都是纯黑暗色，消除初次加载闪白 */
+            background-color: var(--bg-dark) !important; /* 强制网页最底层为纯黑，干掉一切浏览器自带白闪 */
             overflow: hidden;
             color: #fff; font-family: "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
             user-select: none;
@@ -61,10 +61,14 @@
             background-color: var(--bg-dark);
             background-image: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1920');
             background-size: cover; background-position: center;
-            transition: background-image 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+            opacity: 0; /* 默认完全透明，防止图片未加载完时露出色块 */
+            transition: opacity 0.5s ease-in-out, background-image 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .hero-banner-bg.loaded {
+            opacity: 1; /* 图片加载或引擎就绪后丝滑淡入 */
         }
 
-        #star-canvas { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+        #star-canvas { position: absolute; inset: 0; z-index: 1; pointer-events: none; background-color: transparent; }
         .character-split-layer {
             position: absolute; inset: 0; z-index: 2;
             background: linear-gradient(135deg, rgba(15, 23, 42, 0.75) 0%, rgba(30, 41, 59, 0.5) 50%, transparent 50.01%);
@@ -99,7 +103,7 @@
             backdrop-filter: blur(35px);
             display: none;
             flex-direction: column; gap: 40px;
-            opacity: 0; transition: opacity 0.2s ease-in-out; /* 提速淡入淡出，极其利落 */
+            opacity: 0; transition: opacity 0.2s ease-in-out;
         }
         .fullview-overlay.active-page { display: flex; opacity: 1; }
 
@@ -376,26 +380,22 @@
             }
         };
 
-        // --- 核心无闪烁导航控制系统 ---
+        // --- 核心导航控制系统 ---
         function navigateToPage(targetPageId) {
             const stageEl = document.getElementById('main-stage');
 
-            // 1. 回主页逻辑
             if (targetPageId === 'home') {
-                // 先隐藏所有可能打开的独立全屏页
                 document.querySelectorAll('.fullview-overlay').forEach(el => {
                     el.classList.remove('active-page');
                     el.style.display = 'none';
                 });
                 document.querySelectorAll('.nav-menu .nav-btn').forEach(b => b.classList.remove('active'));
                 
-                // 彻底激活并恢复底层主舞台显示，防止切换时背景暴露闪烁
                 stageEl.style.display = 'block'; 
                 document.getElementById('nav-home').classList.add('active');
                 return;
             }
 
-            // 2. 切去其他独立全屏页面逻辑
             let overlayEl = null;
             let navBtnEl = null;
 
@@ -405,10 +405,8 @@
             else if (targetPageId === 'media') { overlayEl = document.getElementById('view-media-page'); navBtnEl = document.getElementById('nav-media'); }
 
             if (overlayEl) {
-                // 【绝杀修复点】隐藏掉背后原本常驻的主页舞台！不留任何微小的显示缝隙。
                 stageEl.style.display = 'none'; 
 
-                // 关闭其余独立页大层
                 document.querySelectorAll('.fullview-overlay').forEach(el => {
                     if (el !== overlayEl) {
                         el.classList.remove('active-page');
@@ -417,7 +415,6 @@
                 });
                 document.querySelectorAll('.nav-menu .nav-btn').forEach(b => b.classList.remove('active'));
 
-                // 瞬间将新页面拉上来，完全在纯黑画布层上渲染
                 overlayEl.style.display = 'flex';
                 overlayEl.classList.add('active-page');
                 if (navBtnEl) navBtnEl.classList.add('active');
@@ -576,6 +573,12 @@
         window.addEventListener('DOMContentLoaded', () => {
             updateLocalization();
             initCanvas(); 
+            
+            // 【首屏防闪烁终极修复】等DOM和Canvas环境初始化完毕后，再以全黑为底色，丝滑淡入大背景图
+            setTimeout(() => {
+                document.getElementById('hero-bg-layer').classList.add('loaded');
+            }, 50);
+
             animate();
         });
     </script>
