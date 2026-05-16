@@ -18,7 +18,7 @@
         * { box-sizing: border-box; }
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
-            background-color: var(--bg-dark);
+            background-color: var(--bg-dark); /* 确保网页最底层在任何时候都是纯黑暗色，消除初次加载闪白 */
             overflow: hidden;
             color: #fff; font-family: "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
             user-select: none;
@@ -51,11 +51,14 @@
         .lang-text { font-size: 0.75rem; letter-spacing: 1px; font-weight: bold; border: 1px solid rgba(255,255,255,0.3); padding: 2px 6px; border-radius: 3px; }
 
         /* --- 主舞台（常驻底层 / 概览页） --- */
-        #main-stage { position: relative; width: 100%; height: 100%; z-index: 10; display: block; }
+        #main-stage { 
+            position: relative; width: 100%; height: 100%; z-index: 10; 
+            display: block; background-color: var(--bg-dark); 
+        }
         
         .hero-banner-bg {
             position: absolute; inset: 0; z-index: 0;
-            background-color: #03050d;
+            background-color: var(--bg-dark);
             background-image: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1920');
             background-size: cover; background-position: center;
             transition: background-image 0.6s cubic-bezier(0.25, 1, 0.5, 1);
@@ -96,7 +99,7 @@
             backdrop-filter: blur(35px);
             display: none;
             flex-direction: column; gap: 40px;
-            opacity: 0; transition: opacity 0.3s ease;
+            opacity: 0; transition: opacity 0.2s ease-in-out; /* 提速淡入淡出，极其利落 */
         }
         .fullview-overlay.active-page { display: flex; opacity: 1; }
 
@@ -326,7 +329,6 @@
         let currentLang = 'zh';
         let currentActiveNotiIdx = 0;
 
-        // 主舞台原生背景轮播驱动
         const stageTabs = ['home', 'info', 'db', 'media'];
         let currentStageIdx = 0;
 
@@ -374,22 +376,26 @@
             }
         };
 
-        // --- 核心无缝导航控制系统 ---
+        // --- 核心无闪烁导航控制系统 ---
         function navigateToPage(targetPageId) {
-            // 1. 关闭全屏独立页面激活状态
-            document.querySelectorAll('.fullview-overlay').forEach(el => {
-                el.classList.remove('active-page');
-                el.style.display = 'none';
-            });
-            document.querySelectorAll('.nav-menu .nav-btn').forEach(b => b.classList.remove('active'));
+            const stageEl = document.getElementById('main-stage');
 
-            // 2. 如果回主页
+            // 1. 回主页逻辑
             if (targetPageId === 'home') {
+                // 先隐藏所有可能打开的独立全屏页
+                document.querySelectorAll('.fullview-overlay').forEach(el => {
+                    el.classList.remove('active-page');
+                    el.style.display = 'none';
+                });
+                document.querySelectorAll('.nav-menu .nav-btn').forEach(b => b.classList.remove('active'));
+                
+                // 彻底激活并恢复底层主舞台显示，防止切换时背景暴露闪烁
+                stageEl.style.display = 'block'; 
                 document.getElementById('nav-home').classList.add('active');
-                return; /* 截断，底层大图保持原样不变，彻底消除图片重载引发的闪烁 */
+                return;
             }
 
-            // 3. 映射对应的全屏大层与导航高亮项
+            // 2. 切去其他独立全屏页面逻辑
             let overlayEl = null;
             let navBtnEl = null;
 
@@ -398,15 +404,26 @@
             else if (targetPageId === 'news') { overlayEl = document.getElementById('view-news-page'); navBtnEl = document.getElementById('nav-news'); } 
             else if (targetPageId === 'media') { overlayEl = document.getElementById('view-media-page'); navBtnEl = document.getElementById('nav-media'); }
 
-            // 4. 执行磨砂大层凌空淡入覆盖
             if (overlayEl) {
+                // 【绝杀修复点】隐藏掉背后原本常驻的主页舞台！不留任何微小的显示缝隙。
+                stageEl.style.display = 'none'; 
+
+                // 关闭其余独立页大层
+                document.querySelectorAll('.fullview-overlay').forEach(el => {
+                    if (el !== overlayEl) {
+                        el.classList.remove('active-page');
+                        el.style.display = 'none';
+                    }
+                });
+                document.querySelectorAll('.nav-menu .nav-btn').forEach(b => b.classList.remove('active'));
+
+                // 瞬间将新页面拉上来，完全在纯黑画布层上渲染
                 overlayEl.style.display = 'flex';
-                setTimeout(() => { overlayEl.classList.add('active-page'); }, 20);
+                overlayEl.classList.add('active-page');
+                if (navBtnEl) navBtnEl.classList.add('active');
             }
-            if (navBtnEl) navBtnEl.classList.add('active');
         }
 
-        // 主舞台手动箭头/播放键切换
         function movePrevTab() {
             currentStageIdx--;
             if (currentStageIdx < 0) currentStageIdx = stageTabs.length - 1;
@@ -431,7 +448,6 @@
             updateLocalization();
         }
 
-        // --- 文本同步更新 ---
         function updateLocalization() {
             const data = langData[currentLang];
             document.getElementById('lang-indicator').innerText = currentLang === 'zh' ? 'EN' : '中文';
@@ -484,7 +500,7 @@
             if(cEl) cEl.innerHTML = data.notiContents[currentActiveNotiIdx];
         }
 
-        // --- 粒子星空与背景轨道列车引擎 ---
+        // --- 粒子星空引擎 ---
         const canvas = document.getElementById('star-canvas');
         const ctx = canvas.getContext('2d');
         let stars = [], meteors = [], trainX = -1000;
