@@ -11,12 +11,10 @@
             --bg-dark: #0a0c16;
             --glass-border: rgba(255, 255, 255, 0.1);
             
-            /* MD3 黑暗模式弹窗色调 */
-            --md-surface: #141218;
-            --md-surface-variant: #2b2930;
-            --md-on-surface: #e6e1e5;
-            --md-on-surface-variant: #cac4d0;
-            --md-primary: #d0bcff;
+            /* 响应式基础流式字号：根据设备宽度自动缩放 */
+            --font-size-hero: clamp(2.5rem, 5vw, 4.5rem);
+            --font-size-sub: clamp(0.9rem, 1.5vw, 1.2rem);
+            --font-size-panel-title: clamp(1.2rem, 1.8vw, 1.5rem);
         }
 
         * { box-sizing: border-box; }
@@ -28,31 +26,40 @@
             user-select: none;
         }
 
-        /* --- 顶部导航栏 --- */
+        /* --- 顶部导航栏 (全面改用视口单位与百分比自适应) --- */
         .top-header {
             position: fixed; top: 0; left: 0; width: 100%; height: 64px;
             display: flex; justify-content: space-between; align-items: center;
-            padding: 0 40px; background: rgba(3, 5, 13, 0.85);
+            padding: 0 4%; background: rgba(3, 5, 13, 0.85);
             backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255,255,255,0.05);
             z-index: 1000;
         }
-        .header-left { display: flex; align-items: center; gap: 40px; }
-        .header-logo { font-size: 1.1rem; letter-spacing: 4px; font-weight: 600; color: #fff; }
+        .header-left { display: flex; align-items: center; gap: clamp(20px, 3vw, 40px); }
+        .header-logo { font-size: clamp(0.95rem, 1.2vw, 1.1rem); letter-spacing: 4px; font-weight: 600; color: #fff; white-space: nowrap; }
         
-        .nav-menu { display: flex; gap: 35px; }
+        .nav-menu { display: flex; gap: clamp(15px, 2.5vw, 35px); }
         .nav-btn {
-            font-size: 0.9rem; color: rgba(255,255,255,0.7); cursor: pointer;
-            transition: 0.3s; position: relative; letter-spacing: 1px;
+            font-size: clamp(0.8rem, 1vw, 0.9rem); color: rgba(255,255,255,0.7); cursor: pointer;
+            transition: 0.3s; position: relative; letter-spacing: 1px; white-space: nowrap;
         }
         .nav-btn.active, .nav-btn:hover { color: #fff; }
         .nav-btn.active::before {
-            content: '+'; position: absolute; left: -14px; color: var(--accent); font-weight: bold;
+            content: '+'; position: absolute; left: -12px; color: var(--accent); font-weight: bold;
         }
 
-        .header-right { display: flex; gap: 24px; color: rgba(255,255,255,0.6); font-size: 0.95rem; }
-        .icon-btn { cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 4px; }
+        .header-right { display: flex; gap: 24px; color: rgba(255,255,255,0.6); font-size: 0.95rem; align-items: center; }
+        .icon-btn { cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 4px; position: relative; }
         .icon-btn:hover { color: #fff; }
         .lang-text { font-size: 0.75rem; letter-spacing: 1px; font-weight: bold; border: 1px solid rgba(255,255,255,0.3); padding: 2px 6px; border-radius: 3px; }
+
+        /* 铃铛右上角的高奢冰蓝呼吸灯提示点 */
+        .notification-badge {
+            position: absolute; top: -2px; right: -2px; width: 6px; height: 6px;
+            background-color: var(--accent); border-radius: 50%;
+            box-shadow: 0 0 8px var(--accent);
+            animation: pulse 2s infinite;
+            transition: opacity 0.3s;
+        }
 
         /* --- 主舞台容器 --- */
         #main-stage {
@@ -60,136 +67,100 @@
         }
 
         /* --- Canvas 背景层 --- */
-        #star-canvas {
-            position: absolute; inset: 0; z-index: 1; pointer-events: none;
-        }
+        #star-canvas { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
 
         /* --- 左上角斜切层 --- */
         .character-split-layer {
             position: absolute; inset: 0; z-index: 2;
             background: linear-gradient(135deg, rgba(15, 23, 42, 0.75) 0%, rgba(30, 41, 59, 0.5) 50%, transparent 50.01%);
-            backdrop-filter: blur(2px);
-            pointer-events: none;
+            backdrop-filter: blur(2px); pointer-events: none;
         }
 
-        /* --- 中央大字标题与对角线错位排版 --- */
+        /* --- 中央大字标题（智能防遮挡排版） --- */
         .center-hero {
             position: absolute; inset: 0; z-index: 5;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            pointer-events: none; text-align: center;
+            pointer-events: none; text-align: center; padding: 0 10%;
         }
         .title-large {
-            font-size: 4.5rem; letter-spacing: 12px; font-weight: 300; margin: 0;
-            text-shadow: 0 0 40px rgba(0,0,0,0.8);
+            font-size: var(--font-size-hero); letter-spacing: 12px; font-weight: 300; margin: 0;
+            text-shadow: 0 0 40px rgba(0,0,0,0.8); white-space: nowrap;
         }
         .title-sub {
-            font-size: 1.2rem; letter-spacing: 8px; color: rgba(255,255,255,0.6); margin: 15px 0 0 0;
+            font-size: var(--font-size-sub); letter-spacing: 8px; color: rgba(255,255,255,0.6); margin: 15px 0 0 0;
             font-family: sans-serif;
         }
         .quote-text {
-            margin-top: 80px; font-size: 0.85rem; color: rgba(255,255,255,0.4);
-            letter-spacing: 3px; max-width: 600px; line-height: 1.8; height: 40px;
+            margin-top: clamp(40px, 8vh, 80px); font-size: clamp(0.75rem, 0.9vw, 0.85rem); color: rgba(255,255,255,0.4);
+            letter-spacing: 3px; max-width: 600px; line-height: 1.8;
         }
 
-        /* --- 左下角悬浮面板 --- */
+        /* --- 左下角悬浮面板 (完美自适应设备屏幕，永不向上遮挡) --- */
         .floating-side-card {
-            position: absolute; left: 60px; bottom: 120px; z-index: 20;
+            position: absolute; left: 4%; bottom: 8vh; z-index: 20;
             background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border);
-            padding: 30px; backdrop-filter: blur(20px); border-radius: 4px;
-            width: 380px; pointer-events: auto;
+            padding: clamp(20px, 2.5vw, 30px); backdrop-filter: blur(20px); border-radius: 4px;
+            width: clamp(300px, 25vw, 380px); pointer-events: auto;
             box-shadow: 0 20px 50px rgba(0,0,0,0.5);
             transition: all 0.5s ease;
+            max-height: 42vh; display: flex; flex-direction: column; /* 严格限制最大高度，防止大设备字体放大撑爆 */
         }
-        .card-tag { color: var(--accent); font-size: 0.7rem; margin-bottom: 10px; letter-spacing: 2px; }
-        .content-wrapper { position: relative; min-height: 120px; }
+        .card-tag { color: var(--accent); font-size: 0.7rem; margin-bottom: 10px; letter-spacing: 2px; flex-shrink: 0; }
+        .content-wrapper { position: relative; flex-grow: 1; overflow-y: auto; overflow-x: hidden; padding-right: 4px; }
         
+        /* 隐藏原生滚动条但保持可滚动，或者赋予极其隐蔽的美化滚动条 */
+        .content-wrapper::-webkit-scrollbar { width: 3px; }
+        .content-wrapper::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+
         .tab-content {
             position: absolute; top: 0; left: 0; width: 100%; opacity: 0;
             transform: translateY(10px); transition: all 0.4s ease; pointer-events: none;
         }
         .tab-content.active { opacity: 1; transform: translateY(0); pointer-events: auto; position: relative; }
         
-        .panel-title { font-size: 1.5rem; margin: 0 0 12px 0; font-weight: 400; }
-        .panel-body { color: rgba(255,255,255,0.6); line-height: 1.8; font-size: 0.9rem; margin: 0; }
+        .panel-title { font-size: var(--font-size-panel-title); margin: 0 0 12px 0; font-weight: 400; }
+        .panel-body { color: rgba(255,255,255,0.6); line-height: 1.8; font-size: clamp(0.8rem, 0.9vw, 0.9rem); margin: 0; }
 
-        /* 空页面特定样式 */
-        .empty-state {
-            display: flex; flex-direction: column; gap: 8px; justify-content: center; min-height: 120px;
-        }
-        .empty-line { height: 4px; background: rgba(255,255,255,0.05); border-radius: 2px; width: 100%; position: relative; overflow: hidden;}
+        /* 空页面及通知特定样式 */
+        .empty-state { display: flex; flex-direction: column; gap: 8px; justify-content: center; margin-top: 10px; }
+        .empty-line { height: 3px; background: rgba(255,255,255,0.05); border-radius: 2px; width: 100%; position: relative; overflow: hidden;}
         .empty-line::after {
             content: ''; position: absolute; left: -50%; top: 0; height: 100%; width: 30%;
             background: linear-gradient(90deg, transparent, rgba(0,229,255,0.2), transparent);
             animation: scan 2s infinite linear;
         }
 
-        /* --- 谷歌 Material Design 3 弹窗组件 --- */
-        .md3-scrim {
-            position: fixed; inset: 0; background: rgba(0, 0, 0, 0.4);
-            z-index: 2000; display: flex; justify-content: center; align-items: center;
-            opacity: 0; pointer-events: none; transition: opacity 0.25s cubic-bezier(0.2, 0, 0, 1);
-        }
-        .md3-scrim.active { opacity: 1; pointer-events: auto; }
-
-        .md3-dialog {
-            background-color: var(--md-surface); width: 100%; max-width: 450px;
-            min-height: 140px; height: auto; /* 核心：自适应文本高度 */
-            border-radius: 28px; padding: 24px; box-shadow: 0px 4px 30px rgba(0, 0, 0, 0.3);
-            transform: scale(0.9) translateY(10px); opacity: 0;
-            transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1), opacity 0.25s cubic-bezier(0.2, 0, 0, 1);
-        }
-        .md3-scrim.active .md3-dialog { transform: scale(1) translateY(0); opacity: 1; }
-
-        .md3-dialog__title {
-            font-size: 1.5rem; color: var(--md-on-surface); font-weight: 400;
-            margin: 0 0 16px 0; letter-spacing: 0px; text-transform: none;
-        }
-        .md3-dialog__body {
-            font-size: 0.88rem; color: var(--md-on-surface-variant); line-height: 1.5;
-            margin-bottom: 24px; text-transform: none; letter-spacing: 0.5px;
-            max-height: 400px; overflow-y: auto; /* 超长文本支持内部滚动 */
-        }
-        .md3-dialog__actions {
-            display: flex; justify-content: flex-end; gap: 8px;
-        }
-        .md3-button {
-            background: none; border: none; color: var(--md-primary); font-size: 0.88rem;
-            font-weight: 500; padding: 10px 12px; cursor: pointer; border-radius: 100px;
-            transition: background-color 0.2s; letter-spacing: 0.5px;
-        }
-        .md3-button:hover { background-color: rgba(208, 188, 255, 0.08); }
-
-        /* --- 辅助组件 --- */
+        /* --- 辅助组件 (自适应缩放) --- */
         .play-btn {
-            position: absolute; left: 40px; top: 55%; z-index: 50;
-            width: 48px; height: 48px; border: 1px solid rgba(255,255,255,0.4);
+            position: absolute; left: 4%; top: 52%; z-index: 50;
+            width: clamp(40px, 3.5vw, 48px); height: clamp(40px, 3.5vw, 48px); border: 1px solid rgba(255,255,255,0.4);
             border-radius: 50%; display: flex; justify-content: center; align-items: center;
             cursor: pointer; transition: 0.3s; pointer-events: auto;
         }
         .play-btn:hover { border-color: #fff; background: rgba(255,255,255,0.1); transform: scale(1.05); }
         .play-btn::after {
             content: ''; display: block; margin-left: 4px;
-            border-style: solid; border-width: 6px 0 6px 10px;
+            border-style: solid; border-width: 5px 0 5px 8px;
             border-color: transparent transparent transparent #fff;
         }
 
         .arrow {
             position: absolute; top: 50%; transform: translateY(-50%); z-index: 50;
-            font-size: 1.8rem; color: rgba(255,255,255,0.3); cursor: pointer; transition: 0.3s;
+            font-size: clamp(1.2rem, 2vw, 1.8rem); color: rgba(255,255,255,0.3); cursor: pointer; transition: 0.3s;
             pointer-events: auto;
         }
         .arrow:hover { color: #fff; text-shadow: 0 0 10px #fff; }
-        .arrow-left { left: 40px; }
-        .arrow-right { right: 40px; }
+        .arrow-left { left: 3%; }
+        .arrow-right { right: 3%; }
 
         .bottom-indicator {
-            position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
-            z-index: 50; display: flex; flex-direction: column; align-items: center; gap: 15px;
+            position: absolute; bottom: 3vh; left: 50%; transform: translateX(-50%);
+            z-index: 50; display: flex; flex-direction: column; align-items: center; gap: 10px;
         }
-        .dots { display: flex; gap: 10px; align-items: center; }
-        .dot { width: 6px; height: 6px; background: rgba(255,255,255,0.3); border-radius: 50%; }
+        .dots { display: flex; gap: 8px; align-items: center; }
+        .dot { width: 5px; height: 5px; background: rgba(255,255,255,0.3); border-radius: 50%; }
         .dot.active { background: #fff; box-shadow: 0 0 8px #fff; }
-        .scroll-hint { font-size: 0.8rem; color: rgba(255,255,255,0.4); animation: bounce 2s infinite; }
+        .scroll-hint { font-size: 0.75rem; color: rgba(255,255,255,0.3); animation: bounce 2s infinite; }
 
         /* --- 启动屏 --- */
         #splash-screen {
@@ -198,28 +169,17 @@
         }
         .btn-launch {
             background: transparent; border: 1px solid rgba(255,255,255,0.15);
-            color: #fff; padding: 16px 60px; cursor: pointer; font-size: 0.95rem;
+            color: #fff; padding: 14px 50px; cursor: pointer; font-size: 0.9rem;
             letter-spacing: 6px; border-radius: 30px; transition: 0.4s;
         }
         .btn-launch:hover { border-color: var(--accent); box-shadow: 0 0 30px var(--accent-glow); }
 
-        @keyframes bounce { 0%, 20%, 50%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-6px); } 60% { transform: translateY(-3px); } }
+        @keyframes bounce { 0%, 20%, 50%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-4px); } 60% { transform: translateY(-2px); } }
         @keyframes scan { from { left: -50%; } to { left: 150%; } }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(0, 229, 255, 0.7); } 70% { box-shadow: 0 0 0 6px rgba(0, 229, 255, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 229, 255, 0); } }
     </style>
 </head>
 <body>
-
-    <div class="md3-scrim" id="notification-scrim" onclick="closeNotification()">
-        <div class="md3-dialog" onclick="event.stopPropagation()">
-            <h3 class="md3-dialog__title" id="dialog-title">通知公告</h3>
-            <div class="md3-dialog__body" id="dialog-body">
-                这里是实时通知内容。窗口会根据这里放置的代码或文本字数长度自动适应调整高度。
-            </div>
-            <div class="md3-dialog__actions">
-                <button class="md3-button" id="dialog-btn" onclick="closeNotification()">知道了</button>
-            </div>
-        </div>
-    </div>
 
     <div id="splash-screen">
         <button class="btn-launch" id="launch-btn" onclick="launch()">LINK START</button>
@@ -240,7 +200,10 @@
             <div class="icon-btn" onclick="toggleLanguage()">
                 <span>🌐</span><span class="lang-text" id="lang-indicator">EN</span>
             </div>
-            <span class="icon-btn" onclick="openNotification()">🔔</span>
+            <div class="icon-btn" id="noti-bell" onclick="openInternalNotification()">
+                <span>🔔</span>
+                <div class="notification-badge" id="noti-dot"></div>
+            </div>
             <span class="icon-btn" onclick="window.open('https://www.bing.com', '_blank')">🔗</span>
         </div>
     </header>
@@ -266,7 +229,7 @@
                 <div class="dot"></div>
                 <div class="dot"></div>
                 <div class="dot"></div>
-            </div>
+                <div class="dot"></div> </div>
             <div class="scroll-hint">➔</div>
         </div>
 
@@ -305,12 +268,16 @@
                     </div>
                 </div>
 
+                <div id="page-noti" class="tab-content">
+                    <h2 class="panel-title" id="dialog-title">广播接收通知</h2>
+                    <p class="panel-body" id="dialog-body">【奇迹市理事会公告】<br>欢迎接入梦想铁道总线网。全线量子纠缠防卫矩阵已部署就绪，各区段数据交换正常。祝您在梦绘未来的旅途中旅居愉快。</p>
+                </div>
+
             </div>
         </div>
     </div>
 
     <script>
-        // --- 国际化本地文本数据库 ---
         let currentLang = 'zh';
         const langData = {
             zh: {
@@ -330,9 +297,8 @@
                 newsBody: "暂无新消息发布。数据流监控中...",
                 mediaTitle: "媒体中心",
                 mediaBody: "视听数据库离线。正在等待理事会广播鉴权...",
-                dialogTitle: "广播接收通知",
-                dialogBody: "【奇迹市理事会公告】<br>欢迎接入梦想铁道总线网。全线量子纠缠防卫矩阵已部署就绪，各区段数据交换正常。祝您在梦绘未来的旅途中旅居愉快。",
-                dialogBtn: "确认"
+                dialogTitle: "全局系统通告",
+                dialogBody: "【奇迹市理事会公告】<br>欢迎接入梦想铁道总线网。全线量子纠缠防卫矩阵已部署就绪，各区段数据交换正常。窗口已集成进入主面板，完全自适应且不阻挡视线。"
             },
             en: {
                 launchBtn: "LINK START",
@@ -351,9 +317,8 @@
                 newsBody: "No new logs released. Monitoring data streams...",
                 mediaTitle: "MEDIA CENTER",
                 mediaBody: "Audio-visual database offline. Awaiting Council broadcast authorization...",
-                dialogTitle: "Broadcast Alert",
-                dialogBody: "[Miracle City Council Bulletin]<br>Welcome to the Dream Railway Bus Network. Quantum entanglement defense matrix deployed. Data sync fully operational. Enjoy your voyage in the architected future.",
-                dialogBtn: "Dismiss"
+                dialogTitle: "SYSTEM BULLETIN",
+                dialogBody: "[Miracle City Council Bulletin]<br>Welcome to the Dream Railway Bus Network. Quantum entanglement defense matrix deployed. The notification is now smoothly unified into the bottom-left panel."
             }
         };
 
@@ -386,7 +351,6 @@
 
             document.getElementById('dialog-title').innerText = data.dialogTitle;
             document.getElementById('dialog-body').innerHTML = data.dialogBody;
-            document.getElementById('dialog-btn').innerText = data.dialogBtn;
         }
 
         function toggleLanguage() {
@@ -394,15 +358,24 @@
             updateLocalization();
         }
 
-        // --- 弹窗逻辑控制 ---
-        function openNotification() {
-            document.getElementById('notification-scrim').classList.add('active');
-        }
-        function closeNotification() {
-            document.getElementById('notification-scrim').classList.remove('active');
+        // --- 集成式通知页跳转控制 ---
+        function openInternalNotification() {
+            // 消除呼吸提示红点
+            document.getElementById('noti-dot').style.opacity = '0';
+            
+            // 取消导航栏的所有高亮状态
+            document.querySelectorAll('.nav-menu .nav-btn').forEach(b => b.classList.remove('active'));
+            // 切入左下角的通知标签面板
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.getElementById('page-noti').classList.add('active');
+            
+            // 底下第6个小圆点亮起
+            const dots = document.querySelectorAll('.dot');
+            dots.forEach(d => d.classList.remove('active'));
+            if(dots[5]) dots[5].classList.add('active');
         }
 
-        // --- 核心星空渲染引擎与初始化逻辑 ---
+        // --- 星空渲染核心逻辑 ---
         const canvas = document.getElementById('star-canvas');
         const ctx = canvas.getContext('2d');
         let stars = [], meteors = [], trainX = -1000, speedMultiplier = 1;
@@ -425,9 +398,7 @@
             draw() {
                 ctx.save(); ctx.beginPath();
                 let gradient = ctx.createLinearGradient(this.x, this.y, this.x - this.len, this.y - this.len * 0.4);
-                gradient.addColorStop(0, '#fff');
-                gradient.addColorStop(0.2, this.color + '0.4)');
-                gradient.addColorStop(1, 'transparent');
+                gradient.addColorStop(0, '#fff'); gradient.addColorStop(0.2, this.color + '0.4)'); gradient.addColorStop(1, 'transparent');
                 ctx.strokeStyle = gradient; ctx.lineWidth = 1.2;
                 ctx.moveTo(this.x, this.y); ctx.lineTo(this.x - this.len, this.y - this.len * 0.4);
                 ctx.stroke(); ctx.restore();
@@ -437,32 +408,26 @@
         class Star {
             constructor() { this.reset(); }
             reset() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
+                this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height;
                 this.dist = Math.sqrt(Math.pow(this.x - canvas.width/2, 2) + Math.pow(this.y - canvas.height/2, 2));
                 this.angle = Math.atan2(this.y - canvas.height/2, this.x - canvas.width/2);
-                this.size = Math.random() * 1.2 + 0.4;
-                this.speed = Math.random() * 0.0004 + 0.0001;
+                this.size = Math.random() * 1.2 + 0.4; this.speed = Math.random() * 0.0004 + 0.0001;
                 this.color = colors[Math.floor(Math.random() * colors.length)] + (Math.random() * 0.3 + 0.2) + ')';
             }
             update() { this.angle += this.speed * speedMultiplier; }
             draw() {
                 const x = canvas.width/2 + Math.cos(this.angle) * this.dist;
                 const y = canvas.height/2 + Math.sin(this.angle) * this.dist;
-                ctx.beginPath(); ctx.fillStyle = this.color;
-                ctx.arc(x, y, this.size, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.fillStyle = this.color; ctx.arc(x, y, this.size, 0, Math.PI*2); ctx.fill();
             }
         }
 
         function drawGhostTrain() {
-            ctx.save(); ctx.globalAlpha = 0.04;
-            ctx.strokeStyle = "rgba(0, 229, 255, 0.5)"; ctx.lineWidth = 1;
-            const trainY = canvas.height * 0.82;
-            trainX += 1 * speedMultiplier;
+            ctx.save(); ctx.globalAlpha = 0.04; ctx.strokeStyle = "rgba(0, 229, 255, 0.5)"; ctx.lineWidth = 1;
+            const trainY = canvas.height * 0.82; trainX += 1 * speedMultiplier;
             if (trainX > canvas.width + 600) trainX = -800;
             for(let i=0; i<6; i++) { 
-                let bx = trainX - (i * 125);
-                ctx.strokeRect(bx, trainY, 115, 20);
+                let bx = trainX - (i * 125); ctx.strokeRect(bx, trainY, 115, 20);
                 for(let j=0; j<4; j++) ctx.strokeRect(bx + 8 + (j*26), trainY + 4, 18, 6);
             }
             ctx.restore();
@@ -493,7 +458,7 @@
         }
 
         function switchTab(id, btn) {
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.nav-menu .nav-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             
@@ -507,7 +472,6 @@
         }
 
         window.addEventListener('resize', initCanvas);
-        // 初始化语言
         updateLocalization();
     </script>
 </body>
