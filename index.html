@@ -18,7 +18,7 @@
         * { box-sizing: border-box; }
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
-            background-color: var(--bg-dark) !important; /* 锁死纯黑 */
+            background-color: var(--bg-dark) !important;
             overflow: hidden;
             color: #fff; font-family: "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
             user-select: none;
@@ -53,16 +53,20 @@
         /* --- 主舞台（常驻底层 / 概览页） --- */
         #main-stage { 
             position: relative; width: 100%; height: 100%; z-index: 10; 
-            display: block; background-color: var(--bg-dark); 
+            background-color: var(--bg-dark); 
+            opacity: 1; transition: opacity 0.3s ease-in-out;
+        }
+        #main-stage.stage-hidden {
+            opacity: 0; pointer-events: none; /* 隐藏时不销毁图层，只做透明和点击穿透处理 */
         }
 
         #star-canvas { position: absolute; inset: 0; z-index: 1; pointer-events: none; background-color: transparent; }
         
-        /* 保持左上角的科幻几何切角阴影，配合纯黑深邃背景 */
+        /* 【重要：带回你最爱的黑白撞色渐变切角层】 */
         .character-split-layer {
             position: absolute; inset: 0; z-index: 2;
-            background: linear-gradient(135deg, rgba(15, 23, 42, 0.4) 0%, rgba(30, 41, 59, 0.1) 50%, transparent 50.01%);
-            backdrop-filter: blur(1px); pointer-events: none;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.75) 0%, rgba(30, 41, 59, 0.5) 50%, transparent 50.01%);
+            backdrop-filter: blur(2px); pointer-events: none;
         }
 
         .view-homepage-content { width: 100%; height: 100%; position: absolute; inset: 0; }
@@ -91,11 +95,12 @@
             z-index: 1500; padding: 120px 8% 60px 8%;
             background: linear-gradient(to top, rgba(3,5,13,0.99), rgba(8,10,18,0.96));
             backdrop-filter: blur(35px);
-            display: none;
+            display: flex; /* 改为常驻 flex 布局，防止重新渲染 */
             flex-direction: column; gap: 40px;
-            opacity: 0; transition: opacity 0.2s ease-in-out;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.3s ease-in-out;
         }
-        .fullview-overlay.active-page { display: flex; opacity: 1; }
+        .fullview-overlay.active-page { opacity: 1; pointer-events: auto; }
 
         .page-header-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px; }
         .page-main-title { font-size: clamp(1.8rem, 3vw, 2.8rem); font-weight: 300; margin: 0; letter-spacing: 4px; }
@@ -362,18 +367,19 @@
             }
         };
 
-        // --- 核心导航系统 ---
+        // --- 核心安全无闪烁导航系统 ---
         function navigateToPage(targetPageId) {
             const stageEl = document.getElementById('main-stage');
 
             if (targetPageId === 'home') {
+                // 淡出所有独立全屏层
                 document.querySelectorAll('.fullview-overlay').forEach(el => {
                     el.classList.remove('active-page');
-                    el.style.display = 'none';
                 });
                 document.querySelectorAll('.nav-menu .nav-btn').forEach(b => b.classList.remove('active'));
                 
-                stageEl.style.display = 'block'; 
+                // 唤醒主舞台
+                stageEl.classList.remove('stage-hidden'); 
                 document.getElementById('nav-home').classList.add('active');
                 return;
             }
@@ -387,17 +393,17 @@
             else if (targetPageId === 'media') { overlayEl = document.getElementById('view-media-page'); navBtnEl = document.getElementById('nav-media'); }
 
             if (overlayEl) {
-                stageEl.style.display = 'none'; 
+                // 隐去主舞台（使用不销毁图层的淡出）
+                stageEl.classList.add('stage-hidden'); 
 
                 document.querySelectorAll('.fullview-overlay').forEach(el => {
                     if (el !== overlayEl) {
                         el.classList.remove('active-page');
-                        el.style.display = 'none';
                     }
                 });
                 document.querySelectorAll('.nav-menu .nav-btn').forEach(b => b.classList.remove('active'));
 
-                overlayEl.style.display = 'flex';
+                // 显示目标页
                 overlayEl.classList.add('active-page');
                 if (navBtnEl) navBtnEl.classList.add('active');
             }
@@ -478,7 +484,7 @@
             if(cEl) cEl.innerHTML = data.notiContents[currentActiveNotiIdx];
         }
 
-        // --- 纯净版：粒子星空引擎 ---
+        // --- 粒子星空引擎 ---
         const canvas = document.getElementById('star-canvas');
         const ctx = canvas.getContext('2d');
         let stars = [], meteors = [], trainX = -1000;
@@ -542,7 +548,6 @@
             for (let i = 0; i < 4; i++) meteors.push(new Meteor());
         }
 
-        // 使用 var(--bg-dark) 的色值擦除画布，确保持续的纯净黑色调
         function animate() {
             ctx.fillStyle = 'rgba(3, 5, 13, 0.06)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
             drawGhostTrain();
