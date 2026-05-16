@@ -16,16 +16,17 @@
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
             background-color: var(--bg-dark) !important;
-            overflow: hidden;
+            /* 全局依然锁定，防止双滚动条混乱 */
+            overflow: hidden; 
             color: #fff; font-family: "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
             user-select: none;
         }
 
-        /* --- 顶部导航栏 --- */
+        /* --- 顶部导航栏 (保持死死固定在最上方) --- */
         .top-header {
             position: fixed; top: 0; left: 0; width: 100%; height: 64px;
             display: flex; justify-content: space-between; align-items: center;
-            padding: 0 4%; background: rgba(3, 5, 13, 0.85);
+            padding: 0 4%; background: rgba(3, 5, 13, 0.9);
             backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255,255,255,0.05);
             z-index: 3000;
         }
@@ -47,7 +48,7 @@
         .icon-btn:hover { color: #fff; }
         .lang-text { font-size: 0.75rem; letter-spacing: 1px; font-weight: bold; border: 1px solid rgba(255,255,255,0.3); padding: 2px 6px; border-radius: 3px; }
 
-        /* --- 主舞台（常驻底层 / 概览页） --- */
+        /* --- 主舞台（首页概览层） --- */
         #main-stage { 
             position: relative; width: 100%; height: 100%; z-index: 10; 
             background-color: var(--bg-dark); 
@@ -61,25 +62,32 @@
             backdrop-filter: blur(2px); pointer-events: none;
         }
 
-        /* 纯净主页排版 */
         .view-homepage-content { width: 100%; height: 100%; position: absolute; inset: 0; display: flex; justify-content: center; align-items: center; }
         .center-hero { text-align: center; z-index: 5; pointer-events: none; }
         .title-large { font-size: clamp(2.5rem, 5vw, 4.5rem); letter-spacing: 12px; font-weight: 300; margin: 0; text-shadow: 0 0 40px rgba(0,0,0,0.8); }
         .title-sub { font-size: clamp(0.9rem, 1.5vw, 1.2rem); letter-spacing: 8px; color: rgba(255,255,255,0.6); margin: 15px 0 0 0; }
         .quote-text { margin-top: 5vh; font-size: clamp(0.75rem, 0.9vw, 0.85rem); color: rgba(255,255,255,0.4); letter-spacing: 3px; line-height: 1.8; max-width: 600px; }
 
-        /* --- 全屏独立页面基础样式 --- */
+        /* --- 核心修改：让整个页面支持向下滚动的独立舞台 --- */
         .fullview-overlay {
             position: fixed; inset: 0; width: 100%; height: 100%; z-index: 1500; 
-            padding: 90px 6% 30px 6%;
+            padding: 90px 6% 60px 6%; /* 顶部留足 90px 确保绝不被导航栏挡住 */
             background: rgba(3, 5, 13, 0.98); backdrop-filter: blur(30px);
             display: flex; flex-direction: column; opacity: 0; pointer-events: none;
             transition: opacity 0.3s ease-in-out;
+            
+            /* 【关键改动】允许整个页面纵向滚动 */
+            overflow-y: auto; 
         }
         .fullview-overlay.active-page { opacity: 1; pointer-events: auto; }
 
+        /* 自定义页面整体的滚动条，维持精致感 */
+        .fullview-overlay::-webkit-scrollbar { width: 6px; }
+        .fullview-overlay::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 3px; }
+        .fullview-overlay::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
         /* 页面顶部标题与返回 */
-        .page-header-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 15px; margin-bottom: 20px; flex-shrink: 0; }
+        .page-header-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 15px; margin-bottom: 25px; flex-shrink: 0; }
         .page-main-title { font-size: clamp(1.4rem, 2.2vw, 2.2rem); font-weight: 300; margin: 0; letter-spacing: 3px; }
         .page-sub-title { font-size: 0.75rem; color: var(--accent); letter-spacing: 2px; margin-top: 5px; font-family: monospace; }
         .page-back-btn {
@@ -88,19 +96,19 @@
         }
         .page-back-btn:hover { color: #fff; border-color: var(--accent); box-shadow: 0 0 15px rgba(0,229,255,0.15); }
 
-        /* ================= 核心：还原原版高级卡片轮播区 ================= */
+        /* ================= 三卡片高级轮播区 ================= */
         .slider-showcase-container {
             display: flex; align-items: center; justify-content: center;
             width: 100%; gap: 30px; position: relative; margin-top: 10px; flex-shrink: 0;
         }
         
-        /* 三卡片横向视差滑轨 */
+        /* 视差滑轨高比例设定 */
         .cards-viewport {
             display: flex; align-items: center; justify-content: center;
-            width: 85%; height: clamp(200px, 28vh, 320px); position: relative; overflow: hidden;
+            width: 85%; height: clamp(240px, 32vh, 380px); position: relative; overflow: hidden;
         }
         
-        /* 独立卡片样式（高精度还原右上/左下不对称切角） */
+        /* 切角卡片 */
         .showcase-card {
             position: absolute; width: 55%; height: 100%;
             background-size: cover; background-position: center;
@@ -109,42 +117,36 @@
             transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
             opacity: 0; pointer-events: none; transform: scale(0.8) translateX(0); z-index: 1;
         }
-        /* 前景激活卡片 */
         .showcase-card.active { opacity: 1; pointer-events: auto; transform: scale(1) translateX(0); z-index: 3; border-color: var(--accent); }
-        /* 两侧预览卡片 */
         .showcase-card.prev { opacity: 0.25; transform: scale(0.85) translateX(-70%); z-index: 2; }
         .showcase-card.next { opacity: 0.25; transform: scale(0.85) translateX(70%); z-index: 2; }
 
-        /* 左右控制箭头 */
         .slide-arrow {
             font-size: 2rem; color: rgba(255,255,255,0.3); cursor: pointer; transition: 0.3s;
             padding: 10px; z-index: 10; user-select: none;
         }
         .slide-arrow:hover { color: #fff; text-shadow: 0 0 10px var(--accent); }
 
-        /* 轮播点状指示器（还原带星芒或长条高亮状态） */
-        .indicator-dots { display: flex; justify-content: center; gap: 12px; margin: 15px 0; align-items: center; flex-shrink: 0; }
+        .indicator-dots { display: flex; justify-content: center; gap: 12px; margin: 20px 0; align-items: center; flex-shrink: 0; }
         .indicator-dot { width: 6px; height: 6px; background: rgba(255,255,255,0.25); border-radius: 50%; transition: 0.3s; cursor: pointer; }
         .indicator-dot.active {
             background: #fff; transform: scale(1.3);
             box-shadow: 0 0 10px #fff, 0 0 4px var(--accent);
-            position: relative;
         }
 
-        /* 下方多文本深度联动区 */
+        /* 【优化改动】下方多文本显示面板不再单独限制高度和滚动，而是自然撑开 */
         .content-display-panel {
-            flex-grow: 1; width: 100%; max-width: 900px; margin: 0 auto;
-            overflow-y: auto; padding-right: 10px; min-height: 0;
+            width: 100%; max-width: 900px; margin: 10px auto 0 auto;
+            text-align: left;
         }
-        .content-display-panel::-webkit-scrollbar { width: 4px; }
-        .content-display-panel::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+        .dynamic-title-group { margin-bottom: 16px; }
+        .dynamic-main-title { font-size: 1.7rem; font-weight: 500; margin: 0 0 8px 0; color: #fff; letter-spacing: 1px; }
+        .dynamic-sub-quote { font-size: 0.95rem; color: var(--accent); font-weight: bold; letter-spacing: 1px; margin-bottom: 20px; display: block; }
+        
+        /* 增加底部间距，确保推上去后文字也能完美阅读 */
+        .dynamic-body-text { font-size: 0.95rem; color: rgba(255,255,255,0.7); line-height: 1.9; text-align: justify; padding-bottom: 60px; }
 
-        .dynamic-title-group { margin-bottom: 12px; }
-        .dynamic-main-title { font-size: 1.6rem; font-weight: 500; margin: 0 0 6px 0; color: #fff; letter-spacing: 1px; }
-        .dynamic-sub-quote { font-size: 0.9rem; color: var(--accent); font-weight: bold; letter-spacing: 1px; margin-bottom: 15px; display: block; }
-        .dynamic-body-text { font-size: 0.9rem; color: rgba(255,255,255,0.65); line-height: 1.8; text-align: justify; }
-
-        /* --- 告示页面排版（保持原有高效分栏） --- */
+        /* --- 告示页面排版调整 --- */
         .page-layout-container { display: flex; gap: 40px; flex-grow: 1; min-height: 0; }
         .noti-sidebar-list { width: 30%; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; }
         .noti-item-card {
@@ -161,14 +163,6 @@
         .detail-title { font-size: 1.4rem; font-weight: 400; margin: 0 0 10px 0; }
         .detail-meta { font-size: 0.8rem; color: rgba(255,255,255,0.4); font-family: monospace; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 12px; margin-bottom: 20px; }
         .detail-content { line-height: 1.8; color: rgba(255,255,255,0.7); font-size: 0.9rem; }
-
-        .empty-state { display: flex; flex-direction: column; gap: 8px; justify-content: center; margin-top: 10px; }
-        .empty-line { height: 2px; background: rgba(255,255,255,0.05); position: relative; overflow: hidden; }
-        .empty-line::after {
-            content: ''; position: absolute; left: -50%; top: 0; height: 100%; width: 30%;
-            background: linear-gradient(90deg, transparent, rgba(0,229,255,0.2), transparent); animation: scan 2s infinite linear;
-        }
-        @keyframes scan { 0% { left: -30%; } 100% { left: 110%; } }
     </style>
 </head>
 <body>
@@ -218,9 +212,9 @@
         <div class="slider-showcase-container">
             <div class="slide-arrow" onclick="moveSlider('info', -1)">〈</div>
             <div class="cards-viewport">
-                <div class="showcase-card" style="background-image: linear-gradient(to bottom right, #1e293b, #0f172a);"></div>
-                <div class="showcase-card" style="background-image: linear-gradient(to bottom right, #0f172a, #334155);"></div>
-                <div class="showcase-card" style="background-image: linear-gradient(to bottom right, #1e1b4b, #311042);"></div>
+                <div class="showcase-card" style="background-image: url('https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80');"></div>
+                <div class="showcase-card" style="background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80');"></div>
+                <div class="showcase-card" style="background-image: url('https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=1200&q=80');"></div>
             </div>
             <div class="slide-arrow" onclick="moveSlider('info', 1)">〉</div>
         </div>
@@ -250,12 +244,15 @@
         <div class="slider-showcase-container">
             <div class="slide-arrow" onclick="moveSlider('db', -1)">〈</div>
             <div class="cards-viewport">
-                <div class="showcase-card" style="background-image: linear-gradient(to bottom right, #022c22, #064e3b);"></div>
-                <div class="showcase-card" style="background-image: linear-gradient(to bottom right, #172554, #1e3a8a);"></div>
+                <div class="showcase-card" style="background-image: url('https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=1200&q=80');"></div>
+                <div class="showcase-card" style="background-image: url('https://images.unsplash.com/photo-1639322537228-f710d846310a?auto=format&fit=crop&w=1200&q=80');"></div>
+                <div class="showcase-card" style="background-image: url('https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=1200&q=80');"></div>
             </div>
             <div class="slide-arrow" onclick="moveSlider('db', 1)">〉</div>
         </div>
+        
         <div class="indicator-dots" id="dots-db"></div>
+        
         <div class="content-display-panel">
             <div class="dynamic-title-group">
                 <h3 class="dynamic-main-title" id="db-render-title">加载中...</h3>
@@ -265,11 +262,11 @@
         </div>
     </div>
 
-    <div id="view-news-page" class="fullview-overlay">
+    <div id="view-news-page" class="fullview-overlay" style="overflow-y: hidden;">
         <div class="page-header-area">
             <div>
                 <h2 class="page-main-title" id="nc-main-title">系统广播中心</h2>
-                <div class="page-sub-title" id="nc-sub-title">// SYSTEM BROADCAST CORE</div>
+                <div class="page-sub-title">// SYSTEM BROADCAST CORE</div>
             </div>
             <div class="page-back-btn" onclick="navigateToPage('home')">
                 <span id="nc-back-text">返回主页</span>
@@ -308,7 +305,7 @@
         <div class="slider-showcase-container">
             <div class="slide-arrow" onclick="moveSlider('media', -1)">〈</div>
             <div class="cards-viewport">
-                <div class="showcase-card" style="background-image: linear-gradient(to bottom right, #4c0519, #881337);"></div>
+                <div class="showcase-card" style="background-image: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80');"></div>
             </div>
             <div class="slide-arrow" onclick="moveSlider('media', 1)">〉</div>
         </div>
@@ -326,17 +323,17 @@
         let currentLang = 'zh';
         let currentActiveNotiIdx = 0;
 
-        // 核心动态联动轮播数据集（精准对应图1和图2的切换模式）
         const sliderData = {
             zh: {
                 info: [
                     { title: "概要", quote: "「城市、星星与魔法——」", body: "在这个既然熟悉又陌生的世界里，东京铁塔甫竣工，御台场国际展示场仍在如火如荼地建设着。<br>一名地方公务员「主任」，被调派至名为 &lt;特区厅&gt; 的神秘机构。<br>而他很快便得知，那里其实是统筹管理当代在东京的魔法网络行政体系。" },
-                    { title: "领地", quote: "「生命的根基，亦是魔法的基础」", body: "魔法会反映出魔法师居住的&lt;土地&gt;上的生活型态。<br>自第五时代以来，魔法师信用&lt;行政&gt;这一概念作为理解世界的框架，将自身所需土地的行政概念系统化，并统称为&lt;魔法师的领地&gt;。<br>最终使得行政系统在现代开始与魔法师的领地系统划上等号。<br><br>港区、新宿区、涩谷区、品川区、墨田区……<br>在现代东京，包含23个特别区在内，魔法师的领地依行政区被划分开来。而彼此之间的冲突与对立，也逐渐演变为行政冲突。<br><br>&lt;主任&gt;身为东京的公务员，同时也是魔法师的领地管理者，今后将不得不负责调停与协调这些魔法师之间的行政纠纷……" },
+                    { title: "领地", quote: "「生命的根基，亦是魔法的基础」", body: "魔法会反映出魔法师居住的&lt;土地&gt;上的生活型态。<br>自第五时代以来，魔法师习惯用&lt;行政&gt;这一概念作为理解世界的框架，将自身所需土地的行政概念系统化，并统称为&lt;魔法师的领地&gt;。<br>最终使得行政系统在现代开始与魔法师的领地系统划上等号。<br><br>港区、新宿区、涩谷区、品川区、墨田区……在现代东京，魔法师的领地依行政区被划分开来。而彼此之间的冲突与对立，也逐渐演变为行政冲突。" },
                     { title: "高轨数据枢纽", quote: "「1.19.2 精密协议架构」", body: "基于虚空高轨搭建的公益核心节点全功能绿灯常驻。每一位筑造师的意识流在这里高频交汇，凝聚成了坚不可摧的数字矩阵网络。在此重谱未来星图的完整轮廓。" }
                 ],
                 db: [
-                    { title: "铁道枢纽人员编制", quote: "// CENTRAL TRANSIT LOG", body: "梦想铁道：一号中央主干线运行正常。<br>浩泽轨交：次区域级轻铁网络全面铺开。<br>设计师与旅居市民在此分配专属的数字密钥。作为主干线的巡读员或区域轻铁网络的构筑者，每个实体的行为轨迹都将深度同步到全网防卫矩阵之中。" },
-                    { title: "量子底层防卫协议", quote: "// PROTOCOL REVISION", body: "系统底层架构坚守完全无附加的公益初衷。安全层级完全交由理事会最高安全部联合托管，全线屏蔽外部逻辑溢出，为设计主干提供最纯净的代码隔离舱环境。" }
+                    { title: "铁道枢纽人员编制", quote: "「梦想铁道：一号中央主干线」", body: "梦想铁道一号主干线运行极其平稳。设计师与旅居市民在此分配专属的数字密钥。作为主干线的巡读员或区域轻铁网络的构筑者，每个实体的底层行为轨迹都将深度同步到量子防卫矩阵之中。" },
+                    { title: "轨道交通网络", quote: "「浩泽轨交：次区域级轻铁网」", body: "作为覆盖城市群边缘及枢纽外围的次区域轨道供给链，浩泽轨交通过自动化无人列车，将源源不断的离散态数字流安全回传至中央干线进行协议收束。" },
+                    { title: "量子底层防卫协议", quote: "「底层系统：安全托管与协议隔离」", body: "系统底层架构基于 1.19.2 精密协议打造，坚守公益初衷。安全层级完全交由理事会最高安全部联合托管，全线屏蔽外部未知溢出，为设计主干提供最纯净的意识流隔离舱环境。" }
                 ],
                 media: [
                     { title: "媒体视听中心", quote: "// BROADCAST AUDIT", body: "视听数据库当前处于离线静默状态。核心正在持续向远端轨道索取广播鉴权许可，部分历史影像记录已被封存入动态扫描队列。" }
@@ -349,8 +346,9 @@
                     { title: "High-Orbit Matrix", quote: "'1.19.2 Precision Architecture'", body: "A high-performance node built on void orbits. The consciousness stream of every architect converges here, shaping an unbreakable 'Miracle Network'." }
                 ],
                 db: [
-                    { title: "Transit Fleet Config", quote: "// CENTRAL TRANSIT LOG", body: "Dream Rail: Central Mainline No.1 active.<br>Haoze Transit: Sub-regional Light Rail system up and running." },
-                    { title: "Quantum Shield Protocol", quote: "// PROTOCOL REVISION", body: "The infrastructure guards pure vanilla gameplay logic. Security states are managed under high-orbit consensus mechanisms." }
+                    { title: "Railway Hub Fleet", quote: "'Dream Rail: Central Mainline No.1'", body: "Dream Rail No.1 operates smoothly. Designers and residents are assigned exclusive digital keys here to synchronize behavior paths into the quantum defense matrix." },
+                    { title: "Transit Network", quote: "'Haoze Transit: Sub-regional Light Rail'", body: "As the sub-regional infrastructure supplying the outer city fringes, Haoze Transit uses autonomous drones to stream metadata securely back to base nodes." },
+                    { title: "Quantum Shield Protocol", quote: "'Base System: Security & Protocol Isolation'", body: "The infrastructure guards pure vanilla gameplay logic based on 1.19.2. Security states are managed under high-orbit consensus mechanisms with complete isolation." }
                 ],
                 media: [
                     { title: "Media Terminal", quote: "// BROADCAST AUDIT", body: "Audio-visual terminal is offline. Awaiting secure credential verification sequences from the orbital council network." }
@@ -358,10 +356,8 @@
             }
         };
 
-        // 各页面的轮播当前索引记录器
         let sliderIndices = { info: 0, db: 0, media: 0 };
 
-        // --- 核心无闪烁导航调度器 ---
         function navigateToPage(targetPageId) {
             const stageEl = document.getElementById('main-stage');
 
@@ -384,14 +380,15 @@
                 overlayEl.classList.add('active-page');
                 if (navBtnEl) navBtnEl.classList.add('active');
 
-                // 进页面时瞬间校准并刷新轮播状态，完美防错位
+                // 切换页面时重置页面滚动高度到顶部，防止上一页的滚动位置影响当前页
+                overlayEl.scrollTop = 0;
+
                 if (sliderIndices[targetPageId] !== undefined) {
                     renderSlider(targetPageId);
                 }
             }
         }
 
-        // --- 高级矩阵卡片轮播渲染引擎 ---
         function initSliderDots(pageKey) {
             const dotsContainer = document.getElementById(`dots-${pageKey}`);
             if (!dotsContainer) return;
@@ -421,7 +418,6 @@
             const pageOverlay = document.getElementById(`view-${pageKey}-page`);
             if (!pageOverlay) return;
 
-            // 1. 联动更新卡片视差样式群 (Active, Prev, Next)
             const cards = pageOverlay.querySelectorAll('.showcase-card');
             cards.forEach((card, idx) => {
                 card.className = 'showcase-card';
@@ -434,21 +430,18 @@
                 }
             });
 
-            // 2. 联动更新下方圆点指示灯
             const dots = pageOverlay.querySelectorAll('.indicator-dot');
             dots.forEach((dot, idx) => {
                 if(idx === currentIdx) dot.classList.add('active');
                 else dot.classList.remove('active');
             });
 
-            // 3. 联动更新下方核心数据文本
             const data = items[currentIdx];
             document.getElementById(`${pageKey}-render-title`).innerText = data.title;
             document.getElementById(`${pageKey}-render-quote`).innerText = data.quote;
             document.getElementById(`${pageKey}-render-body`).innerHTML = data.body;
         }
 
-        // --- 告示模块数据源 ---
         const newsLangData = {
             zh: {
                 ncMain: "系统广播中心", ncBack: "返回主页",
@@ -456,7 +449,7 @@
                 notiMetas: ["发布时间: 2026-05-17 // 授权层级: 最高安全部", "发布时间: 2026-05-10 // 授权层级: 轨交枢纽部"],
                 notiContents: [
                     `<p>亲爱的设计师及旅居市民：</p><p>奇迹市全线量子纠缠防卫矩阵目前已成功更新至底层 1.19.2 精密协议架构。本次技术调整优化了次区域轻铁网络的数据吞吐性能，使高轨道星图同步率恒定保持在 100% 阈值。</p><p>感谢您一直以来对奇迹城×MX服务器节点的协同与筑造，祝您本次航行愉快。</p>`,
-                    `<p>调度通告：</p><p>为了应对日益增长的意识流过载，核心一号中央主干线于今日凌晨进行热插拔式空间扩容。维护期间次区域轻型轨交网络采用备用信道传输，当前绿灯节点已全面恢复。</p>`
+                    `<p>调度通告：</p><p>为了应对日益增长 of 意识流过载，核心一号中央主干线于今日凌晨进行热插拔式空间扩容。维护期间次区域轻型轨交网络采用备用信道传输，当前绿灯节点已全面恢复。</p>`
                 ]
             },
             en: {
@@ -484,7 +477,6 @@
             document.getElementById('nd-content').innerHTML = data.notiContents[currentActiveNotiIdx];
         }
 
-        // --- 全局本地化切换器 ---
         function toggleLanguage() {
             currentLang = (currentLang === 'zh') ? 'en' : 'zh';
             updateLocalization();
@@ -512,7 +504,6 @@
             document.getElementById('page-title-media').innerText = isZh ? "媒体视听数据库" : "MEDIA BROADCAST CENTER";
             document.querySelectorAll('.back-home-txt').forEach(el => el.innerText = isZh ? "返回主页" : "BACK");
 
-            // 告示页面本地化
             const nData = newsLangData[currentLang];
             document.getElementById('nc-main-title').innerText = nData.ncMain;
             document.getElementById('nc-back-text').innerText = nData.ncBack;
@@ -520,7 +511,6 @@
             document.getElementById('ni-t1').innerText = nData.notiTitles[1];
             refreshNotiDetailText();
 
-            // 初始化并刷新所有轮播页
             ['info', 'db', 'media'].forEach(key => {
                 initSliderDots(key);
                 renderSlider(key);
