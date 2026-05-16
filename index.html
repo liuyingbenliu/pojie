@@ -137,15 +137,16 @@
         .dynamic-sub-quote { font-size: 0.95rem; color: var(--accent); font-weight: bold; letter-spacing: 1px; margin-bottom: 20px; display: block; }
         .dynamic-body-text { font-size: 0.95rem; color: rgba(255,255,255,0.7); line-height: 1.9; text-align: justify; padding-bottom: 60px; }
 
-        /* ================= 告示页面高阶分栏布局 ================= */
+        /* ================= 告示页面分栏布局 ================= */
         .page-layout-container { 
             display: flex; gap: 30px; flex-grow: 1; height: calc(100vh - 220px); min-height: 400px; overflow: hidden; 
         }
         
-        /* 左侧列表：允许独立内部滚动 */
+        /* 【关键修复点】左侧列表：增加 padding-bottom，防止第 10 个卡片显示不全 */
         .noti-sidebar-list { 
             width: 32%; display: flex; flex-direction: column; gap: 10px; 
             overflow-y: auto; padding-right: 6px; height: 100%;
+            padding-bottom: 40px; /* 留出底部空白安全区，让第 10 个卡片能安全滚上来 */
         }
         .noti-item-card {
             background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); padding: 15px;
@@ -161,6 +162,7 @@
         .generic-detail-panel { 
             width: 68%; background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.03); 
             border-radius: 8px; padding: 35px; overflow-y: auto; height: 100%;
+            padding-bottom: 40px; /* 同理，详情也加上底部防切内边距 */
         }
         .detail-title { font-size: 1.4rem; font-weight: 400; margin: 0 0 10px 0; color: #fff; letter-spacing: 0.5px; line-height: 1.4; }
         .detail-meta { font-size: 0.8rem; color: rgba(255,255,255,0.4); font-family: monospace; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 14px; margin-bottom: 22px; }
@@ -275,7 +277,6 @@
         </div>
         <div class="page-layout-container">
             <div class="noti-sidebar-list" id="noti-list-container"></div>
-            
             <div class="generic-detail-panel">
                 <h3 class="detail-title" id="nd-title">加载中...</h3>
                 <div class="detail-meta" id="nd-meta">加载中...</div>
@@ -349,7 +350,6 @@
             }
         };
 
-        // ================= 深度拓展模拟：10 份完备的公告数据集 =================
         const newsLangData = {
             zh: {
                 ncMain: "系统广播中心", ncBack: "返回主页",
@@ -468,13 +468,12 @@
             document.getElementById(`${pageKey}-render-body`).innerHTML = data.body;
         }
 
-        // ================= 核心渲染：动态生成 10 个告示节点与触发器 =================
         function buildNotificationList() {
             const listContainer = document.getElementById('noti-list-container');
             if (!listContainer) return;
 
             const data = newsLangData[currentLang];
-            listContainer.innerHTML = ''; // 清空重新注入
+            listContainer.innerHTML = ''; 
 
             data.list.forEach((item, index) => {
                 const card = document.createElement('div');
@@ -502,7 +501,6 @@
             if(element) {
                 element.classList.add('item-active');
             } else {
-                // 如果是直接调用的（比如语言切换时），去匹配对应的卡片高亮
                 const cards = document.querySelectorAll('.noti-item-card');
                 if(cards[index]) cards[index].classList.add('item-active');
             }
@@ -546,7 +544,6 @@
             document.getElementById('nc-main-title').innerText = newsLangData[currentLang].ncMain;
             document.getElementById('nc-back-text').innerText = newsLangData[currentLang].ncBack;
             
-            // 构建并刷新10个告示列表
             buildNotificationList();
 
             ['info', 'db', 'media'].forEach(key => {
