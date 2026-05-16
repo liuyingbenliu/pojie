@@ -13,7 +13,6 @@
             
             --font-size-hero: clamp(2.5rem, 5vw, 4.5rem);
             --font-size-sub: clamp(0.9rem, 1.5vw, 1.2rem);
-            --font-size-panel-title: clamp(1.2rem, 1.8vw, 1.4rem);
         }
 
         * { box-sizing: border-box; }
@@ -25,13 +24,13 @@
             user-select: none;
         }
 
-        /* --- 顶部导航栏（最高优先级，永远常驻） --- */
+        /* --- 顶部导航栏 --- */
         .top-header {
             position: fixed; top: 0; left: 0; width: 100%; height: 64px;
             display: flex; justify-content: space-between; align-items: center;
             padding: 0 4%; background: rgba(3, 5, 13, 0.85);
             backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255,255,255,0.05);
-            z-index: 3000; /* 调高层级，确保在所有独立全屏页上方 */
+            z-index: 3000;
         }
         .header-left { display: flex; align-items: center; gap: clamp(20px, 3vw, 40px); }
         .header-logo { font-size: clamp(0.95rem, 1.2vw, 1.1rem); letter-spacing: 4px; font-weight: 600; color: #fff; white-space: nowrap; }
@@ -56,6 +55,7 @@
         
         .hero-banner-bg {
             position: absolute; inset: 0; z-index: 0;
+            background-color: #03050d;
             background-image: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1920');
             background-size: cover; background-position: center;
             transition: background-image 0.6s cubic-bezier(0.25, 1, 0.5, 1);
@@ -88,29 +88,15 @@
             letter-spacing: 3px; max-width: 600px; line-height: 1.8;
         }
 
-        /* --- 左下角数据监控卡片 --- */
-        .floating-side-card {
-            position: absolute; left: 4%; bottom: 8vh; z-index: 20;
-            background: rgba(255, 255, 255, 0.01); 
-            border: 1px solid rgba(255, 255, 255, 0.03);
-            border-radius: 8px;
-            padding: 30px; backdrop-filter: blur(30px);
-            width: clamp(320px, 26vw, 400px); max-height: 42vh; display: flex; flex-direction: column;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-        }
-        .card-tag { font-size: 0.75rem; color: var(--accent); letter-spacing: 2px; margin-bottom: 20px; font-family: monospace; }
-        .panel-title { font-size: var(--font-size-panel-title); margin: 0 0 15px 0; font-weight: 400; color: #fff; border-left: 3px solid var(--accent); padding-left: 12px; line-height: 1.2; }
-        .panel-body { color: rgba(255,255,255,0.7); line-height: 1.8; font-size: clamp(0.85rem, 0.9vw, 0.95rem); margin: 0; padding-left: 15px; text-align: justify;}
-
-        /* --- 核心升级：通用全屏独立页面基础样式 --- */
+        /* --- 全屏独立页面基础样式 --- */
         .fullview-overlay {
             position: fixed; inset: 0; width: 100%; height: 100%;
             z-index: 1500; padding: 120px 8% 60px 8%;
-            background: linear-gradient(to top, rgba(3,5,13,0.98), rgba(10,12,22,0.95));
-            backdrop-filter: blur(30px);
-            display: none; /* 由 JS 控制显示切换 */
+            background: linear-gradient(to top, rgba(3,5,13,0.99), rgba(8,10,18,0.96));
+            backdrop-filter: blur(35px);
+            display: none;
             flex-direction: column; gap: 40px;
-            opacity: 0; transition: opacity 0.4s ease;
+            opacity: 0; transition: opacity 0.3s ease;
         }
         .fullview-overlay.active-page { display: flex; opacity: 1; }
 
@@ -128,7 +114,7 @@
 
         .page-layout-container { display: flex; gap: 50px; flex-grow: 1; height: calc(100% - 150px); min-height: 0; }
 
-        /* --- 独立页：单列/双列图文展示容器 --- */
+        /* 图文展示通用面板 */
         .generic-detail-panel {
             width: 100%; background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.03);
             border-radius: 8px; padding: 40px; overflow-y: auto; height: 100%;
@@ -139,7 +125,7 @@
         .section-title { font-size: 1.4rem; margin: 0 0 15px 0; font-weight: 400; color: #fff; border-left: 3px solid var(--accent); padding-left: 15px; }
         .section-content { font-size: 0.95rem; color: rgba(255,255,255,0.7); line-height: 2; text-align: justify; padding-left: 18px; margin-bottom: 40px; }
 
-        /* 告示列表特化 */
+        /* 告示列表排版 */
         .noti-sidebar-list { width: 30%; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; }
         .noti-item-card {
             background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 20px;
@@ -150,6 +136,10 @@
         .noti-item-title { font-size: 0.95rem; margin: 8px 0 0 0; font-weight: 400; color: rgba(255,255,255,0.8); }
         .noti-item-card.item-active .noti-item-title { color: #fff; font-weight: bold; }
         .noti-detail-panel { width: 70%; }
+        
+        .detail-title { font-size: 1.5rem; font-weight: 400; margin: 0 0 10px 0; }
+        .detail-meta { font-size: 0.8rem; color: rgba(255,255,255,0.4); font-family: monospace; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 15px; margin-bottom: 20px; }
+        .detail-content { line-height: 2; color: rgba(255,255,255,0.75); font-size: 0.95rem; }
 
         .empty-state { display: flex; flex-direction: column; gap: 8px; justify-content: center; margin-top: 10px; }
         .empty-line { height: 3px; background: rgba(255,255,255,0.05); border-radius: 2px; width: 100%; position: relative; overflow: hidden;}
@@ -157,8 +147,9 @@
             content: ''; position: absolute; left: -50%; top: 0; height: 100%; width: 30%;
             background: linear-gradient(90deg, transparent, rgba(0,229,255,0.2), transparent); animation: scan 2s infinite linear;
         }
+        @keyframes scan { 0% { left: -30%; } 100% { left: 110%; } }
 
-        /* --- 主舞台控制按钮组 --- */
+        /* --- 主舞台常驻控制组 --- */
         .play-btn {
             position: absolute; left: 4%; top: 52%; z-index: 50;
             width: clamp(40px, 3.5vw, 48px); height: clamp(40px, 3.5vw, 48px); border: 1px solid rgba(255,255,255,0.4);
@@ -179,12 +170,11 @@
         .bottom-indicator {
             position: absolute; bottom: 3vh; left: 50%; transform: translateX(-50%);
             z-index: 50; display: flex; flex-direction: column; align-items: center; gap: 10px;
-            transition: opacity 0.4s;
         }
         .dots { display: flex; gap: 8px; align-items: center; }
         .dot { width: 5px; height: 5px; background: rgba(255,255,255,0.3); border-radius: 50%; }
         .dot.active { background: #fff; box-shadow: 0 0 8px #fff; }
-        .scroll-hint { font-size: 0.75rem; color: rgba(255,255,255,0.3); animation: bounce 2s infinite; }
+        .scroll-hint { font-size: 0.75rem; color: rgba(255,255,255,0.3); }
     </style>
 </head>
 <body>
@@ -223,19 +213,9 @@
             <div class="play-btn" onclick="moveNextTab()"></div>
             <div class="arrow arrow-left" onclick="movePrevTab()">〈</div>
             <div class="arrow arrow-right" onclick="moveNextTab()">〉</div>
-
-            <div class="floating-side-card" id="side-panel">
-                <div class="card-tag" id="panel-tag">// SYSTEM PROTOCOL MONITOR</div>
-                <div class="content-wrapper">
-                    <div id="page-home" class="tab-content active">
-                        <h2 class="panel-title" id="th-title">梦绘未来</h2>
-                        <p class="panel-body" id="th-body">当前运行季：（UTC+8）<br>2026.03.14 - 2026.06.20<br>高轨道星图同步率：100%</p>
-                    </div>
-                </div>
-            </div>
         </div>
 
-        <div class="bottom-indicator" id="global-indicator">
+        <div class="bottom-indicator">
             <div class="dots">
                 <div class="dot active"></div>
                 <div class="dot"></div>
@@ -261,7 +241,7 @@
                 <h3 class="section-title" id="ti-title">服务器规格与世界基底</h3>
                 <div class="section-content" id="ti-body">
                     类型：纯净公益核心<br>赛季：S5 梦想纪元<br>状态：高性能全功能节点绿灯<br><br>
-                    这里是建立在虚空高轨上的数据枢纽。每一位筑造师的意识流在这里交汇，凝聚成了坚不可摧的“奇迹网络”。基于1.19.2精密协议架构，我们在此重塑未来的星图轮廓。
+                    这里是建立在虚空高轨上的数据枢纽。每一位筑造师的意识流在这里交汇，凝聚成了坚不可摧的“奇迹网络”。基于1.19.2精密协议架构，我们在此重谱未来的星图轮廓。
                 </div>
             </div>
         </div>
@@ -335,7 +315,7 @@
             <div class="generic-detail-panel">
                 <h3 class="section-title" id="tm-title">媒体中心</h3>
                 <div class="empty-state">
-                    <p class="panel-body" id="tm-body" style="color: rgba(255,255,255,0.3)">视听数据库离线。正在等待理事会广播鉴权...</p>
+                    <p class="panel-body" id="tm-body" style="color: rgba(255,255,255,0.3); padding-left:0;">视听数据库离线。正在等待理事会广播鉴权...</p>
                     <div class="empty-line"></div>
                 </div>
             </div>
@@ -346,15 +326,15 @@
         let currentLang = 'zh';
         let currentActiveNotiIdx = 0;
 
-        // 主舞台概览模式下的轮播指数与图片映射
+        // 主舞台原生背景轮播驱动
         const stageTabs = ['home', 'info', 'db', 'media'];
         let currentStageIdx = 0;
 
         const bgImages = [
-            "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1920", // 概览背景
-            "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1920", // 世界观关联背景
-            "https://images.unsplash.com/photo-1542831371-29b0f74f9713?q=80&w=1920", // 角色关联背景
-            "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?q=80&w=1920"  // 媒体关联背景
+            "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1920",
+            "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1920",
+            "https://images.unsplash.com/photo-1542831371-29b0f74f9713?q=80&w=1920",
+            "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?q=80&w=1920"
         ];
         
         const langData = {
@@ -362,9 +342,7 @@
                 logo: "奇迹城 × MX",
                 nav: ["主要概览", "世界观", "角色", "告示", "媒体"],
                 heroTitle: "奇迹城", heroQuote: "「……原来你真的是这里的设计师啊。」—— 链接已建立，梦想铁道列车正平稳通过中央干线。",
-                tag: "// SYSTEM PROTOCOL MONITOR",
-                homeTitle: "梦绘未来", homeBody: "当前运行季：（UTC+8）<br>2026.03.14 - 2026.06.20<br>高轨道星图同步率：100%",
-                infoTitle: "服务器规格与世界基底", infoBody: "类型：纯净公益核心<br>赛季：S5 梦想纪元<br>状态：高性能全功能节点绿灯<br><br>这里是建立在虚空高轨上的数据枢纽。每一位筑造师的意识流在这里交汇，凝聚成了坚不可摧的“奇迹网络”。基于1.19.2精密协议架构，我们在此重塑未来的星图轮廓。",
+                infoTitle: "服务器规格与世界基底", infoBody: "类型：纯净公益核心<br>赛季：S5 梦想纪元<br>状态：高性能全功能节点绿灯<br><br>这里是建立在虚空高轨上的数据枢纽。每一位筑造师的意识流在这里交汇，凝聚成了坚不可摧的“奇迹网络”。基于1.19.2精密协议架构，我们在此重谱未来的星图轮廓。",
                 dbTitle: "铁道枢纽中心人员及网络编制", dbBody: "梦想铁道：一号中央主干线<br>浩泽轨交：次区域级轻铁网<br>系统底层：基于 1.19.2 精密架构<br><br>设计师与旅居市民在此分配专属的数字密钥。作为主干线的巡读员或区域轻铁网络的构筑者，每个实体的底层行为轨迹都将深度同步到量子防卫矩阵之中。",
                 mediaTitle: "媒体中心", mediaBody: "视听数据库离线。正在等待理事会广播鉴权...",
                 backTxt: "返回主页",
@@ -381,8 +359,6 @@
                 logo: "MIRACLE CITY × MX",
                 nav: ["OVERVIEW", "WORLD", "CHARACTERS", "BULLETIN", "MEDIA"],
                 heroTitle: "MIRACLE CITY", heroQuote: "'...So you really are the designer here.' — Connection established. The Dream Railway train is passing through the central mainline smoothly.",
-                tag: "// SYSTEM PROTOCOL MONITOR",
-                homeTitle: "FUTURE SKETCH", homeBody: "Current Season: (UTC+8)<br>2026.03.14 - 2026.06.20<br>High-orbit Star Chart Sync: 100%",
                 infoTitle: "SERVER SPECIFICATION & WORLD MATRIX", infoBody: "Type: Pure Vanilla Core<br>Season: S5 Era of Dreams<br>Status: High-performance nodes active.<br><br>This is a data hub built on a void high orbit. The consciousness stream of every architect converges here, forming an unbreakable 'Miracle Network'.",
                 dbTitle: "RAILWAY HUB INFRASTRUCTURE", dbBody: "Dream Rail: Central Mainline No.1<br>Haoze Transit: Sub-regional Light Rail<br>Base Protocol: Built on 1.19.2 Architecture.<br><br>Designers and residents are assigned exclusive digital keys here to synchronize behavior paths into the quantum defense matrix.",
                 mediaTitle: "MEDIA CENTER", mediaBody: "Audio-visual database offline. Awaiting Council broadcast authorization...",
@@ -398,79 +374,49 @@
             }
         };
 
-        // --- 核心无缝导航中转控制系统 ---
+        // --- 核心无缝导航控制系统 ---
         function navigateToPage(targetPageId) {
-            // 1. 清除所有的页面激活状态
+            // 1. 关闭全屏独立页面激活状态
             document.querySelectorAll('.fullview-overlay').forEach(el => {
                 el.classList.remove('active-page');
                 el.style.display = 'none';
             });
             document.querySelectorAll('.nav-menu .nav-btn').forEach(b => b.classList.remove('active'));
 
-            // 2. 如果目标是回主页 (概览)
+            // 2. 如果回主页
             if (targetPageId === 'home') {
                 document.getElementById('nav-home').classList.add('active');
-                currentStageIdx = 0;
-                updateStageBackgroundAndDots();
-                return;
+                return; /* 截断，底层大图保持原样不变，彻底消除图片重载引发的闪烁 */
             }
 
-            // 3. 映射对应的独立全屏大层ID与导航高亮项
+            // 3. 映射对应的全屏大层与导航高亮项
             let overlayEl = null;
             let navBtnEl = null;
 
-            if (targetPageId === 'info') {
-                overlayEl = document.getElementById('view-info-page');
-                navBtnEl = document.getElementById('nav-info');
-                currentStageIdx = 1;
-            } else if (targetPageId === 'db') {
-                overlayEl = document.getElementById('view-db-page');
-                navBtnEl = document.getElementById('nav-db');
-                currentStageIdx = 2;
-            } else if (targetPageId === 'news') {
-                overlayEl = document.getElementById('view-news-page');
-                navBtnEl = document.getElementById('nav-news');
-            } else if (targetPageId === 'media') {
-                overlayEl = document.getElementById('view-media-page');
-                navBtnEl = document.getElementById('nav-media');
-                currentStageIdx = 3;
-            }
+            if (targetPageId === 'info') { overlayEl = document.getElementById('view-info-page'); navBtnEl = document.getElementById('nav-info'); } 
+            else if (targetPageId === 'db') { overlayEl = document.getElementById('view-db-page'); navBtnEl = document.getElementById('nav-db'); } 
+            else if (targetPageId === 'news') { overlayEl = document.getElementById('view-news-page'); navBtnEl = document.getElementById('nav-news'); } 
+            else if (targetPageId === 'media') { overlayEl = document.getElementById('view-media-page'); navBtnEl = document.getElementById('nav-media'); }
 
-            // 4. 执行动效显隐切入
+            // 4. 执行磨砂大层凌空淡入覆盖
             if (overlayEl) {
                 overlayEl.style.display = 'flex';
                 setTimeout(() => { overlayEl.classList.add('active-page'); }, 20);
             }
             if (navBtnEl) navBtnEl.classList.add('active');
-
-            // 5. 让底层舞台的大图与点同步对应
-            updateStageBackgroundAndDots();
         }
 
-        // 主舞台箭头/播放键驱动：切上一个背景
+        // 主舞台手动箭头/播放键切换
         function movePrevTab() {
             currentStageIdx--;
             if (currentStageIdx < 0) currentStageIdx = stageTabs.length - 1;
-            syncStageFromControls();
+            updateStageBackgroundAndDots();
         }
 
-        // 主舞台箭头/播放键驱动：切下一个背景
         function moveNextTab() {
             currentStageIdx++;
             if (currentStageIdx >= stageTabs.length) currentStageIdx = 0;
-            syncStageFromControls();
-        }
-
-        function syncStageFromControls() {
             updateStageBackgroundAndDots();
-            // 如果切到非home版块，也顺滑同步点亮顶层导航按钮标识（让用户知道当前属于哪个概念背景）
-            document.querySelectorAll('.nav-menu .nav-btn').forEach(b => b.classList.remove('active'));
-            const currentTabId = stageTabs[currentStageIdx];
-            let navBtnId = 'nav-home';
-            if (currentTabId === 'info') navBtnId = 'nav-info';
-            if (currentTabId === 'db') navBtnId = 'nav-db';
-            if (currentTabId === 'media') navBtnId = 'nav-media';
-            document.getElementById(navBtnId).classList.add('active');
         }
 
         function updateStageBackgroundAndDots() {
@@ -480,7 +426,12 @@
             if(dots[currentStageIdx]) dots[currentStageIdx].classList.add('active');
         }
 
-        // --- 国际化及文本同步更新 ---
+        function toggleLanguage() {
+            currentLang = (currentLang === 'zh') ? 'en' : 'zh';
+            updateLocalization();
+        }
+
+        // --- 文本同步更新 ---
         function updateLocalization() {
             const data = langData[currentLang];
             document.getElementById('lang-indicator').innerText = currentLang === 'zh' ? 'EN' : '中文';
@@ -494,10 +445,6 @@
 
             document.getElementById('hero-title').innerText = data.heroTitle;
             document.getElementById('hero-quote').innerText = data.heroQuote;
-            document.getElementById('panel-tag').innerText = data.tag;
-
-            document.getElementById('th-title').innerText = data.homeTitle;
-            document.getElementById('th-body').innerHTML = data.homeBody;
             
             document.getElementById('ti-title').innerText = data.infoTitle;
             document.getElementById('ti-body').innerHTML = data.infoBody;
@@ -506,7 +453,6 @@
             document.getElementById('tm-title').innerText = data.mediaTitle;
             document.getElementById('tm-body').innerHTML = data.mediaBody;
 
-            // 填充独立页面大标题与返回文本
             document.getElementById('page-title-info').innerText = data.pageTitleInfo;
             document.getElementById('page-title-db').innerText = data.pageTitleDb;
             document.getElementById('page-title-media').innerText = data.pageTitleMedia;
@@ -541,7 +487,7 @@
         // --- 粒子星空与背景轨道列车引擎 ---
         const canvas = document.getElementById('star-canvas');
         const ctx = canvas.getContext('2d');
-        let stars = [], meteors = [], trainX = -1000, speedMultiplier = 1;
+        let stars = [], meteors = [], trainX = -1000;
         const colors = ['rgba(0, 229, 255, ', 'rgba(180, 100, 255, ', 'rgba(255, 255, 255, '];
 
         class Meteor {
@@ -554,8 +500,7 @@
                 this.color = colors[Math.floor(Math.random() * colors.length)];
             }
             update() {
-                this.x += this.speed * speedMultiplier;
-                this.y += this.speed * 0.4 * speedMultiplier;
+                this.x += this.speed; this.y += this.speed * 0.4;
                 if (this.x > canvas.width || this.y > canvas.height) this.reset();
             }
             draw() {
@@ -577,7 +522,7 @@
                 this.size = Math.random() * 1.2 + 0.4; this.speed = Math.random() * 0.0004 + 0.0001;
                 this.color = colors[Math.floor(Math.random() * colors.length)] + (Math.random() * 0.3 + 0.2) + ')';
             }
-            update() { this.angle += this.speed * speedMultiplier; }
+            update() { this.angle += this.speed; }
             draw() {
                 const x = canvas.width/2 + Math.cos(this.angle) * this.dist;
                 const y = canvas.height/2 + Math.sin(this.angle) * this.dist;
@@ -587,7 +532,7 @@
 
         function drawGhostTrain() {
             ctx.save(); ctx.globalAlpha = 0.04; ctx.strokeStyle = "rgba(0, 229, 255, 0.5)"; ctx.lineWidth = 1;
-            const trainY = canvas.height * 0.82; trainX += 1 * speedMultiplier;
+            const trainY = canvas.height * 0.82; trainX += 1;
             if (trainX > canvas.width + 600) trainX = -800;
             for(let i=0; i<6; i++) { 
                 let bx = trainX - (i * 125); ctx.strokeRect(bx, trainY, 115, 20);
@@ -612,7 +557,6 @@
         }
 
         window.addEventListener('resize', initCanvas);
-        
         window.addEventListener('DOMContentLoaded', () => {
             updateLocalization();
             initCanvas(); 
