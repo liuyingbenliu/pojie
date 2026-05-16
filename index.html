@@ -17,11 +17,11 @@
             margin: 0; padding: 0; width: 100%; height: 100%;
             background-color: #03050d;
             overflow: hidden;
-            color: #fff; font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+            color: #fff; font-family: "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
             user-select: none;
         }
 
-        /* --- 顶部导航栏 (完美还原截图) --- */
+        /* --- 顶部导航栏 --- */
         .top-header {
             position: fixed; top: 0; left: 0; width: 100%; height: 64px;
             display: flex; justify-content: space-between; align-items: center;
@@ -43,20 +43,21 @@
         }
 
         .header-right { display: flex; gap: 24px; color: rgba(255,255,255,0.6); font-size: 0.95rem; }
-        .icon-btn { cursor: pointer; transition: 0.3s; }
+        .icon-btn { cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 4px; }
         .icon-btn:hover { color: #fff; }
+        .lang-text { font-size: 0.75rem; letter-spacing: 1px; font-weight: bold; border: 1px solid rgba(255,255,255,0.3); padding: 2px 6px; border-radius: 3px; }
 
         /* --- 主舞台容器 --- */
         #main-stage {
             position: relative; width: 100%; height: 100%; display: none; z-index: 10;
         }
 
-        /* --- Canvas 背景层 (右下角夜空、星轨与隐约列车) --- */
+        /* --- Canvas 背景层 --- */
         #star-canvas {
             position: absolute; inset: 0; z-index: 1; pointer-events: none;
         }
 
-        /* --- 左上角对角线切片层 (模拟截图角色特写区块) --- */
+        /* --- 左上角斜切层 --- */
         .character-split-layer {
             position: absolute; inset: 0; z-index: 2;
             background: linear-gradient(135deg, rgba(15, 23, 42, 0.75) 0%, rgba(30, 41, 59, 0.5) 50%, transparent 50.01%);
@@ -64,7 +65,7 @@
             pointer-events: none;
         }
 
-        /* --- 核心核心：中央大字标题与对角线错位排版 --- */
+        /* --- 中央大字标题与对角线错位排版 --- */
         .center-hero {
             position: absolute; inset: 0; z-index: 5;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
@@ -80,10 +81,10 @@
         }
         .quote-text {
             margin-top: 80px; font-size: 0.85rem; color: rgba(255,255,255,0.4);
-            letter-spacing: 3px; max-width: 500px; line-height: 1.8;
+            letter-spacing: 3px; max-width: 600px; line-height: 1.8; height: 40px;
         }
 
-        /* --- 侧边悬浮面板 (整合你之前的服务器数据) --- */
+        /* --- 左下角悬浮面板 --- */
         .floating-side-card {
             position: absolute; left: 60px; bottom: 120px; z-index: 20;
             background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border);
@@ -94,24 +95,28 @@
         }
         .card-tag { color: var(--accent); font-size: 0.7rem; margin-bottom: 10px; letter-spacing: 2px; }
         .content-wrapper { position: relative; min-height: 120px; }
+        
         .tab-content {
             position: absolute; top: 0; left: 0; width: 100%; opacity: 0;
             transform: translateY(10px); transition: all 0.4s ease; pointer-events: none;
         }
         .tab-content.active { opacity: 1; transform: translateY(0); pointer-events: auto; position: relative; }
+        
         .panel-title { font-size: 1.5rem; margin: 0 0 12px 0; font-weight: 400; }
         .panel-body { color: rgba(255,255,255,0.6); line-height: 1.8; font-size: 0.9rem; margin: 0; }
 
-        /* --- 轮播图UI外壳组件 (完全还原截图交互) --- */
-        .arrow {
-            position: absolute; top: 50%; transform: translateY(-50%); z-index: 50;
-            font-size: 1.8rem; color: rgba(255,255,255,0.3); cursor: pointer; transition: 0.3s;
-            pointer-events: auto;
+        /* 空页面特定样式 */
+        .empty-state {
+            display: flex; flex-direction: column; gap: 8px; justify-content: center; min-height: 120px;
         }
-        .arrow:hover { color: #fff; text-shadow: 0 0 10px #fff; }
-        .arrow-left { left: 40px; }
-        .arrow-right { right: 40px; }
+        .empty-line { height: 4px; background: rgba(255,255,255,0.05); border-radius: 2px; width: 100%; position: relative; overflow: hidden;}
+        .empty-line::after {
+            content: ''; position: absolute; left: -50%; top: 0; height: 100%; width: 30%;
+            background: linear-gradient(90deg, transparent, rgba(0,229,255,0.2), transparent);
+            animation: scan 2s infinite linear;
+        }
 
+        /* --- 辅助组件 --- */
         .play-btn {
             position: absolute; left: 40px; top: 55%; z-index: 50;
             width: 48px; height: 48px; border: 1px solid rgba(255,255,255,0.4);
@@ -125,16 +130,25 @@
             border-color: transparent transparent transparent #fff;
         }
 
+        .arrow {
+            position: absolute; top: 50%; transform: translateY(-50%); z-index: 50;
+            font-size: 1.8rem; color: rgba(255,255,255,0.3); cursor: pointer; transition: 0.3s;
+            pointer-events: auto;
+        }
+        .arrow:hover { color: #fff; text-shadow: 0 0 10px #fff; }
+        .arrow-left { left: 40px; }
+        .arrow-right { right: 40px; }
+
         .bottom-indicator {
             position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
             z-index: 50; display: flex; flex-direction: column; align-items: center; gap: 15px;
         }
         .dots { display: flex; gap: 10px; align-items: center; }
-        .dot { width: 6px; height: 6px; background: rgba(255,255,255,0.3); border-radius: 50%; cursor: pointer; }
+        .dot { width: 6px; height: 6px; background: rgba(255,255,255,0.3); border-radius: 50%; }
         .dot.active { background: #fff; box-shadow: 0 0 8px #fff; }
-        .scroll-hint { font-size: 0.8rem; color: rgba(255,255,255,0.4); animation: bounce 2s infinite; cursor: pointer; }
+        .scroll-hint { font-size: 0.8rem; color: rgba(255,255,255,0.4); animation: bounce 2s infinite; }
 
-        /* --- 纯白高奢启动屏 --- */
+        /* --- 启动屏 --- */
         #splash-screen {
             position: fixed; inset: 0; display: flex; justify-content: center; align-items: center;
             z-index: 2000; background: #03050d; transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
@@ -147,27 +161,30 @@
         .btn-launch:hover { border-color: var(--accent); box-shadow: 0 0 30px var(--accent-glow); }
 
         @keyframes bounce { 0%, 20%, 50%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-6px); } 60% { transform: translateY(-3px); } }
+        @keyframes scan { from { left: -50%; } to { left: 150%; } }
     </style>
 </head>
 <body>
 
     <div id="splash-screen">
-        <button class="btn-launch" onclick="launch()">LINK START</button>
+        <button class="btn-launch" id="launch-btn" onclick="launch()">LINK START</button>
     </div>
 
     <header class="top-header">
         <div class="header-left">
-            <div class="header-logo">奇迹城 × MX</div>
+            <div class="header-logo" id="logo-text">奇迹城 × MX</div>
             <nav class="nav-menu">
-                <div class="nav-btn active" onclick="switchTab('home', this)">主要概览</div>
-                <div class="nav-btn" onclick="switchTab('info', this)">世界观</div>
-                <div class="nav-btn" onclick="switchTab('db', this)">角色</div>
-                <div class="nav-btn" onclick="alert('暂无新消息')">消息</div>
-                <div class="nav-btn" onclick="alert('媒体中心筹备中')">媒体</div>
+                <div class="nav-btn active" id="nav-home" onclick="switchTab('home', this)">主要概览</div>
+                <div class="nav-btn" id="nav-info" onclick="switchTab('info', this)">世界观</div>
+                <div class="nav-btn" id="nav-db" onclick="switchTab('db', this)">角色</div>
+                <div class="nav-btn" id="nav-news" onclick="switchTab('news', this)">消息</div>
+                <div class="nav-btn" id="nav-media" onclick="switchTab('media', this)">媒体</div>
             </nav>
         </div>
         <div class="header-right">
-            <span class="icon-btn">🌐</span>
+            <div class="icon-btn" onclick="toggleLanguage()">
+                <span>🌐</span><span class="lang-text" id="lang-indicator">EN</span>
+            </div>
             <span class="icon-btn">🔔</span>
             <span class="icon-btn">🔗</span>
         </div>
@@ -175,23 +192,23 @@
 
     <div id="main-stage">
         <canvas id="star-canvas"></canvas>
-
         <div class="character-split-layer"></div>
 
         <div class="center-hero">
-            <h1 class="title-large">奇迹城</h1>
+            <h1 class="title-large" id="hero-title">奇迹城</h1>
             <div class="title-sub">M I R A C L E · C I T Y</div>
-            <p class="quote-text">「……原来你真的是这里的设计师啊。」—— 链接已建立，梦想铁道列车正平稳通过中央干线。</p>
+            <p class="quote-text" id="hero-quote">「……原来你真的是这里的设计师啊。」—— 链接已建立，梦想铁道列车正平稳通过中央干线。</p>
         </div>
 
-        <div class="play-btn" onclick="alert('正在激活PV播放器...')"></div>
-
-        <div class="arrow arrow-left" onclick="alert('已无上一个板块')">〈</div>
-        <div class="arrow arrow-right" onclick="alert('已进入终点板块')">〉</div>
+        <div class="play-btn"></div>
+        <div class="arrow arrow-left">〈</div>
+        <div class="arrow arrow-right">〉</div>
 
         <div class="bottom-indicator">
             <div class="dots">
                 <div class="dot active"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
                 <div class="dot"></div>
                 <div class="dot"></div>
             </div>
@@ -199,25 +216,120 @@
         </div>
 
         <div class="floating-side-card" id="side-panel">
-            <div class="card-tag">// SYSTEM PROTOCOL MONITOR</div>
+            <div class="card-tag" id="panel-tag">// SYSTEM PROTOCOL MONITOR</div>
             <div class="content-wrapper">
+                
                 <div id="page-home" class="tab-content active">
-                    <h2 class="panel-title">梦绘未来</h2>
-                    <p class="panel-body">当前运行季：（UTC+8）<br>2026.03.14 - 2026.06.20<br>高轨道星图同步率：100%</p>
+                    <h2 class="panel-title" id="th-title">梦绘未来</h2>
+                    <p class="panel-body" id="th-body">当前运行季：（UTC+8）<br>2026.03.14 - 2026.06.20<br>高轨道星图同步率：100%</p>
                 </div>
+                
                 <div id="page-info" class="tab-content">
-                    <h2 class="panel-title">服务器规格</h2>
-                    <p class="panel-body">类型：纯净公益核心<br>赛季：S5 梦想纪元<br>状态：高性能全功能节点绿灯</p>
+                    <h2 class="panel-title" id="ti-title">服务器规格</h2>
+                    <p class="panel-body" id="ti-body">类型：纯净公益核心<br>赛季：S5 梦想纪元<br>状态：高性能全功能节点绿灯</p>
                 </div>
+                
                 <div id="page-db" class="tab-content">
-                    <h2 class="panel-title">铁道枢纽中心</h2>
-                    <p class="panel-body">梦想铁道：一号中央主干线<br>浩泽轨交：次区域级轻铁网<br>系统底层：基于 1.19.2 精密架构</p>
+                    <h2 class="panel-title" id="td-title">铁道枢纽中心</h2>
+                    <p class="panel-body" id="td-body">梦想铁道：一号中央主干线<br>浩泽轨交：次区域级轻铁网<br>系统底层：基于 1.19.2 精密架构</p>
                 </div>
+
+                <div id="page-news" class="tab-content">
+                    <h2 class="panel-title" id="tn-title">最新情报</h2>
+                    <div class="empty-state">
+                        <p class="panel-body" id="tn-body" style="color: rgba(255,255,255,0.3)">暂无新消息发布。数据流监控中...</p>
+                        <div class="empty-line"></div>
+                    </div>
+                </div>
+
+                <div id="page-media" class="tab-content">
+                    <h2 class="panel-title" id="tm-title">媒体中心</h2>
+                    <div class="empty-state">
+                        <p class="panel-body" id="tm-body" style="color: rgba(255,255,255,0.3)">视听数据库离线。正在等待理事会广播鉴权...</p>
+                        <div class="empty-line"></div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
 
     <script>
+        // --- 国际化本地文本数据库 ---
+        let currentLang = 'zh';
+        const langData = {
+            zh: {
+                launchBtn: "LINK START",
+                logo: "奇迹城 × MX",
+                nav: ["主要概览", "世界观", "角色", "消息", "媒体"],
+                heroTitle: "奇迹城",
+                heroQuote: "「……原来你真的是这里的设计师啊。」—— 链接已建立，梦想铁道列车正平稳通过中央干线。",
+                tag: "// SYSTEM PROTOCOL MONITOR",
+                homeTitle: "梦绘未来",
+                homeBody: "当前运行季：（UTC+8）<br>2026.03.14 - 2026.06.20<br>高轨道星图同步率：100%",
+                infoTitle: "服务器规格",
+                infoBody: "类型：纯净公益核心<br>赛季：S5 梦想纪元<br>状态：高性能全功能节点绿灯",
+                dbTitle: "铁道枢纽中心",
+                dbBody: "梦想铁道：一号中央主干线<br>浩泽轨交：次区域级轻铁网<br>系统底层：基于 1.19.2 精密架构",
+                newsTitle: "最新情报",
+                newsBody: "暂无新消息发布。数据流监控中...",
+                mediaTitle: "媒体中心",
+                mediaBody: "视听数据库离线。正在等待理事会广播鉴权..."
+            },
+            en: {
+                launchBtn: "LINK START",
+                logo: "MIRACLE CITY × MX",
+                nav: ["OVERVIEW", "WORLD", "CHARACTERS", "NEWS", "MEDIA"],
+                heroTitle: "MIRACLE CITY",
+                heroQuote: "'...So you really are the designer here.' — Connection established. The Dream Railway train is passing through the central mainline smoothly.",
+                tag: "// SYSTEM PROTOCOL MONITOR",
+                homeTitle: "FUTURE SKETCH",
+                homeBody: "Current Season: (UTC+8)<br>2026.03.14 - 2026.06.20<br>High-orbit Star Chart Sync: 100%",
+                infoTitle: "SERVER SPECIFICATION",
+                infoBody: "Type: Pure Vanilla Core<br>Season: S5 Era of Dreams<br>Status: High-performance nodes active",
+                dbTitle: "RAILWAY HUB",
+                dbBody: "Dream Rail: Central Mainline No.1<br>Haoze Transit: Sub-regional Light Rail<br>Base Protocol: Built on 1.19.2 Architecture",
+                newsTitle: "LATEST NEWS",
+                newsBody: "No new logs released. Monitoring data streams...",
+                mediaTitle: "MEDIA CENTER",
+                mediaBody: "Audio-visual database offline. Awaiting Council broadcast authorization..."
+            }
+        };
+
+        function updateLocalization() {
+            const data = langData[currentLang];
+            document.getElementById('lang-indicator').innerText = currentLang === 'zh' ? 'EN' : '中文';
+            document.getElementById('launch-btn').innerText = data.launchBtn;
+            document.getElementById('logo-text').innerText = data.logo;
+            
+            document.getElementById('nav-home').innerText = data.nav[0];
+            document.getElementById('nav-info').innerText = data.nav[1];
+            document.getElementById('nav-db').innerText = data.nav[2];
+            document.getElementById('nav-news').innerText = data.nav[3];
+            document.getElementById('nav-media').innerText = data.nav[4];
+
+            document.getElementById('hero-title').innerText = data.heroTitle;
+            document.getElementById('hero-quote').innerText = data.heroQuote;
+            document.getElementById('panel-tag').innerText = data.tag;
+
+            document.getElementById('th-title').innerText = data.homeTitle;
+            document.getElementById('th-body').innerHTML = data.homeBody;
+            document.getElementById('ti-title').innerText = data.infoTitle;
+            document.getElementById('ti-body').innerHTML = data.infoBody;
+            document.getElementById('td-title').innerText = data.dbTitle;
+            document.getElementById('td-body').innerHTML = data.dbBody;
+            document.getElementById('tn-title').innerText = data.newsTitle;
+            document.getElementById('tn-body').innerHTML = data.newsBody;
+            document.getElementById('tm-title').innerText = data.mediaTitle;
+            document.getElementById('tm-body').innerHTML = data.mediaBody;
+        }
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'zh' ? 'en' : 'zh';
+            updateLocalization();
+        }
+
+        // --- 以下为原有的星空引擎与动画逻辑 ---
         const canvas = document.getElementById('star-canvas');
         const ctx = canvas.getContext('2d');
         let stars = [], meteors = [], trainX = -1000, speedMultiplier = 1;
@@ -244,7 +356,7 @@
                 gradient.addColorStop(0.2, this.color + '0.4)');
                 gradient.addColorStop(1, 'transparent');
                 ctx.strokeStyle = gradient; ctx.lineWidth = 1.2;
-                ctx.moveTo(this.x, this.y); ctx.lineTo(x = this.x - this.len, y = this.y - this.len * 0.4);
+                ctx.moveTo(this.x, this.y); ctx.lineTo(this.x - this.len, this.y - this.len * 0.4);
                 ctx.stroke(); ctx.restore();
             }
         }
@@ -270,7 +382,7 @@
         }
 
         function drawGhostTrain() {
-            ctx.save(); ctx.globalAlpha = 0.04; // 极其微弱隐约
+            ctx.save(); ctx.globalAlpha = 0.04;
             ctx.strokeStyle = "rgba(0, 229, 255, 0.5)"; ctx.lineWidth = 1;
             const trainY = canvas.height * 0.82;
             trainX += 1 * speedMultiplier;
@@ -311,10 +423,10 @@
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            
             const targetContent = document.getElementById('page-' + id);
             if(targetContent) targetContent.classList.add('active');
             
-            // 联动底下轮播小圆点
             const dots = document.querySelectorAll('.dot');
             dots.forEach(d => d.classList.remove('active'));
             const idx = Array.from(btn.parentNode.children).indexOf(btn);
@@ -322,6 +434,8 @@
         }
 
         window.addEventListener('resize', initCanvas);
+        // 初始化运行一次中文数据映射
+        updateLocalization();
     </script>
 </body>
 </html>
