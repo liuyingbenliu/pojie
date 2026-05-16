@@ -53,7 +53,7 @@
         .lang-text { font-size: 0.75rem; letter-spacing: 1px; font-weight: bold; border: 1px solid rgba(255,255,255,0.3); padding: 2px 6px; border-radius: 3px; }
 
         /* --- 主舞台与其内部视图层 --- */
-        #main-stage { position: relative; width: 100%; height: 100%; display: none; z-index: 10; }
+        #main-stage { position: relative; width: 100%; height: 100%; z-index: 10; }
         #star-canvas { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
         .character-split-layer {
             position: absolute; inset: 0; z-index: 2;
@@ -186,23 +186,9 @@
         .dot { width: 5px; height: 5px; background: rgba(255,255,255,0.3); border-radius: 50%; }
         .dot.active { background: #fff; box-shadow: 0 0 8px #fff; }
         .scroll-hint { font-size: 0.75rem; color: rgba(255,255,255,0.3); animation: bounce 2s infinite; }
-
-        #splash-screen {
-            position: fixed; inset: 0; display: flex; justify-content: center; align-items: center;
-            z-index: 1500; background: #03050d; transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .btn-launch {
-            background: transparent; border: 1px solid rgba(255,255,255,0.15);
-            color: #fff; padding: 14px 50px; cursor: pointer; font-size: 0.9rem; letter-spacing: 6px; border-radius: 30px; transition: 0.4s;
-        }
-        .btn-launch:hover { border-color: var(--accent); box-shadow: 0 0 30px var(--accent-glow); }
     </style>
 </head>
 <body>
-
-    <div id="splash-screen">
-        <button class="btn-launch" id="launch-btn" onclick="launch()">LINK START</button>
-    </div>
 
     <header class="top-header">
         <div class="header-left">
@@ -320,10 +306,11 @@
 
     <script>
         let currentLang = 'zh';
+        let currentActiveNotiIdx = 0;
         
         const langData = {
             zh: {
-                launchBtn: "LINK START", logo: "奇迹城 × MX",
+                logo: "奇迹城 × MX",
                 nav: ["主要概览", "世界观", "角色", "告示", "媒体"],
                 heroTitle: "奇迹城", heroQuote: "「……原来你真的是这里的设计师啊。」—— 链接已建立，梦想铁道列车正平稳通过中央干线。",
                 tag: "// SYSTEM PROTOCOL MONITOR",
@@ -342,7 +329,7 @@
                 ]
             },
             en: {
-                launchBtn: "LINK START", logo: "MIRACLE CITY × MX",
+                logo: "MIRACLE CITY × MX",
                 nav: ["OVERVIEW", "WORLD", "CHARACTERS", "BULLETIN", "MEDIA"],
                 heroTitle: "MIRACLE CITY", heroQuote: "'...So you really are the designer here.' — Connection established. The Dream Railway train is passing through the central mainline smoothly.",
                 tag: "// SYSTEM PROTOCOL MONITOR",
@@ -362,12 +349,9 @@
             }
         };
 
-        let currentActiveNotiIdx = 0;
-
         function updateLocalization() {
             const data = langData[currentLang];
             document.getElementById('lang-indicator').innerText = currentLang === 'zh' ? 'EN' : '中文';
-            document.getElementById('launch-btn').innerText = data.launchBtn;
             document.getElementById('logo-text').innerText = data.logo;
             
             document.getElementById('nav-home').innerText = data.nav[0];
@@ -404,7 +388,7 @@
             updateLocalization();
         }
 
-        // --- 全屏独立页面无缝切换引擎 ---
+        // --- 视图无缝切换引擎 ---
         function navigateToView(viewName) {
             document.querySelectorAll('.view-section').forEach(view => view.classList.remove('view-active'));
             
@@ -420,19 +404,23 @@
 
         function switchNotiDetail(index, element) {
             document.querySelectorAll('.noti-item-card').forEach(card => card.classList.remove('item-active'));
-            element.classList.add('item-active');
+            if(element) element.classList.add('item-active');
             currentActiveNotiIdx = index;
             refreshNotiDetailText();
         }
 
         function refreshNotiDetailText() {
             const data = langData[currentLang];
-            document.getElementById('nd-title').innerText = data.notiTitles[currentActiveNotiIdx];
-            document.getElementById('nd-meta').innerText = data.notiMetas[currentActiveNotiIdx];
-            document.getElementById('nd-content').innerHTML = data.notiContents[currentActiveNotiIdx];
+            const tEl = document.getElementById('nd-title');
+            const mEl = document.getElementById('nd-meta');
+            const cEl = document.getElementById('nd-content');
+            
+            if(tEl) tEl.innerText = data.notiTitles[currentActiveNotiIdx];
+            if(mEl) mEl.innerText = data.notiMetas[currentActiveNotiIdx];
+            if(cEl) cEl.innerHTML = data.notiContents[currentActiveNotiIdx];
         }
 
-        // --- 粒子画布引擎 ---
+        // --- 粒子星空与背景轨道列车引擎 ---
         const canvas = document.getElementById('star-canvas');
         const ctx = canvas.getContext('2d');
         let stars = [], meteors = [], trainX = -1000, speedMultiplier = 1;
@@ -505,21 +493,12 @@
             requestAnimationFrame(animate);
         }
 
-        function launch() {
-            document.getElementById('splash-screen').style.opacity = '0';
-            setTimeout(() => {
-                document.getElementById('splash-screen').style.display = 'none';
-                document.getElementById('main-stage').style.display = 'block';
-                initCanvas(); animate();
-            }, 1000);
-        }
-
-        // 选项卡切换逻辑
+        // 首页内部卡片切换
         function switchTab(id, btn) {
             navigateToView('homepage');
 
             document.querySelectorAll('.nav-menu .nav-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
+            if(btn) btn.classList.add('active');
             
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             const targetContent = document.getElementById('page-' + id);
@@ -532,7 +511,13 @@
         }
 
         window.addEventListener('resize', initCanvas);
-        updateLocalization();
+        
+        // 页面加载完毕后立即初始化并启动
+        window.addEventListener('DOMContentLoaded', () => {
+            updateLocalization();
+            initCanvas(); 
+            animate();
+        });
     </script>
 </body>
 </html>
