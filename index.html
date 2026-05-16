@@ -504,17 +504,26 @@
             const targetContent = document.getElementById('page-' + id);
             if(targetContent) targetContent.classList.add('active');
             
-            const dots = document.querySelectorAll('.dot');
-            dots.forEach(d => d.classList.remove('active'));
-            const idx = Array.from(btn.parentNode.children).indexOf(btn);
-            if(dots[idx]) dots[idx].classList.add('active');
+            // 安全防线：检查节点是否存在，避免由于按钮缺失导致渲染线程死锁
+            if (btn && btn.parentNode) {
+                const dots = document.querySelectorAll('.dot');
+                dots.forEach(d => d.classList.remove('active'));
+                const idx = Array.from(btn.parentNode.children).indexOf(btn);
+                if(dots[idx]) dots[idx].classList.add('active');
+            }
         }
 
         window.addEventListener('resize', initCanvas);
         
-        // 页面加载完毕后立即初始化并启动
+        // 核心修正：严格按照 DOM 渲染流生命周期执行初始化
         window.addEventListener('DOMContentLoaded', () => {
+            // 1. 确保舞台完全暴露并可供计算
+            document.getElementById('main-stage').style.display = 'block';
+            
+            // 2. 载入核心本地化翻译流
             updateLocalization();
+            
+            // 3. 安全挂载高刷动画引擎
             initCanvas(); 
             animate();
         });
