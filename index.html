@@ -8,10 +8,10 @@
         :root {
             --accent: #00e5ff;
             --accent-glow: rgba(0, 229, 255, 0.4);
-            --bg-dark: #0a0c16;
+            --bg-dark: #03050d;
             --glass-border: rgba(255, 255, 255, 0.1);
             
-            /* 响应式基础流式字号：根据设备宽度自动缩放 */
+            /* 响应式基础流式字号 */
             --font-size-hero: clamp(2.5rem, 5vw, 4.5rem);
             --font-size-sub: clamp(0.9rem, 1.5vw, 1.2rem);
             --font-size-panel-title: clamp(1.2rem, 1.8vw, 1.5rem);
@@ -20,13 +20,13 @@
         * { box-sizing: border-box; }
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
-            background-color: #03050d;
+            background-color: var(--bg-dark);
             overflow: hidden;
             color: #fff; font-family: "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
             user-select: none;
         }
 
-        /* --- 顶部导航栏 (全面改用视口单位与百分比自适应) --- */
+        /* --- 顶部导航栏 --- */
         .top-header {
             position: fixed; top: 0; left: 0; width: 100%; height: 64px;
             display: flex; justify-content: space-between; align-items: center;
@@ -52,31 +52,30 @@
         .icon-btn:hover { color: #fff; }
         .lang-text { font-size: 0.75rem; letter-spacing: 1px; font-weight: bold; border: 1px solid rgba(255,255,255,0.3); padding: 2px 6px; border-radius: 3px; }
 
-        /* 铃铛右上角的高奢冰蓝呼吸灯提示点 */
         .notification-badge {
             position: absolute; top: -2px; right: -2px; width: 6px; height: 6px;
             background-color: var(--accent); border-radius: 50%;
-            box-shadow: 0 0 8px var(--accent);
-            animation: pulse 2s infinite;
-            transition: opacity 0.3s;
+            box-shadow: 0 0 8px var(--accent); animation: pulse 2s infinite; transition: opacity 0.3s;
         }
 
-        /* --- 主舞台容器 --- */
-        #main-stage {
-            position: relative; width: 100%; height: 100%; display: none; z-index: 10;
-        }
-
-        /* --- Canvas 背景层 --- */
+        /* --- 主舞台与其内部视图层（支持无缝切换） --- */
+        #main-stage { position: relative; width: 100%; height: 100%; display: none; z-index: 10; }
         #star-canvas { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
-
-        /* --- 左上角斜切层 --- */
         .character-split-layer {
             position: absolute; inset: 0; z-index: 2;
             background: linear-gradient(135deg, rgba(15, 23, 42, 0.75) 0%, rgba(30, 41, 59, 0.5) 50%, transparent 50.01%);
             backdrop-filter: blur(2px); pointer-events: none;
         }
 
-        /* --- 中央大字标题（智能防遮挡排版） --- */
+        /* 统一的视图切出/切入过渡效果 */
+        .view-section {
+            position: absolute; inset: 0; width: 100%; height: 100%;
+            opacity: 0; pointer-events: none; transform: scale(1.02);
+            transition: opacity 0.6s cubic-bezier(0.2, 0, 0, 1), transform 0.6s cubic-bezier(0.2, 0, 0, 1);
+        }
+        .view-section.view-active { opacity: 1; pointer-events: auto; transform: scale(1); }
+
+        /* --- 视图一：主首页内容 --- */
         .center-hero {
             position: absolute; inset: 0; z-index: 5;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
@@ -95,20 +94,15 @@
             letter-spacing: 3px; max-width: 600px; line-height: 1.8;
         }
 
-        /* --- 左下角悬浮面板 (完美自适应设备屏幕，永不向上遮挡) --- */
         .floating-side-card {
             position: absolute; left: 4%; bottom: 8vh; z-index: 20;
             background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border);
             padding: clamp(20px, 2.5vw, 30px); backdrop-filter: blur(20px); border-radius: 4px;
-            width: clamp(300px, 25vw, 380px); pointer-events: auto;
+            width: clamp(300px, 25vw, 380px); max-height: 42vh; display: flex; flex-direction: column;
             box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            transition: all 0.5s ease;
-            max-height: 42vh; display: flex; flex-direction: column; /* 严格限制最大高度，防止大设备字体放大撑爆 */
         }
-        .card-tag { color: var(--accent); font-size: 0.7rem; margin-bottom: 10px; letter-spacing: 2px; flex-shrink: 0; }
-        .content-wrapper { position: relative; flex-grow: 1; overflow-y: auto; overflow-x: hidden; padding-right: 4px; }
-        
-        /* 隐藏原生滚动条但保持可滚动，或者赋予极其隐蔽的美化滚动条 */
+        .card-tag { color: var(--accent); font-size: 0.7rem; margin-bottom: 10px; letter-spacing: 2px; }
+        .content-wrapper { position: relative; flex-grow: 1; overflow-y: auto; padding-right: 4px; }
         .content-wrapper::-webkit-scrollbar { width: 3px; }
         .content-wrapper::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
 
@@ -117,60 +111,97 @@
             transform: translateY(10px); transition: all 0.4s ease; pointer-events: none;
         }
         .tab-content.active { opacity: 1; transform: translateY(0); pointer-events: auto; position: relative; }
-        
         .panel-title { font-size: var(--font-size-panel-title); margin: 0 0 12px 0; font-weight: 400; }
         .panel-body { color: rgba(255,255,255,0.6); line-height: 1.8; font-size: clamp(0.8rem, 0.9vw, 0.9rem); margin: 0; }
 
-        /* 空页面及通知特定样式 */
         .empty-state { display: flex; flex-direction: column; gap: 8px; justify-content: center; margin-top: 10px; }
         .empty-line { height: 3px; background: rgba(255,255,255,0.05); border-radius: 2px; width: 100%; position: relative; overflow: hidden;}
         .empty-line::after {
             content: ''; position: absolute; left: -50%; top: 0; height: 100%; width: 30%;
-            background: linear-gradient(90deg, transparent, rgba(0,229,255,0.2), transparent);
-            animation: scan 2s infinite linear;
+            background: linear-gradient(90deg, transparent, rgba(0,229,255,0.2), transparent); animation: scan 2s infinite linear;
         }
 
-        /* --- 辅助组件 (自适应缩放) --- */
+        /* --- 视图二：独立全屏通知公告中心页面 --- */
+        .notification-center-view {
+            z-index: 100; padding: 120px 8% 60px 8%;
+            background: linear-gradient(to top, rgba(3,5,13,0.98), rgba(10,12,22,0.92));
+            backdrop-filter: blur(30px); display: flex; flex-direction: column; gap: 40px;
+        }
+        .noti-header-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px; }
+        .noti-main-title { font-size: clamp(1.8rem, 3vw, 2.8rem); font-weight: 300; margin: 0; letter-spacing: 4px; }
+        .noti-sub-title { font-size: 0.8rem; color: var(--accent); letter-spacing: 2px; margin-top: 8px; font-family: monospace; }
+        
+        /* 右上角高奢返回按钮 */
+        .noti-back-btn {
+            display: flex; align-items: center; gap: 10px; font-size: 0.9rem; color: rgba(255,255,255,0.6);
+            cursor: pointer; transition: 0.3s; border: 1px solid rgba(255,255,255,0.2); padding: 8px 20px; border-radius: 20px;
+        }
+        .noti-back-btn:hover { color: #fff; border-color: var(--accent); box-shadow: 0 0 15px rgba(0,229,255,0.2); }
+        .noti-back-btn span { font-weight: bold; transition: transform 0.4s; display: inline-block; }
+        .noti-back-btn:hover span { transform: rotate(-40deg); color: var(--accent); }
+
+        /* 通知核心双栏自适应架构 */
+        .noti-layout-container { display: flex; gap: 50px; flex-grow: 1; height: calc(100% - 150px); min-height: 0; }
+        
+        /* 左栏：列表 */
+        .noti-sidebar-list { width: 30%; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; }
+        .noti-item-card {
+            background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 20px;
+            border-radius: 6px; cursor: pointer; transition: 0.3s;
+        }
+        .noti-item-card:hover, .noti-item-card.item-active { background: rgba(255,255,255,0.05); border-color: var(--accent); }
+        .noti-item-date { font-size: 0.75rem; color: rgba(255,255,255,0.4); font-family: monospace; }
+        .noti-item-title { font-size: 0.95rem; margin: 8px 0 0 0; font-weight: 400; color: rgba(255,255,255,0.8); }
+        .noti-item-card.item-active .noti-item-title { color: #fff; font-weight: bold; }
+
+        /* 右栏：详情框内容自适应 */
+        .noti-detail-panel {
+            width: 70%; background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.03);
+            border-radius: 8px; padding: 40px; overflow-y: auto; height: 100%;
+        }
+        .noti-detail-panel::-webkit-scrollbar { width: 4px; }
+        .noti-detail-panel::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+        
+        .detail-title { font-size: 1.6rem; margin: 0 0 15px 0; font-weight: 400; color: #fff; border-left: 3px solid var(--accent); padding-left: 15px; }
+        .detail-meta { font-size: 0.85rem; color: rgba(255,255,255,0.4); margin-bottom: 30px; font-family: monospace; padding-left: 18px;}
+        .detail-content { font-size: 0.95rem; color: rgba(255,255,255,0.7); line-height: 2; text-align: justify; padding-left: 18px;}
+        .detail-content p { margin: 0 0 20px 0; }
+
+        /* --- 辅助组件 --- */
         .play-btn {
             position: absolute; left: 4%; top: 52%; z-index: 50;
             width: clamp(40px, 3.5vw, 48px); height: clamp(40px, 3.5vw, 48px); border: 1px solid rgba(255,255,255,0.4);
-            border-radius: 50%; display: flex; justify-content: center; align-items: center;
-            cursor: pointer; transition: 0.3s; pointer-events: auto;
+            border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.3s;
         }
         .play-btn:hover { border-color: #fff; background: rgba(255,255,255,0.1); transform: scale(1.05); }
         .play-btn::after {
-            content: ''; display: block; margin-left: 4px;
-            border-style: solid; border-width: 5px 0 5px 8px;
-            border-color: transparent transparent transparent #fff;
+            content: ''; display: block; margin-left: 4px; border-style: solid; border-width: 5px 0 5px 8px; border-color: transparent transparent transparent #fff;
         }
 
         .arrow {
             position: absolute; top: 50%; transform: translateY(-50%); z-index: 50;
             font-size: clamp(1.2rem, 2vw, 1.8rem); color: rgba(255,255,255,0.3); cursor: pointer; transition: 0.3s;
-            pointer-events: auto;
         }
         .arrow:hover { color: #fff; text-shadow: 0 0 10px #fff; }
-        .arrow-left { left: 3%; }
-        .arrow-right { right: 3%; }
+        .arrow-left { left: 3%; } .arrow-right { right: 3%; }
 
         .bottom-indicator {
             position: absolute; bottom: 3vh; left: 50%; transform: translateX(-50%);
             z-index: 50; display: flex; flex-direction: column; align-items: center; gap: 10px;
+            transition: opacity 0.4s;
         }
         .dots { display: flex; gap: 8px; align-items: center; }
         .dot { width: 5px; height: 5px; background: rgba(255,255,255,0.3); border-radius: 50%; }
         .dot.active { background: #fff; box-shadow: 0 0 8px #fff; }
         .scroll-hint { font-size: 0.75rem; color: rgba(255,255,255,0.3); animation: bounce 2s infinite; }
 
-        /* --- 启动屏 --- */
         #splash-screen {
             position: fixed; inset: 0; display: flex; justify-content: center; align-items: center;
             z-index: 1500; background: #03050d; transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .btn-launch {
             background: transparent; border: 1px solid rgba(255,255,255,0.15);
-            color: #fff; padding: 14px 50px; cursor: pointer; font-size: 0.9rem;
-            letter-spacing: 6px; border-radius: 30px; transition: 0.4s;
+            color: #fff; padding: 14px 50px; cursor: pointer; font-size: 0.9rem; letter-spacing: 6px; border-radius: 30px; transition: 0.4s;
         }
         .btn-launch:hover { border-color: var(--accent); box-shadow: 0 0 30px var(--accent-glow); }
 
@@ -200,7 +231,7 @@
             <div class="icon-btn" onclick="toggleLanguage()">
                 <span>🌐</span><span class="lang-text" id="lang-indicator">EN</span>
             </div>
-            <div class="icon-btn" id="noti-bell" onclick="openInternalNotification()">
+            <div class="icon-btn" id="noti-bell" onclick="navigateToView('notification')">
                 <span>🔔</span>
                 <div class="notification-badge" id="noti-dot"></div>
             </div>
@@ -212,115 +243,145 @@
         <canvas id="star-canvas"></canvas>
         <div class="character-split-layer"></div>
 
-        <div class="center-hero">
-            <h1 class="title-large" id="hero-title">奇迹城</h1>
-            <div class="title-sub">M I R A C L E · C I T Y</div>
-            <p class="quote-text" id="hero-quote">「……原来你真的是这里的设计师啊。」—— 链接已建立，梦想铁道列车正平稳通过中央干线。</p>
+        <div id="view-homepage" class="view-section view-active">
+            <div class="center-hero">
+                <h1 class="title-large" id="hero-title">奇迹城</h1>
+                <div class="title-sub">M I R A C L E · C I T Y</div>
+                <p class="quote-text" id="hero-quote">「……原来你真的是这里的设计师啊。」—— 链接已建立，梦想铁道列车正平稳通过中央干线。</p>
+            </div>
+
+            <div class="play-btn"></div>
+            <div class="arrow arrow-left">〈</div>
+            <div class="arrow arrow-right">〉</div>
+
+            <div class="floating-side-card" id="side-panel">
+                <div class="card-tag" id="panel-tag">// SYSTEM PROTOCOL MONITOR</div>
+                <div class="content-wrapper">
+                    <div id="page-home" class="tab-content active">
+                        <h2 class="panel-title" id="th-title">梦绘未来</h2>
+                        <p class="panel-body" id="th-body">当前运行季：（UTC+8）<br>2026.03.14 - 2026.06.20<br>高轨道星图同步率：100%</p>
+                    </div>
+                    <div id="page-info" class="tab-content">
+                        <h2 class="panel-title" id="ti-title">服务器规格</h2>
+                        <p class="panel-body" id="ti-body">类型：纯净公益核心<br>赛季：S5 梦想纪元<br>状态：高性能全功能节点绿灯</p>
+                    </div>
+                    <div id="page-db" class="tab-content">
+                        <h2 class="panel-title" id="td-title">铁道枢纽中心</h2>
+                        <p class="panel-body" id="td-body">梦想铁道：一号中央主干线<br>浩泽轨交：次区域级轻铁网<br>系统底层：基于 1.19.2 精密架构</p>
+                    </div>
+                    <div id="page-news" class="tab-content">
+                        <h2 class="panel-title" id="tn-title">最新情报</h2>
+                        <div class="empty-state">
+                            <p class="panel-body" id="tn-body" style="color: rgba(255,255,255,0.3)">暂无新消息发布。数据流监控中...</p>
+                            <div class="empty-line"></div>
+                        </div>
+                    </div>
+                    <div id="page-media" class="tab-content">
+                        <h2 class="panel-title" id="tm-title">媒体中心</h2>
+                        <div class="empty-state">
+                            <p class="panel-body" id="tm-body" style="color: rgba(255,255,255,0.3)">视听数据库离线。正在等待理事会广播鉴权...</p>
+                            <div class="empty-line"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="play-btn"></div>
-        <div class="arrow arrow-left">〈</div>
-        <div class="arrow arrow-right">〉</div>
+        <div id="view-notification" class="view-section notification-center-view">
+            <div class="noti-header-area">
+                <div>
+                    <h2 class="noti-main-title" id="nc-main-title">系统广播中心</h2>
+                    <div class="noti-sub-title" id="nc-sub-title">// SYSTEM BROADCAST CORE</div>
+                </div>
+                <div class="noti-back-btn" onclick="navigateToView('homepage')">
+                    <span>＋</span> <font id="nc-back-text">返回主页</font>
+                </div>
+            </div>
+            
+            <div class="noti-layout-container">
+                <div class="noti-sidebar-list">
+                    <div class="noti-item-card item-active" onclick="switchNotiDetail(0, this)">
+                        <div class="noti-item-date">2026-05-17</div>
+                        <div class="noti-item-title" id="ni-t0">关于量子防卫矩阵同步更新说明</div>
+                    </div>
+                    <div class="noti-item-card" onclick="switchNotiDetail(1, this)">
+                        <div class="noti-item-date">2026-05-10</div>
+                        <div class="noti-item-title" id="ni-t1">梦想铁道一号线扩容维护公告</div>
+                    </div>
+                </div>
+                <div class="noti-detail-panel">
+                    <h3 class="detail-title" id="nd-title">关于量子防卫矩阵同步更新说明</h3>
+                    <div class="detail-meta" id="nd-meta">发布时间: 2026-05-17 01:11 // 授权层级: 理事会最高安全部</div>
+                    <div class="detail-content" id="nd-content">
+                        <p>亲爱的设计师及旅居市民：</p>
+                        <p>奇迹市全线量子纠缠防卫矩阵目前已成功更新至底层 1.19.2 精密协议架构。本次技术调整优化了次区域轻铁网络的数据吞吐性能，使高轨道星图同步率恒定保持在 100% 阈值。</p>
+                        <p>感谢您一直以来对奇迹城×MX服务器节点的协同与筑造，祝您本次旅途愉快。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        <div class="bottom-indicator">
+        <div class="bottom-indicator" id="global-indicator">
             <div class="dots">
                 <div class="dot active"></div>
                 <div class="dot"></div>
                 <div class="dot"></div>
                 <div class="dot"></div>
                 <div class="dot"></div>
-                <div class="dot"></div> </div>
+            </div>
             <div class="scroll-hint">➔</div>
         </div>
 
-        <div class="floating-side-card" id="side-panel">
-            <div class="card-tag" id="panel-tag">// SYSTEM PROTOCOL MONITOR</div>
-            <div class="content-wrapper">
-                
-                <div id="page-home" class="tab-content active">
-                    <h2 class="panel-title" id="th-title">梦绘未来</h2>
-                    <p class="panel-body" id="th-body">当前运行季：（UTC+8）<br>2026.03.14 - 2026.06.20<br>高轨道星图同步率：100%</p>
-                </div>
-                
-                <div id="page-info" class="tab-content">
-                    <h2 class="panel-title" id="ti-title">服务器规格</h2>
-                    <p class="panel-body" id="ti-body">类型：纯净公益核心<br>赛季：S5 梦想纪元<br>状态：高性能全功能节点绿灯</p>
-                </div>
-                
-                <div id="page-db" class="tab-content">
-                    <h2 class="panel-title" id="td-title">铁道枢纽中心</h2>
-                    <p class="panel-body" id="td-body">梦想铁道：一号中央主干线<br>浩泽轨交：次区域级轻铁网<br>系统底层：基于 1.19.2 精密架构</p>
-                </div>
-
-                <div id="page-news" class="tab-content">
-                    <h2 class="panel-title" id="tn-title">最新情报</h2>
-                    <div class="empty-state">
-                        <p class="panel-body" id="tn-body" style="color: rgba(255,255,255,0.3)">暂无新消息发布。数据流监控中...</p>
-                        <div class="empty-line"></div>
-                    </div>
-                </div>
-
-                <div id="page-media" class="tab-content">
-                    <h2 class="panel-title" id="tm-title">媒体中心</h2>
-                    <div class="empty-state">
-                        <p class="panel-body" id="tm-body" style="color: rgba(255,255,255,0.3)">视听数据库离线。正在等待理事会广播鉴权...</p>
-                        <div class="empty-line"></div>
-                    </div>
-                </div>
-
-                <div id="page-noti" class="tab-content">
-                    <h2 class="panel-title" id="dialog-title">广播接收通知</h2>
-                    <p class="panel-body" id="dialog-body">【奇迹市理事会公告】<br>欢迎接入梦想铁道总线网。全线量子纠缠防卫矩阵已部署就绪，各区段数据交换正常。祝您在梦绘未来的旅途中旅居愉快。</p>
-                </div>
-
-            </div>
-        </div>
     </div>
 
     <script>
         let currentLang = 'zh';
+        
+        // --- 深度集成独立通知页的数据仓库 ---
         const langData = {
             zh: {
-                launchBtn: "LINK START",
-                logo: "奇迹城 × MX",
+                launchBtn: "LINK START", logo: "奇迹城 × MX",
                 nav: ["主要概览", "世界观", "角色", "消息", "媒体"],
-                heroTitle: "奇迹城",
-                heroQuote: "「……原来你真的是这里的设计师啊。」—— 链接已建立，梦想铁道列车正平稳通过中央干线。",
+                heroTitle: "奇迹城", heroQuote: "「……原来你真的是这里的设计师啊。」—— 链接已建立，梦想铁道列车正平稳通过中央干线。",
                 tag: "// SYSTEM PROTOCOL MONITOR",
-                homeTitle: "梦绘未来",
-                homeBody: "当前运行季：（UTC+8）<br>2026.03.14 - 2026.06.20<br>高轨道星图同步率：100%",
-                infoTitle: "服务器规格",
-                infoBody: "类型：纯净公益核心<br>赛季：S5 梦想纪元<br>状态：高性能全功能节点绿灯",
-                dbTitle: "铁道枢纽中心",
-                dbBody: "梦想铁道：一号中央主干线<br>浩泽轨交：次区域级轻铁网<br>系统底层：基于 1.19.2 精密架构",
-                newsTitle: "最新情报",
-                newsBody: "暂无新消息发布。数据流监控中...",
-                mediaTitle: "媒体中心",
-                mediaBody: "视听数据库离线。正在等待理事会广播鉴权...",
-                dialogTitle: "全局系统通告",
-                dialogBody: "【奇迹市理事会公告】<br>欢迎接入梦想铁道总线网。全线量子纠缠防卫矩阵已部署就绪，各区段数据交换正常。窗口已集成进入主面板，完全自适应且不阻挡视线。"
+                homeTitle: "梦绘未来", homeBody: "当前运行季：（UTC+8）<br>2026.03.14 - 2026.06.20<br>高轨道星图同步率：100%",
+                infoTitle: "服务器规格", infoBody: "类型：纯净公益核心<br>赛季：S5 梦想纪元<br>状态：高性能全功能节点绿灯",
+                dbTitle: "铁道枢纽中心", dbBody: "梦想铁道：一号中央主干线<br>浩泽轨交：次区域级轻铁网<br>系统底层：基于 1.19.2 精密架构",
+                newsTitle: "最新情报", newsBody: "暂无新消息发布。数据流监控中...",
+                mediaTitle: "媒体中心", mediaBody: "视听数据库离线。正在等待理事会广播鉴权...",
+                
+                // 通知中心专属中文
+                ncMain: "系统广播中心", ncBack: "返回主页",
+                notiTitles: ["关于量子防卫矩阵同步更新说明", "梦想铁道一号线扩容维护公告"],
+                notiMetas: ["发布时间: 2026-05-17 // 授权层级: 最高安全部", "发布时间: 2026-05-10 // 授权层级: 轨交枢纽部"],
+                notiContents: [
+                    `<p>亲爱的设计师及旅居市民：</p><p>奇迹市全线量子纠缠防卫矩阵目前已成功更新至底层 1.19.2 精密协议架构。本次技术调整优化了次区域轻铁网络的数据吞吐性能，使高轨道星图同步率恒定保持在 100% 阈值。</p><p>感谢您一直以来对奇迹城×MX服务器节点的协同与筑造，祝您本次航行愉快。</p>`,
+                    `<p>调度通告：</p><p>为了应对日益增长的意识流过载，核心一号中央主干线于今日凌晨进行热插拔式空间扩容。维护期间次区域轻型轨交网络采用备用信道传输，当前绿灯节点已全面恢复。</p>`
+                ]
             },
             en: {
-                launchBtn: "LINK START",
-                logo: "MIRACLE CITY × MX",
+                launchBtn: "LINK START", logo: "MIRACLE CITY × MX",
                 nav: ["OVERVIEW", "WORLD", "CHARACTERS", "NEWS", "MEDIA"],
-                heroTitle: "MIRACLE CITY",
-                heroQuote: "'...So you really are the designer here.' — Connection established. The Dream Railway train is passing through the central mainline smoothly.",
+                heroTitle: "MIRACLE CITY", heroQuote: "'...So you really are the designer here.' — Connection established. The Dream Railway train is passing through the central mainline smoothly.",
                 tag: "// SYSTEM PROTOCOL MONITOR",
-                homeTitle: "FUTURE SKETCH",
-                homeBody: "Current Season: (UTC+8)<br>2026.03.14 - 2026.06.20<br>High-orbit Star Chart Sync: 100%",
-                infoTitle: "SERVER SPECIFICATION",
-                infoBody: "Type: Pure Vanilla Core<br>Season: S5 Era of Dreams<br>Status: High-performance nodes active",
-                dbTitle: "RAILWAY HUB",
-                dbBody: "Dream Rail: Central Mainline No.1<br>Haoze Transit: Sub-regional Light Rail<br>Base Protocol: Built on 1.19.2 Architecture",
-                newsTitle: "LATEST NEWS",
-                newsBody: "No new logs released. Monitoring data streams...",
-                mediaTitle: "MEDIA CENTER",
-                mediaBody: "Audio-visual database offline. Awaiting Council broadcast authorization...",
-                dialogTitle: "SYSTEM BULLETIN",
-                dialogBody: "[Miracle City Council Bulletin]<br>Welcome to the Dream Railway Bus Network. Quantum entanglement defense matrix deployed. The notification is now smoothly unified into the bottom-left panel."
+                homeTitle: "FUTURE SKETCH", homeBody: "Current Season: (UTC+8)<br>2026.03.14 - 2026.06.20<br>High-orbit Star Chart Sync: 100%",
+                infoTitle: "SERVER SPECIFICATION", infoBody: "Type: Pure Vanilla Core<br>Season: S5 Era of Dreams<br>Status: High-performance nodes active",
+                dbTitle: "RAILWAY HUB", dbBody: "Dream Rail: Central Mainline No.1<br>Haoze Transit: Sub-regional Light Rail<br>Base Protocol: Built on 1.19.2 Architecture",
+                newsTitle: "LATEST NEWS", newsBody: "No new logs released. Monitoring data streams...",
+                mediaTitle: "MEDIA CENTER", mediaBody: "Audio-visual database offline. Awaiting Council broadcast authorization...",
+                
+                // 通知中心专属英文
+                ncMain: "BROADCAST CENTER", ncBack: "BACK",
+                notiTitles: ["Quantum Matrix Synchronization Notes", "Dream Rail Mainline No.1 Expansion Notice"],
+                notiMetas: ["Date: 2026-05-17 // Auth: High Security Dep.", "Date: 2026-05-10 // Auth: Transit Hub Dep."],
+                notiContents: [
+                    `<p>Dear Architects and Residents:</p><p>The Quantum Defense Matrix has been successfully synchronized into the base 1.19.2 architecture. This patch improves light rail data transit loops, locking high-orbit chart sync at a stable 100%.</p><p>Thank you for building alongside Miracle City × MX.</p>`,
+                    `<p>System Dispatch Log:</p><p>To prevent localized overlay drift, Central Mainline No.1 underwent dynamic hot-swap volume routing. Sub-regional light rails temporarily operated on reserve frequencies. All node lights are now green.</p>`
+                ]
             }
         };
+
+        let currentActiveNotiIdx = 0;
 
         function updateLocalization() {
             const data = langData[currentLang];
@@ -349,8 +410,14 @@
             document.getElementById('tm-title').innerText = data.mediaTitle;
             document.getElementById('tm-body').innerHTML = data.mediaBody;
 
-            document.getElementById('dialog-title').innerText = data.dialogTitle;
-            document.getElementById('dialog-body').innerHTML = data.dialogBody;
+            // 独立通知页语言同步映射
+            document.getElementById('nc-main-title').innerText = data.ncMain;
+            document.getElementById('nc-back-text').innerText = data.ncBack;
+            document.getElementById('ni-t0').innerText = data.notiTitles[0];
+            document.getElementById('ni-t1').innerText = data.notiTitles[1];
+            
+            // 刷新右侧当前选中的卡片详细文本
+            refreshNotiDetailText();
         }
 
         function toggleLanguage() {
@@ -358,24 +425,41 @@
             updateLocalization();
         }
 
-        // --- 集成式通知页跳转控制 ---
-        function openInternalNotification() {
-            // 消除呼吸提示红点
-            document.getElementById('noti-dot').style.opacity = '0';
+        // --- 核心：全屏独立页面无缝切换引擎 ---
+        function navigateToView(viewName) {
+            // 移除红点
+            if(viewName === 'notification') document.getElementById('noti-dot').style.opacity = '0';
+
+            // 隐藏全部视图层
+            document.querySelectorAll('.view-section').forEach(view => view.classList.remove('view-active'));
             
-            // 取消导航栏的所有高亮状态
-            document.querySelectorAll('.nav-menu .nav-btn').forEach(b => b.classList.remove('active'));
-            // 切入左下角的通知标签面板
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.getElementById('page-noti').classList.add('active');
-            
-            // 底下第6个小圆点亮起
-            const dots = document.querySelectorAll('.dot');
-            dots.forEach(d => d.classList.remove('active'));
-            if(dots[5]) dots[5].classList.add('active');
+            if (viewName === 'homepage') {
+                document.getElementById('view-homepage').classList.add('view-active');
+                document.getElementById('global-indicator').style.opacity = '1'; // 恢复主页指示器
+            } else if (viewName === 'notification') {
+                document.getElementById('view-notification').classList.add('view-active');
+                document.getElementById('global-indicator').style.opacity = '0'; // 隐去指示器
+                // 取消导航菜单高亮，因为进入了全新的平行世界级独立子页
+                document.querySelectorAll('.nav-menu .nav-btn').forEach(b => b.classList.remove('active'));
+            }
         }
 
-        // --- 星空渲染核心逻辑 ---
+        // --- 通知详情阅读项本地切换 ---
+        function switchNotiDetail(index, element) {
+            document.querySelectorAll('.noti-item-card').forEach(card => card.classList.remove('item-active'));
+            element.classList.add('item-active');
+            currentActiveNotiIdx = index;
+            refreshNotiDetailText();
+        }
+
+        function refreshNotiDetailText() {
+            const data = langData[currentLang];
+            document.getElementById('nd-title').innerText = data.notiTitles[currentActiveNotiIdx];
+            document.getElementById('nd-meta').innerText = data.notiMetas[currentActiveNotiIdx];
+            document.getElementById('nd-content').innerHTML = data.notiContents[currentActiveNotiIdx];
+        }
+
+        // --- 经典的粒子与星轨Canvas物理引擎 ---
         const canvas = document.getElementById('star-canvas');
         const ctx = canvas.getContext('2d');
         let stars = [], meteors = [], trainX = -1000, speedMultiplier = 1;
@@ -458,6 +542,9 @@
         }
 
         function switchTab(id, btn) {
+            // 如果处于通知新页面，优先跳回主首页视图
+            navigateToView('homepage');
+
             document.querySelectorAll('.nav-menu .nav-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
