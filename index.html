@@ -16,13 +16,12 @@
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
             background-color: var(--bg-dark) !important;
-            /* 全局依然锁定，防止双滚动条混乱 */
             overflow: hidden; 
             color: #fff; font-family: "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
             user-select: none;
         }
 
-        /* --- 顶部导航栏 (保持死死固定在最上方) --- */
+        /* --- 顶部导航栏 (固定置顶) --- */
         .top-header {
             position: fixed; top: 0; left: 0; width: 100%; height: 64px;
             display: flex; justify-content: space-between; align-items: center;
@@ -68,23 +67,27 @@
         .title-sub { font-size: clamp(0.9rem, 1.5vw, 1.2rem); letter-spacing: 8px; color: rgba(255,255,255,0.6); margin: 15px 0 0 0; }
         .quote-text { margin-top: 5vh; font-size: clamp(0.75rem, 0.9vw, 0.85rem); color: rgba(255,255,255,0.4); letter-spacing: 3px; line-height: 1.8; max-width: 600px; }
 
-        /* --- 核心修改：让整个页面支持向下滚动的独立舞台 --- */
+        /* --- 全屏独立舞台基础样式 --- */
         .fullview-overlay {
             position: fixed; inset: 0; width: 100%; height: 100%; z-index: 1500; 
-            padding: 90px 6% 60px 6%; /* 顶部留足 90px 确保绝不被导航栏挡住 */
+            padding: 90px 6% 40px 6%;
             background: rgba(3, 5, 13, 0.98); backdrop-filter: blur(30px);
             display: flex; flex-direction: column; opacity: 0; pointer-events: none;
             transition: opacity 0.3s ease-in-out;
-            
-            /* 【关键改动】允许整个页面纵向滚动 */
             overflow-y: auto; 
         }
         .fullview-overlay.active-page { opacity: 1; pointer-events: auto; }
 
-        /* 自定义页面整体的滚动条，维持精致感 */
-        .fullview-overlay::-webkit-scrollbar { width: 6px; }
-        .fullview-overlay::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 3px; }
-        .fullview-overlay::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+        /* 统一精致滚动条 */
+        .fullview-overlay::-webkit-scrollbar, 
+        .noti-sidebar-list::-webkit-scrollbar, 
+        .generic-detail-panel::-webkit-scrollbar { width: 4px; }
+        .fullview-overlay::-webkit-scrollbar-thumb, 
+        .noti-sidebar-list::-webkit-scrollbar-thumb, 
+        .generic-detail-panel::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.12); border-radius: 2px; }
+        .fullview-overlay::-webkit-scrollbar-thumb:hover, 
+        .noti-sidebar-list::-webkit-scrollbar-thumb:hover, 
+        .generic-detail-panel::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 
         /* 页面顶部标题与返回 */
         .page-header-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 15px; margin-bottom: 25px; flex-shrink: 0; }
@@ -101,14 +104,10 @@
             display: flex; align-items: center; justify-content: center;
             width: 100%; gap: 30px; position: relative; margin-top: 10px; flex-shrink: 0;
         }
-        
-        /* 视差滑轨高比例设定 */
         .cards-viewport {
             display: flex; align-items: center; justify-content: center;
             width: 85%; height: clamp(240px, 32vh, 380px); position: relative; overflow: hidden;
         }
-        
-        /* 切角卡片 */
         .showcase-card {
             position: absolute; width: 55%; height: 100%;
             background-size: cover; background-position: center;
@@ -129,40 +128,44 @@
 
         .indicator-dots { display: flex; justify-content: center; gap: 12px; margin: 20px 0; align-items: center; flex-shrink: 0; }
         .indicator-dot { width: 6px; height: 6px; background: rgba(255,255,255,0.25); border-radius: 50%; transition: 0.3s; cursor: pointer; }
-        .indicator-dot.active {
-            background: #fff; transform: scale(1.3);
-            box-shadow: 0 0 10px #fff, 0 0 4px var(--accent);
-        }
+        .indicator-dot.active { background: #fff; transform: scale(1.3); box-shadow: 0 0 10px #fff, 0 0 4px var(--accent); }
 
-        /* 【优化改动】下方多文本显示面板不再单独限制高度和滚动，而是自然撑开 */
-        .content-display-panel {
-            width: 100%; max-width: 900px; margin: 10px auto 0 auto;
-            text-align: left;
-        }
+        /* 多文本显示面板 */
+        .content-display-panel { width: 100%; max-width: 900px; margin: 10px auto 0 auto; text-align: left; }
         .dynamic-title-group { margin-bottom: 16px; }
         .dynamic-main-title { font-size: 1.7rem; font-weight: 500; margin: 0 0 8px 0; color: #fff; letter-spacing: 1px; }
         .dynamic-sub-quote { font-size: 0.95rem; color: var(--accent); font-weight: bold; letter-spacing: 1px; margin-bottom: 20px; display: block; }
-        
-        /* 增加底部间距，确保推上去后文字也能完美阅读 */
         .dynamic-body-text { font-size: 0.95rem; color: rgba(255,255,255,0.7); line-height: 1.9; text-align: justify; padding-bottom: 60px; }
 
-        /* --- 告示页面排版调整 --- */
-        .page-layout-container { display: flex; gap: 40px; flex-grow: 1; min-height: 0; }
-        .noti-sidebar-list { width: 30%; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; }
-        .noti-item-card {
-            background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 18px;
-            border-radius: 6px; cursor: pointer; transition: 0.3s;
+        /* ================= 告示页面高阶分栏布局 ================= */
+        .page-layout-container { 
+            display: flex; gap: 30px; flex-grow: 1; height: calc(100vh - 220px); min-height: 400px; overflow: hidden; 
         }
-        .noti-item-card:hover, .noti-item-card.item-active { background: rgba(255,255,255,0.04); border-color: var(--accent); }
-        .noti-item-date { font-size: 0.75rem; color: rgba(255,255,255,0.4); font-family: monospace; }
-        .noti-item-title { font-size: 0.9rem; margin: 8px 0 0 0; font-weight: 400; color: rgba(255,255,255,0.75); }
-        .noti-item-card.item-active .noti-item-title { color: #fff; font-weight: bold; }
         
-        .generic-detail-panel { width: 100%; background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.03); border-radius: 8px; padding: 35px; overflow-y: auto; }
-        .noti-detail-panel { width: 70%; }
-        .detail-title { font-size: 1.4rem; font-weight: 400; margin: 0 0 10px 0; }
-        .detail-meta { font-size: 0.8rem; color: rgba(255,255,255,0.4); font-family: monospace; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 12px; margin-bottom: 20px; }
-        .detail-content { line-height: 1.8; color: rgba(255,255,255,0.7); font-size: 0.9rem; }
+        /* 左侧列表：允许独立内部滚动 */
+        .noti-sidebar-list { 
+            width: 32%; display: flex; flex-direction: column; gap: 10px; 
+            overflow-y: auto; padding-right: 6px; height: 100%;
+        }
+        .noti-item-card {
+            background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); padding: 15px;
+            border-radius: 6px; cursor: pointer; transition: 0.25s; flex-shrink: 0;
+        }
+        .noti-item-card:hover { background: rgba(255,255,255,0.05); border-color: rgba(0, 229, 255, 0.4); }
+        .noti-item-card.item-active { background: rgba(0, 229, 255, 0.05); border-color: var(--accent); box-shadow: inset 0 0 15px rgba(0, 229, 255, 0.05); }
+        .noti-item-date { font-size: 0.75rem; color: rgba(255,255,255,0.35); font-family: monospace; letter-spacing: 0.5px; }
+        .noti-item-title { font-size: 0.88rem; margin: 6px 0 0 0; font-weight: 400; color: rgba(255,255,255,0.7); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .noti-item-card.item-active .noti-item-title { color: #fff; font-weight: 500; }
+        
+        /* 右侧详情：允许独立内部滚动 */
+        .generic-detail-panel { 
+            width: 68%; background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.03); 
+            border-radius: 8px; padding: 35px; overflow-y: auto; height: 100%;
+        }
+        .detail-title { font-size: 1.4rem; font-weight: 400; margin: 0 0 10px 0; color: #fff; letter-spacing: 0.5px; line-height: 1.4; }
+        .detail-meta { font-size: 0.8rem; color: rgba(255,255,255,0.4); font-family: monospace; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 14px; margin-bottom: 22px; }
+        .detail-content { line-height: 1.85; color: rgba(255,255,255,0.75); font-size: 0.92rem; text-align: justify; }
+        .detail-content p { margin: 0 0 16px 0; }
     </style>
 </head>
 <body>
@@ -220,7 +223,6 @@
         </div>
         
         <div class="indicator-dots" id="dots-info"></div>
-
         <div class="content-display-panel">
             <div class="dynamic-title-group">
                 <h3 class="dynamic-main-title" id="info-render-title">加载中...</h3>
@@ -252,7 +254,6 @@
         </div>
         
         <div class="indicator-dots" id="dots-db"></div>
-        
         <div class="content-display-panel">
             <div class="dynamic-title-group">
                 <h3 class="dynamic-main-title" id="db-render-title">加载中...</h3>
@@ -273,20 +274,12 @@
             </div>
         </div>
         <div class="page-layout-container">
-            <div class="noti-sidebar-list">
-                <div class="noti-item-card item-active" onclick="switchNotiDetail(0, this)">
-                    <div class="noti-item-date">2026-05-17</div>
-                    <div class="noti-item-title" id="ni-t0">关于量子防卫矩阵同步更新说明</div>
-                </div>
-                <div class="noti-item-card" onclick="switchNotiDetail(1, this)">
-                    <div class="noti-item-date">2026-05-10</div>
-                    <div class="noti-item-title" id="ni-t1">梦想铁道一号线扩容维护公告</div>
-                </div>
-            </div>
-            <div class="generic-detail-panel noti-detail-panel">
-                <h3 class="detail-title" id="nd-title">关于量子防卫矩阵同步更新说明</h3>
-                <div class="detail-meta" id="nd-meta">发布时间: 2026-05-17 01:11 // 授权层级: 理事会最高安全部</div>
-                <div class="detail-content" id="nd-content"></div>
+            <div class="noti-sidebar-list" id="noti-list-container"></div>
+            
+            <div class="generic-detail-panel">
+                <h3 class="detail-title" id="nd-title">加载中...</h3>
+                <div class="detail-meta" id="nd-meta">加载中...</div>
+                <div class="detail-content" id="nd-content">加载中...</div>
             </div>
         </div>
     </div>
@@ -356,6 +349,40 @@
             }
         };
 
+        // ================= 深度拓展模拟：10 份完备的公告数据集 =================
+        const newsLangData = {
+            zh: {
+                ncMain: "系统广播中心", ncBack: "返回主页",
+                list: [
+                    { date: "2026-05-17", title: "01/ 关于量子防卫矩阵同步更新说明", meta: "发布时间: 2026-05-17 01:11 // 授权层级: 最高安全部", content: `<p>亲爱的设计师及旅居市民：</p><p>奇迹市全线量子纠缠防卫矩阵目前已成功更新至底层 1.19.2 精密协议架构。本次技术调整优化了次区域轻铁网络的数据吞吐性能，使高轨道星图同步率恒定保持在 100% 阈值。</p><p>感谢您一直以来对奇迹城×MX服务器节点的协同与筑造，祝您本次航行愉快。</p>` },
+                    { date: "2026-05-10", title: "02/ 梦想铁道一号线扩容维护公告", meta: "发布时间: 2026-05-10 03:00 // 授权层级: 轨交枢纽部", content: `<p>调度通告：</p><p>为了应对日益增长的意识流过载，核心一号中央主干线于今日凌晨进行热插拔式空间扩容。维护期间次区域轻型轨交网络采用备用信道传输，当前绿灯节点已全面恢复。</p>` },
+                    { date: "2026-05-01", title: "03/ 边缘数据节点高频震荡排查报告", meta: "发布时间: 2026-05-01 14:20 // 授权层级: 矩阵研发部", content: `<p>排查报告：</p><p>监测到位于外围虚空交界处的三个子节点出现周期性高频震荡，经核查为意识外溢冲突导致。已调派逻辑隔离舱进行协议压制，目前波形已恢复正弦常态。</p>` },
+                    { date: "2026-04-25", title: "04/ 第二季筑造度设计密钥下发通知", meta: "发布时间: 2026-04-25 09:00 // 授权层级: 理事会行政厅", content: `<p>下发通知：</p><p>新一季的数字资产身份密钥已通过高轨广播投递。请各位常驻设计师及时登入特区厅终端进行特征码比对与降噪同步，过期未校验的节点将转入静默托管状态。</p>` },
+                    { date: "2026-04-18", title: "05/ 公益核心节点全功能绿灯常驻检查", meta: "发布时间: 2026-04-18 23:45 // 授权层级: 最高安全部", content: `<p>例行安全报告：</p><p>全功能核心矩阵绿灯天线已连续平稳闭环运行超过 3000 循环时。底层协议未见任何未知溢出污染。感谢所有巡读员在暗处的长效观测。</p>` },
+                    { date: "2026-04-11", title: "06/ 关于次区域轻铁网自动调频说明", meta: "发布时间: 2026-04-11 11:15 // 授权层级: 轨交枢纽部", content: `<p>技术白皮书：</p><p>浩泽轨交将全面铺开自动无人自适应调频算法。该算法能根据主干线列车的入站信标，在毫秒级内自动拓扑离散态数字流通道，进一步削减归档时延。</p>` },
+                    { date: "2026-04-03", title: "07/ 外部意识流输入容灾演练预告", meta: "发布时间: 2026-04-03 08:00 // 授权层级: 最高安全部", content: `<p>演练通告：</p><p>特区厅将于本周五开展跨维容灾推演。届时虚空高轨天线将模拟遭遇大范围异常干扰。请各位筑造师做好本地数据快照备份，演练时长预计 15 纳秒时。</p>` },
+                    { date: "2026-03-27", title: "08/ 数字资产特征码防伪升级指南", meta: "发布时间: 2026-03-27 16:30 // 授权层级: 矩阵研发部", content: `<p>升级指南：</p><p>为了防御高智商虚空黑客的潜流渗透，本季密钥新增不对称光解混淆。升级后，所有在中央干线流通的视觉资产均会附带一层隐藏的特区厅防伪水印。</p>` },
+                    { date: "2026-03-20", title: "09/ 特区厅魔法网络行政体系扩编公示", meta: "发布时间: 2026-03-20 10:00 // 授权层级: 理事会行政厅", content: `<p>公示信息：</p><p>因东京行政网络与魔法师领地的耦合度加深，特区厅计划向各行政区派遣驻地联络官（主任职级），用以协调日益复杂的现代行政冲突与资源分配分配。</p>` },
+                    { date: "2026-03-12", title: "10/ 梦想续航：初春繁星筑造纪实录", meta: "发布时间: 2026-03-12 12:00 // 授权层级: 文化记录矩阵", content: `<p>纪实档案：</p><p>春季繁星划过高轨。MX服务器本季度累计完成了 400 余次重大建筑架构的合并申请。星光不仅闪烁在夜空，也深深烙印在每一位深夜无声码字的筑造师眼里。</p>` }
+                ]
+            },
+            en: {
+                ncMain: "BROADCAST CENTER", ncBack: "BACK",
+                list: [
+                    { date: "2026-05-17", title: "01/ Quantum Matrix Synchronization Notes", meta: "Date: 2026-05-17 // Auth: High Security Dep.", content: `<p>Dear Architects and Residents:</p><p>The Quantum Defense Matrix has been successfully synchronized into the base 1.19.2 architecture. This patch improves light rail data transit loops, locking high-orbit chart sync at a stable 100%.</p>` },
+                    { date: "2026-05-10", title: "02/ Dream Rail Mainline No.1 Expansion Notice", meta: "Date: 2026-05-10 // Auth: Transit Hub Dep.", content: `<p>System Dispatch Log:</p><p>To prevent localized overlay drift, Central Mainline No.1 underwent dynamic hot-swap volume routing. Sub-regional light rails temporarily operated on reserve frequencies.</p>` },
+                    { date: "2026-05-01", title: "03/ Peripheral Node High-Frequency Oscillation Report", meta: "Date: 2026-05-01 // Auth: Matrix R&D Dep.", content: `<p>Investigation Log:</p><p>Periodic oscillations were detected at 3 outer nodes. Protocol suppression has been deployed, restoring the signal waveform back to standard sine matrix values.</p>` },
+                    { date: "2026-04-25", title: "04/ Q2 Design Asset Key Distribution Notice", meta: "Date: 2026-04-25 // Auth: Council Admin", content: `<p>Distribution Hub:</p><p>The identity tokens for the new construction cycle have been cast via orbital beams. Please authenticate your nodes at the terminal before expiration.</p>` },
+                    { date: "2026-04-18", title: "05/ Core Grid Green-Light Continuity Inspection", meta: "Date: 2026-04-18 // Auth: High Security Dep.", content: `<p>Routine Safety Audit:</p><p>The global system architecture has run flawlessly for 3,000 cycles. Zero protocol leaks or memory drifts detected. Thanks to all inspectors on duty.</p>` },
+                    { date: "2026-04-11", title: "06/ Sub-regional Light Rail Adaptive Tuning Notes", meta: "Date: 2026-04-11 // Auth: Transit Hub Dep.", content: `<p>Tech Whitepaper:</p><p>Haoze Transit is rolling out its automatic frequency adjustment algorithms. This allows peripheral transport networks to sync seamlessly with mainline schedules.</p>` },
+                    { date: "2026-04-03", title: "07/ External Stream Disaster Recovery Drill", meta: "Date: 2026-04-03 // Auth: High Security Dep.", content: `<p>Simulation Notice:</p><p>The Special District Office will conduct a cross-dimensional disaster simulation this Friday. Please back up local cache files prior to the 15-ns window.</p>` },
+                    { date: "2026-03-27", title: "08/ Anti-Counterfeiting Asset Watermark Guide", meta: "Date: 2026-03-27 // Auth: Matrix R&D Dep.", content: `<p>Upgrade Guide:</p><p>To safeguard structural designs from neural hackers, an asymmetric light-decomposition watermark will now be embedded into all visual records.</p>` },
+                    { date: "2026-03-20", title: "09/ Expansion of Magic Network Bureaucracy", meta: "Date: 2026-03-20 // Auth: Council Admin", content: `<p>Public Notice:</p><p>As urban matrix structures merge closer with Mage Territories, new Liaison Officers will be sent to districts to settle complex administrative conflicts.</p>` },
+                    { date: "2026-03-12", title: "10/ Dream On: Early Spring Architecture Record", meta: "Date: 2026-03-12 // Auth: Cultural Archive Grid", content: `<p>Archival Entry:</p><p>Over 400 major architectural pulls were integrated this season. The starlight is reflected not just in the sky, but in the eyes of everyone building here.</p>` }
+                ]
+            }
+        };
+
         let sliderIndices = { info: 0, db: 0, media: 0 };
 
         function navigateToPage(targetPageId) {
@@ -380,7 +407,6 @@
                 overlayEl.classList.add('active-page');
                 if (navBtnEl) navBtnEl.classList.add('active');
 
-                // 切换页面时重置页面滚动高度到顶部，防止上一页的滚动位置影响当前页
                 overlayEl.scrollTop = 0;
 
                 if (sliderIndices[targetPageId] !== undefined) {
@@ -442,39 +468,54 @@
             document.getElementById(`${pageKey}-render-body`).innerHTML = data.body;
         }
 
-        const newsLangData = {
-            zh: {
-                ncMain: "系统广播中心", ncBack: "返回主页",
-                notiTitles: ["关于量子防卫矩阵同步更新说明", "梦想铁道一号线扩容维护公告"],
-                notiMetas: ["发布时间: 2026-05-17 // 授权层级: 最高安全部", "发布时间: 2026-05-10 // 授权层级: 轨交枢纽部"],
-                notiContents: [
-                    `<p>亲爱的设计师及旅居市民：</p><p>奇迹市全线量子纠缠防卫矩阵目前已成功更新至底层 1.19.2 精密协议架构。本次技术调整优化了次区域轻铁网络的数据吞吐性能，使高轨道星图同步率恒定保持在 100% 阈值。</p><p>感谢您一直以来对奇迹城×MX服务器节点的协同与筑造，祝您本次航行愉快。</p>`,
-                    `<p>调度通告：</p><p>为了应对日益增长 of 意识流过载，核心一号中央主干线于今日凌晨进行热插拔式空间扩容。维护期间次区域轻型轨交网络采用备用信道传输，当前绿灯节点已全面恢复。</p>`
-                ]
-            },
-            en: {
-                ncMain: "BROADCAST CENTER", ncBack: "BACK",
-                notiTitles: ["Quantum Matrix Synchronization Notes", "Dream Rail Mainline No.1 Expansion Notice"],
-                notiMetas: ["Date: 2026-05-17 // Auth: High Security Dep.", "Date: 2026-05-10 // Auth: Transit Hub Dep."],
-                notiContents: [
-                    `<p>Dear Architects and Residents:</p><p>The Quantum Defense Matrix has been successfully synchronized into the base 1.19.2 architecture. This patch improves light rail data transit loops, locking high-orbit chart sync at a stable 100%.</p><p>Thank you for building alongside Miracle City × MX.</p>`,
-                    `<p>System Dispatch Log:</p><p>To prevent localized overlay drift, Central Mainline No.1 underwent dynamic hot-swap volume routing. Sub-regional light rails temporarily operated on reserve frequencies. All node lights are now green.</p>`
-                ]
-            }
-        };
+        // ================= 核心渲染：动态生成 10 个告示节点与触发器 =================
+        function buildNotificationList() {
+            const listContainer = document.getElementById('noti-list-container');
+            if (!listContainer) return;
+
+            const data = newsLangData[currentLang];
+            listContainer.innerHTML = ''; // 清空重新注入
+
+            data.list.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = `noti-item-card ${index === currentActiveNotiIdx ? 'item-active' : ''}`;
+                card.onclick = (e) => switchNotiDetail(index, card);
+
+                const dateEl = document.createElement('div');
+                dateEl.className = 'noti-item-date';
+                dateEl.innerText = item.date;
+
+                const titleEl = document.createElement('div');
+                titleEl.className = 'noti-item-title';
+                titleEl.innerText = item.title;
+
+                card.appendChild(dateEl);
+                card.appendChild(titleEl);
+                listContainer.appendChild(card);
+            });
+
+            refreshNotiDetailText();
+        }
 
         function switchNotiDetail(index, element) {
             document.querySelectorAll('.noti-item-card').forEach(card => card.classList.remove('item-active'));
-            if(element) element.classList.add('item-active');
+            if(element) {
+                element.classList.add('item-active');
+            } else {
+                // 如果是直接调用的（比如语言切换时），去匹配对应的卡片高亮
+                const cards = document.querySelectorAll('.noti-item-card');
+                if(cards[index]) cards[index].classList.add('item-active');
+            }
             currentActiveNotiIdx = index;
             refreshNotiDetailText();
         }
 
         function refreshNotiDetailText() {
-            const data = newsLangData[currentLang];
-            document.getElementById('nd-title').innerText = data.notiTitles[currentActiveNotiIdx];
-            document.getElementById('nd-meta').innerText = data.notiMetas[currentActiveNotiIdx];
-            document.getElementById('nd-content').innerHTML = data.notiContents[currentActiveNotiIdx];
+            const data = newsLangData[currentLang].list[currentActiveNotiIdx];
+            if (!data) return;
+            document.getElementById('nd-title').innerText = data.title;
+            document.getElementById('nd-meta').innerText = data.meta;
+            document.getElementById('nd-content').innerHTML = data.content;
         }
 
         function toggleLanguage() {
@@ -495,21 +536,18 @@
             document.getElementById('nav-media').innerText = navs[4];
 
             document.getElementById('hero-title').innerText = isZh ? "奇迹城" : "MIRACLE CITY"; 
-            document.getElementById('hero-sub-title').innerText = "M I R A C L E · C I T Y"; 
             document.getElementById('hero-quote').innerText = isZh ? "「……原来你真的是这里的设计师啊。」—— 链接已建立，梦想铁道列车正平稳通过中央干线。" : "'...So you really are the designer here.' — Connection established.";
             
             document.getElementById('page-title-info').innerText = isZh ? "世界观设定核心" : "WORLDVIEW MATRIX CORE";
             document.getElementById('page-title-db').innerText = isZh ? "设定" : "SETTINGS"; 
-            document.getElementById('page-sub-db').innerText = isZh ? "// SETTINGS" : "// SETTINGS"; 
             document.getElementById('page-title-media').innerText = isZh ? "媒体视听数据库" : "MEDIA BROADCAST CENTER";
             document.querySelectorAll('.back-home-txt').forEach(el => el.innerText = isZh ? "返回主页" : "BACK");
 
-            const nData = newsLangData[currentLang];
-            document.getElementById('nc-main-title').innerText = nData.ncMain;
-            document.getElementById('nc-back-text').innerText = nData.ncBack;
-            document.getElementById('ni-t0').innerText = nData.notiTitles[0];
-            document.getElementById('ni-t1').innerText = nData.notiTitles[1];
-            refreshNotiDetailText();
+            document.getElementById('nc-main-title').innerText = newsLangData[currentLang].ncMain;
+            document.getElementById('nc-back-text').innerText = newsLangData[currentLang].ncBack;
+            
+            // 构建并刷新10个告示列表
+            buildNotificationList();
 
             ['info', 'db', 'media'].forEach(key => {
                 initSliderDots(key);
