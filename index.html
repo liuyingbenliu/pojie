@@ -10,9 +10,6 @@
             --accent-glow: rgba(0, 229, 255, 0.4);
             --bg-dark: #03050d;
             --glass-border: rgba(255, 255, 255, 0.08);
-            
-            --font-size-hero: clamp(2.5rem, 5vw, 4.5rem);
-            --font-size-sub: clamp(0.9rem, 1.5vw, 1.2rem);
         }
 
         * { box-sizing: border-box; }
@@ -56,127 +53,122 @@
             background-color: var(--bg-dark); 
             opacity: 1; transition: opacity 0.3s ease-in-out;
         }
-        #main-stage.stage-hidden {
-            opacity: 0; pointer-events: none;
-        }
-
-        #star-canvas { position: absolute; inset: 0; z-index: 1; pointer-events: none; background-color: transparent; }
-        
-        /* 黑白切角渐变层 */
+        #main-stage.stage-hidden { opacity: 0; pointer-events: none; }
+        #star-canvas { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
         .character-split-layer {
             position: absolute; inset: 0; z-index: 2;
             background: linear-gradient(135deg, rgba(15, 23, 42, 0.75) 0%, rgba(30, 41, 59, 0.5) 50%, transparent 50.01%);
             backdrop-filter: blur(2px); pointer-events: none;
         }
 
-        .view-homepage-content { width: 100%; height: 100%; position: absolute; inset: 0; }
-
-        .center-hero {
-            position: absolute; inset: 0; z-index: 5;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            pointer-events: none; text-align: center; padding: 0 10%;
-        }
-        .title-large {
-            font-size: var(--font-size-hero); letter-spacing: 12px; font-weight: 300; margin: 0;
-            text-shadow: 0 0 40px rgba(0,0,0,0.8); white-space: nowrap;
-        }
-        .title-sub {
-            font-size: var(--font-size-sub); letter-spacing: 8px; color: rgba(255,255,255,0.6); margin: 15px 0 0 0;
-            font-family: sans-serif;
-        }
-        .quote-text {
-            margin-top: clamp(40px, 8vh, 80px); font-size: clamp(0.75rem, 0.9vw, 0.85rem); color: rgba(255,255,255,0.4);
-            letter-spacing: 3px; max-width: 600px; line-height: 1.8;
-        }
+        /* 纯净主页排版 */
+        .view-homepage-content { width: 100%; height: 100%; position: absolute; inset: 0; display: flex; justify-content: center; align-items: center; }
+        .center-hero { text-align: center; z-index: 5; pointer-events: none; }
+        .title-large { font-size: clamp(2.5rem, 5vw, 4.5rem); letter-spacing: 12px; font-weight: 300; margin: 0; text-shadow: 0 0 40px rgba(0,0,0,0.8); }
+        .title-sub { font-size: clamp(0.9rem, 1.5vw, 1.2rem); letter-spacing: 8px; color: rgba(255,255,255,0.6); margin: 15px 0 0 0; }
+        .quote-text { margin-top: 5vh; font-size: clamp(0.75rem, 0.9vw, 0.85rem); color: rgba(255,255,255,0.4); letter-spacing: 3px; line-height: 1.8; max-width: 600px; }
 
         /* --- 全屏独立页面基础样式 --- */
         .fullview-overlay {
-            position: fixed; inset: 0; width: 100%; height: 100%;
-            z-index: 1500; padding: 120px 8% 60px 8%;
-            background: linear-gradient(to top, rgba(3,5,13,0.99), rgba(8,10,18,0.96));
-            backdrop-filter: blur(35px);
-            display: flex;
-            flex-direction: column; gap: 40px;
-            opacity: 0; pointer-events: none;
+            position: fixed; inset: 0; width: 100%; height: 100%; z-index: 1500; 
+            padding: 90px 6% 30px 6%;
+            background: rgba(3, 5, 13, 0.98); backdrop-filter: blur(30px);
+            display: flex; flex-direction: column; opacity: 0; pointer-events: none;
             transition: opacity 0.3s ease-in-out;
         }
         .fullview-overlay.active-page { opacity: 1; pointer-events: auto; }
 
-        .page-header-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px; }
-        .page-main-title { font-size: clamp(1.8rem, 3vw, 2.8rem); font-weight: 300; margin: 0; letter-spacing: 4px; }
-        .page-sub-title { font-size: 0.8rem; color: var(--accent); letter-spacing: 2px; margin-top: 8px; font-family: monospace; }
-
+        /* 页面顶部标题与返回 */
+        .page-header-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 15px; margin-bottom: 20px; flex-shrink: 0; }
+        .page-main-title { font-size: clamp(1.4rem, 2.2vw, 2.2rem); font-weight: 300; margin: 0; letter-spacing: 3px; }
+        .page-sub-title { font-size: 0.75rem; color: var(--accent); letter-spacing: 2px; margin-top: 5px; font-family: monospace; }
         .page-back-btn {
-            display: flex; align-items: center; gap: 10px; font-size: 0.9rem; color: rgba(255,255,255,0.6);
-            cursor: pointer; transition: 0.3s; border: 1px solid rgba(255,255,255,0.2); padding: 8px 20px; border-radius: 20px;
+            display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: rgba(255,255,255,0.6);
+            cursor: pointer; transition: 0.3s; border: 1px solid rgba(255,255,255,0.15); padding: 6px 16px; border-radius: 20px;
         }
-        .page-back-btn:hover { color: #fff; border-color: var(--accent); box-shadow: 0 0 15px rgba(0,229,255,0.2); }
-        .page-back-btn span { font-weight: bold; transition: transform 0.4s; display: inline-block; }
-        .page-back-btn:hover span { transform: rotate(-40deg); color: var(--accent); }
+        .page-back-btn:hover { color: #fff; border-color: var(--accent); box-shadow: 0 0 15px rgba(0,229,255,0.15); }
 
-        .page-layout-container { display: flex; gap: 50px; flex-grow: 1; height: calc(100% - 150px); min-height: 0; }
-
-        /* 图文展示通用面板 */
-        .generic-detail-panel {
-            width: 100%; background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.03);
-            border-radius: 8px; padding: 40px; overflow-y: auto; height: 100%;
+        /* ================= 核心：还原原版高级卡片轮播区 ================= */
+        .slider-showcase-container {
+            display: flex; align-items: center; justify-content: center;
+            width: 100%; gap: 30px; position: relative; margin-top: 10px; flex-shrink: 0;
         }
-        .generic-detail-panel::-webkit-scrollbar { width: 4px; }
-        .generic-detail-panel::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+        
+        /* 三卡片横向视差滑轨 */
+        .cards-viewport {
+            display: flex; align-items: center; justify-content: center;
+            width: 85%; height: clamp(200px, 28vh, 320px); position: relative; overflow: hidden;
+        }
+        
+        /* 独立卡片样式（高精度还原右上/左下不对称切角） */
+        .showcase-card {
+            position: absolute; width: 55%; height: 100%;
+            background-size: cover; background-position: center;
+            border: 1px solid rgba(255,255,255,0.1);
+            clip-path: polygon(0 0, calc(100% - 40px) 0, 100% 40px, 100% 100%, 40px 100%, 0 calc(100% - 40px));
+            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+            opacity: 0; pointer-events: none; transform: scale(0.8) translateX(0); z-index: 1;
+        }
+        /* 前景激活卡片 */
+        .showcase-card.active { opacity: 1; pointer-events: auto; transform: scale(1) translateX(0); z-index: 3; border-color: var(--accent); }
+        /* 两侧预览卡片 */
+        .showcase-card.prev { opacity: 0.25; transform: scale(0.85) translateX(-70%); z-index: 2; }
+        .showcase-card.next { opacity: 0.25; transform: scale(0.85) translateX(70%); z-index: 2; }
 
-        .section-title { font-size: 1.4rem; margin: 0 0 15px 0; font-weight: 400; color: #fff; border-left: 3px solid var(--accent); padding-left: 15px; }
-        .section-content { font-size: 0.95rem; color: rgba(255,255,255,0.7); line-height: 2; text-align: justify; padding-left: 18px; margin-bottom: 40px; }
+        /* 左右控制箭头 */
+        .slide-arrow {
+            font-size: 2rem; color: rgba(255,255,255,0.3); cursor: pointer; transition: 0.3s;
+            padding: 10px; z-index: 10; user-select: none;
+        }
+        .slide-arrow:hover { color: #fff; text-shadow: 0 0 10px var(--accent); }
 
-        /* 告示列表排版 */
+        /* 轮播点状指示器（还原带星芒或长条高亮状态） */
+        .indicator-dots { display: flex; justify-content: center; gap: 12px; margin: 15px 0; align-items: center; flex-shrink: 0; }
+        .indicator-dot { width: 6px; height: 6px; background: rgba(255,255,255,0.25); border-radius: 50%; transition: 0.3s; cursor: pointer; }
+        .indicator-dot.active {
+            background: #fff; transform: scale(1.3);
+            box-shadow: 0 0 10px #fff, 0 0 4px var(--accent);
+            position: relative;
+        }
+
+        /* 下方多文本深度联动区 */
+        .content-display-panel {
+            flex-grow: 1; width: 100%; max-width: 900px; margin: 0 auto;
+            overflow-y: auto; padding-right: 10px; min-height: 0;
+        }
+        .content-display-panel::-webkit-scrollbar { width: 4px; }
+        .content-display-panel::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+
+        .dynamic-title-group { margin-bottom: 12px; }
+        .dynamic-main-title { font-size: 1.6rem; font-weight: 500; margin: 0 0 6px 0; color: #fff; letter-spacing: 1px; }
+        .dynamic-sub-quote { font-size: 0.9rem; color: var(--accent); font-weight: bold; letter-spacing: 1px; margin-bottom: 15px; display: block; }
+        .dynamic-body-text { font-size: 0.9rem; color: rgba(255,255,255,0.65); line-height: 1.8; text-align: justify; }
+
+        /* --- 告示页面排版（保持原有高效分栏） --- */
+        .page-layout-container { display: flex; gap: 40px; flex-grow: 1; min-height: 0; }
         .noti-sidebar-list { width: 30%; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; }
         .noti-item-card {
-            background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 20px;
+            background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 18px;
             border-radius: 6px; cursor: pointer; transition: 0.3s;
         }
-        .noti-item-card:hover, .noti-item-card.item-active { background: rgba(255,255,255,0.05); border-color: var(--accent); }
+        .noti-item-card:hover, .noti-item-card.item-active { background: rgba(255,255,255,0.04); border-color: var(--accent); }
         .noti-item-date { font-size: 0.75rem; color: rgba(255,255,255,0.4); font-family: monospace; }
-        .noti-item-title { font-size: 0.95rem; margin: 8px 0 0 0; font-weight: 400; color: rgba(255,255,255,0.8); }
+        .noti-item-title { font-size: 0.9rem; margin: 8px 0 0 0; font-weight: 400; color: rgba(255,255,255,0.75); }
         .noti-item-card.item-active .noti-item-title { color: #fff; font-weight: bold; }
-        .noti-detail-panel { width: 70%; }
         
-        .detail-title { font-size: 1.5rem; font-weight: 400; margin: 0 0 10px 0; }
-        .detail-meta { font-size: 0.8rem; color: rgba(255,255,255,0.4); font-family: monospace; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 15px; margin-bottom: 20px; }
-        .detail-content { line-height: 2; color: rgba(255,255,255,0.75); font-size: 0.95rem; }
+        .generic-detail-panel { width: 100%; background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.03); border-radius: 8px; padding: 35px; overflow-y: auto; }
+        .noti-detail-panel { width: 70%; }
+        .detail-title { font-size: 1.4rem; font-weight: 400; margin: 0 0 10px 0; }
+        .detail-meta { font-size: 0.8rem; color: rgba(255,255,255,0.4); font-family: monospace; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 12px; margin-bottom: 20px; }
+        .detail-content { line-height: 1.8; color: rgba(255,255,255,0.7); font-size: 0.9rem; }
 
         .empty-state { display: flex; flex-direction: column; gap: 8px; justify-content: center; margin-top: 10px; }
-        .empty-line { height: 3px; background: rgba(255,255,255,0.05); border-radius: 2px; width: 100%; position: relative; overflow: hidden;}
+        .empty-line { height: 2px; background: rgba(255,255,255,0.05); position: relative; overflow: hidden; }
         .empty-line::after {
             content: ''; position: absolute; left: -50%; top: 0; height: 100%; width: 30%;
             background: linear-gradient(90deg, transparent, rgba(0,229,255,0.2), transparent); animation: scan 2s infinite linear;
         }
         @keyframes scan { 0% { left: -30%; } 100% { left: 110%; } }
-
-        /* --- 主舞台常驻控制组 --- */
-        .play-btn {
-            position: absolute; left: 4%; top: 52%; z-index: 50;
-            width: clamp(40px, 3.5vw, 48px); height: clamp(40px, 3.5vw, 48px); border: 1px solid rgba(255,255,255,0.4);
-            border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.3s;
-        }
-        .play-btn:hover { border-color: #fff; background: rgba(255,255,255,0.1); transform: scale(1.05); }
-        .play-btn::after {
-            content: ''; display: block; margin-left: 4px; border-style: solid; border-width: 5px 0 5px 8px; border-color: transparent transparent transparent #fff;
-        }
-
-        .arrow {
-            position: absolute; top: 50%; transform: translateY(-50%); z-index: 50;
-            font-size: clamp(1.2rem, 2vw, 1.8rem); color: rgba(255,255,255,0.3); cursor: pointer; transition: 0.3s;
-        }
-        .arrow:hover { color: #fff; text-shadow: 0 0 10px #fff; }
-        .arrow-left { left: 3%; } .arrow-right { right: 3%; }
-
-        .bottom-indicator {
-            position: absolute; bottom: 3vh; left: 50%; transform: translateX(-50%);
-            z-index: 50; display: flex; flex-direction: column; align-items: center; gap: 10px;
-        }
-        .dots { display: flex; gap: 8px; align-items: center; }
-        .dot { width: 5px; height: 5px; background: rgba(255,255,255,0.3); border-radius: 50%; }
-        .dot.active { background: #fff; box-shadow: 0 0 8px #fff; }
-        .scroll-hint { font-size: 0.75rem; color: rgba(255,255,255,0.3); }
     </style>
 </head>
 <body>
@@ -203,27 +195,12 @@
     <div id="main-stage">
         <canvas id="star-canvas"></canvas>
         <div class="character-split-layer"></div>
-
         <div class="view-homepage-content">
             <div class="center-hero">
                 <h1 class="title-large" id="hero-title">奇迹城</h1>
                 <div class="title-sub" id="hero-sub-title">M I R A C L E · C I T Y</div>
                 <p class="quote-text" id="hero-quote">「……原来你真的是这里的设计师啊。」—— 链接已建立，梦想铁道列车正平稳通过中央干线。</p>
             </div>
-
-            <div class="play-btn" onclick="moveNextTab()"></div>
-            <div class="arrow arrow-left" onclick="movePrevTab()">〈</div>
-            <div class="arrow arrow-right" onclick="moveNextTab()">〉</div>
-        </div>
-
-        <div class="bottom-indicator">
-            <div class="dots">
-                <div class="dot active"></div>
-                <div class="dot"></div>
-                <div class="dot"></div>
-                <div class="dot"></div>
-            </div>
-            <div class="scroll-hint">➔</div>
         </div>
     </div>
 
@@ -234,17 +211,28 @@
                 <div class="page-sub-title">// WORLDVIEW MATRIX CORE</div>
             </div>
             <div class="page-back-btn" onclick="navigateToPage('home')">
-                <span>＋</span> <font class="back-home-txt">返回主页</font>
+                <span class="back-home-txt">返回主页</span>
             </div>
         </div>
-        <div class="page-layout-container">
-            <div class="generic-detail-panel">
-                <h3 class="section-title" id="ti-title">服务器规格与世界基底</h3>
-                <div class="section-content" id="ti-body">
-                    类型：纯净公益核心<br>赛季：S5 梦想纪元<br>状态：高性能全功能节点绿灯<br><br>
-                    这里是建立在虚空高轨上的数据枢纽。每一位筑造师的意识流在这里交汇，凝聚成了坚不可摧的“奇迹网络”。基于1.19.2精密协议架构，我们在此重谱未来的星图轮廓。
-                </div>
+        
+        <div class="slider-showcase-container">
+            <div class="slide-arrow" onclick="moveSlider('info', -1)">〈</div>
+            <div class="cards-viewport">
+                <div class="showcase-card" style="background-image: linear-gradient(to bottom right, #1e293b, #0f172a);"></div>
+                <div class="showcase-card" style="background-image: linear-gradient(to bottom right, #0f172a, #334155);"></div>
+                <div class="showcase-card" style="background-image: linear-gradient(to bottom right, #1e1b4b, #311042);"></div>
             </div>
+            <div class="slide-arrow" onclick="moveSlider('info', 1)">〉</div>
+        </div>
+        
+        <div class="indicator-dots" id="dots-info"></div>
+
+        <div class="content-display-panel">
+            <div class="dynamic-title-group">
+                <h3 class="dynamic-main-title" id="info-render-title">加载中...</h3>
+                <span class="dynamic-sub-quote" id="info-render-quote">加载中...</span>
+            </div>
+            <div class="dynamic-body-text" id="info-render-body">加载中...</div>
         </div>
     </div>
 
@@ -255,17 +243,25 @@
                 <div class="page-sub-title" id="page-sub-db">// SETTINGS</div>
             </div>
             <div class="page-back-btn" onclick="navigateToPage('home')">
-                <span>＋</span> <font class="back-home-txt">返回主页</font>
+                <span class="back-home-txt">返回主页</span>
             </div>
         </div>
-        <div class="page-layout-container">
-            <div class="generic-detail-panel">
-                <h3 class="section-title" id="td-title">铁道枢纽中心人员及网络编制</h3>
-                <div class="section-content" id="td-body">
-                    梦想铁道：一号中央主干线<br>浩泽轨交：次区域级轻铁网<br>系统底层：基于 1.19.2 精密架构<br><br>
-                    设计师与旅居市民在此分配专属的数字密钥。作为主干线的巡读员或区域轻铁网络的构筑者，每个实体的底层行为轨迹都将深度同步到量子防卫矩阵之中。
-                </div>
+        
+        <div class="slider-showcase-container">
+            <div class="slide-arrow" onclick="moveSlider('db', -1)">〈</div>
+            <div class="cards-viewport">
+                <div class="showcase-card" style="background-image: linear-gradient(to bottom right, #022c22, #064e3b);"></div>
+                <div class="showcase-card" style="background-image: linear-gradient(to bottom right, #172554, #1e3a8a);"></div>
             </div>
+            <div class="slide-arrow" onclick="moveSlider('db', 1)">〉</div>
+        </div>
+        <div class="indicator-dots" id="dots-db"></div>
+        <div class="content-display-panel">
+            <div class="dynamic-title-group">
+                <h3 class="dynamic-main-title" id="db-render-title">加载中...</h3>
+                <span class="dynamic-sub-quote" id="db-render-quote">加载中...</span>
+            </div>
+            <div class="dynamic-body-text" id="db-render-body">加载中...</div>
         </div>
     </div>
 
@@ -276,7 +272,7 @@
                 <div class="page-sub-title" id="nc-sub-title">// SYSTEM BROADCAST CORE</div>
             </div>
             <div class="page-back-btn" onclick="navigateToPage('home')">
-                <span>＋</span> <font id="nc-back-text">返回主页</font>
+                <span id="nc-back-text">返回主页</span>
             </div>
         </div>
         <div class="page-layout-container">
@@ -293,11 +289,7 @@
             <div class="generic-detail-panel noti-detail-panel">
                 <h3 class="detail-title" id="nd-title">关于量子防卫矩阵同步更新说明</h3>
                 <div class="detail-meta" id="nd-meta">发布时间: 2026-05-17 01:11 // 授权层级: 理事会最高安全部</div>
-                <div class="detail-content" id="nd-content">
-                    <p>亲爱的设计师及旅居市民：</p>
-                    <p>奇迹市全线量子纠缠防卫矩阵目前已成功更新至底层 1.19.2 精密协议架构。本次技术调整优化了次区域轻铁网络的数据吞吐性能，使高轨道星图同步率恒定保持 Graves 100% 阈值。</p>
-                    <p>感谢您一直以来对奇迹城×MX服务器节点的协同与筑造，祝您本次旅途愉快。</p>
-                </div>
+                <div class="detail-content" id="nd-content"></div>
             </div>
         </div>
     </div>
@@ -309,17 +301,24 @@
                 <div class="page-sub-title">// MEDIA BROADCAST CENTER</div>
             </div>
             <div class="page-back-btn" onclick="navigateToPage('home')">
-                <span>＋</span> <font class="back-home-txt">返回主页</font>
+                <span class="back-home-txt">返回主页</span>
             </div>
         </div>
-        <div class="page-layout-container">
-            <div class="generic-detail-panel">
-                <h3 class="section-title" id="tm-title">媒体中心</h3>
-                <div class="empty-state">
-                    <p class="panel-body" id="tm-body" style="color: rgba(255,255,255,0.3); padding-left:0;">视听数据库离线。正在等待理事会广播鉴权...</p>
-                    <div class="empty-line"></div>
-                </div>
+        
+        <div class="slider-showcase-container">
+            <div class="slide-arrow" onclick="moveSlider('media', -1)">〈</div>
+            <div class="cards-viewport">
+                <div class="showcase-card" style="background-image: linear-gradient(to bottom right, #4c0519, #881337);"></div>
             </div>
+            <div class="slide-arrow" onclick="moveSlider('media', 1)">〉</div>
+        </div>
+        <div class="indicator-dots" id="dots-media"></div>
+        <div class="content-display-panel">
+            <div class="dynamic-title-group">
+                <h3 class="dynamic-main-title" id="media-render-title">加载中...</h3>
+                <span class="dynamic-sub-quote" id="media-render-quote">加载中...</span>
+            </div>
+            <div class="dynamic-body-text" id="media-render-body">加载中...</div>
         </div>
     </div>
 
@@ -327,22 +326,131 @@
         let currentLang = 'zh';
         let currentActiveNotiIdx = 0;
 
-        const stageTabs = ['home', 'info', 'db', 'media'];
-        let currentStageIdx = 0;
-        
-        const langData = {
+        // 核心动态联动轮播数据集（精准对应图1和图2的切换模式）
+        const sliderData = {
             zh: {
-                logo: "奇迹城 × 梦想", // 左上角Logo中英同步配置
-                nav: ["主要概览", "世界观", "设定", "告示", "媒体"],
-                heroTitle: "奇迹城", heroSub: "M I R A C L E · C I T Y", 
-                heroQuote: "「……原来你真的是这里的设计师啊。」—— 链接已建立，梦想铁道列车正平稳通过中央干线。",
-                infoTitle: "服务器规格与世界基底", infoBody: "类型：纯净公益核心<br>赛季：S5 梦想纪元<br>状态：高性能全功能节点绿灯<br><br>这里是建立在虚空高轨上的数据枢纽。每一位筑造师的意识流在这里交汇，凝聚成了坚不可摧的“奇迹网络”。基于1.19.2精密协议架构，我们在此重谱未来的星图轮廓。",
-                dbTitle: "铁道枢纽中心人员及网络编制", dbBody: "梦想铁道：一号中央主干线<br>浩泽轨交：次区域级轻铁网<br>系统底层：基于 1.19.2 精密架构<br><br>设计师与旅居市民在此分配专属的数字密钥。作为主干线的巡读员或区域轻铁网络的构筑者，每个实体的底层行为轨迹都将深度同步到量子防卫矩阵之中。",
-                mediaTitle: "媒体中心", mediaBody: "视听数据库离线。正在等待理事会广播鉴权...",
-                backTxt: "返回主页",
-                pageTitleInfo: "世界观设定核心", 
-                pageTitleDb: "设定", 
-                pageTitleMedia: "媒体视听数据库",
+                info: [
+                    { title: "概要", quote: "「城市、星星与魔法——」", body: "在这个既然熟悉又陌生的世界里，东京铁塔甫竣工，御台场国际展示场仍在如火如荼地建设着。<br>一名地方公务员「主任」，被调派至名为 &lt;特区厅&gt; 的神秘机构。<br>而他很快便得知，那里其实是统筹管理当代在东京的魔法网络行政体系。" },
+                    { title: "领地", quote: "「生命的根基，亦是魔法的基础」", body: "魔法会反映出魔法师居住的&lt;土地&gt;上的生活型态。<br>自第五时代以来，魔法师信用&lt;行政&gt;这一概念作为理解世界的框架，将自身所需土地的行政概念系统化，并统称为&lt;魔法师的领地&gt;。<br>最终使得行政系统在现代开始与魔法师的领地系统划上等号。<br><br>港区、新宿区、涩谷区、品川区、墨田区……<br>在现代东京，包含23个特别区在内，魔法师的领地依行政区被划分开来。而彼此之间的冲突与对立，也逐渐演变为行政冲突。<br><br>&lt;主任&gt;身为东京的公务员，同时也是魔法师的领地管理者，今后将不得不负责调停与协调这些魔法师之间的行政纠纷……" },
+                    { title: "高轨数据枢纽", quote: "「1.19.2 精密协议架构」", body: "基于虚空高轨搭建的公益核心节点全功能绿灯常驻。每一位筑造师的意识流在这里高频交汇，凝聚成了坚不可摧的数字矩阵网络。在此重谱未来星图的完整轮廓。" }
+                ],
+                db: [
+                    { title: "铁道枢纽人员编制", quote: "// CENTRAL TRANSIT LOG", body: "梦想铁道：一号中央主干线运行正常。<br>浩泽轨交：次区域级轻铁网络全面铺开。<br>设计师与旅居市民在此分配专属的数字密钥。作为主干线的巡读员或区域轻铁网络的构筑者，每个实体的行为轨迹都将深度同步到全网防卫矩阵之中。" },
+                    { title: "量子底层防卫协议", quote: "// PROTOCOL REVISION", body: "系统底层架构坚守完全无附加的公益初衷。安全层级完全交由理事会最高安全部联合托管，全线屏蔽外部逻辑溢出，为设计主干提供最纯净的代码隔离舱环境。" }
+                ],
+                media: [
+                    { title: "媒体视听中心", quote: "// BROADCAST AUDIT", body: "视听数据库当前处于离线静默状态。核心正在持续向远端轨道索取广播鉴权许可，部分历史影像记录已被封存入动态扫描队列。" }
+                ]
+            },
+            en: {
+                info: [
+                    { title: "Synopsis", quote: "'Cities, Stars, and Magic—'", body: "In this both familiar and strange world, Tokyo Tower has just been completed. A local civil servant, the 'Supervisor', is dispatched to a mysterious agency known as the &lt;Special District Office&gt;." },
+                    { title: "Territory", quote: "'The foundation of life is the basis of magic'", body: "Magic reflects the lifestyle on the &lt;Land&gt; where mages reside. Mages use the concept of &lt;Administration&gt; as a framework to understand the world, systematizing their lands into &lt;Mage Territories&gt;." },
+                    { title: "High-Orbit Matrix", quote: "'1.19.2 Precision Architecture'", body: "A high-performance node built on void orbits. The consciousness stream of every architect converges here, shaping an unbreakable 'Miracle Network'." }
+                ],
+                db: [
+                    { title: "Transit Fleet Config", quote: "// CENTRAL TRANSIT LOG", body: "Dream Rail: Central Mainline No.1 active.<br>Haoze Transit: Sub-regional Light Rail system up and running." },
+                    { title: "Quantum Shield Protocol", quote: "// PROTOCOL REVISION", body: "The infrastructure guards pure vanilla gameplay logic. Security states are managed under high-orbit consensus mechanisms." }
+                ],
+                media: [
+                    { title: "Media Terminal", quote: "// BROADCAST AUDIT", body: "Audio-visual terminal is offline. Awaiting secure credential verification sequences from the orbital council network." }
+                ]
+            }
+        };
+
+        // 各页面的轮播当前索引记录器
+        let sliderIndices = { info: 0, db: 0, media: 0 };
+
+        // --- 核心无闪烁导航调度器 ---
+        function navigateToPage(targetPageId) {
+            const stageEl = document.getElementById('main-stage');
+
+            if (targetPageId === 'home') {
+                document.querySelectorAll('.fullview-overlay').forEach(el => el.classList.remove('active-page'));
+                document.querySelectorAll('.nav-menu .nav-btn').forEach(b => b.classList.remove('active'));
+                stageEl.classList.remove('stage-hidden'); 
+                document.getElementById('nav-home').classList.add('active');
+                return;
+            }
+
+            let overlayEl = document.getElementById(`view-${targetPageId}-page`);
+            let navBtnEl = document.getElementById(`nav-${targetPageId}`);
+
+            if (overlayEl) {
+                stageEl.classList.add('stage-hidden'); 
+                document.querySelectorAll('.fullview-overlay').forEach(el => { if (el !== overlayEl) el.classList.remove('active-page'); });
+                document.querySelectorAll('.nav-menu .nav-btn').forEach(b => b.classList.remove('active'));
+
+                overlayEl.classList.add('active-page');
+                if (navBtnEl) navBtnEl.classList.add('active');
+
+                // 进页面时瞬间校准并刷新轮播状态，完美防错位
+                if (sliderIndices[targetPageId] !== undefined) {
+                    renderSlider(targetPageId);
+                }
+            }
+        }
+
+        // --- 高级矩阵卡片轮播渲染引擎 ---
+        function initSliderDots(pageKey) {
+            const dotsContainer = document.getElementById(`dots-${pageKey}`);
+            if (!dotsContainer) return;
+            const items = sliderData[currentLang][pageKey];
+            dotsContainer.innerHTML = '';
+            items.forEach((_, idx) => {
+                const dot = document.createElement('div');
+                dot.className = `indicator-dot ${idx === sliderIndices[pageKey] ? 'active' : ''}`;
+                dot.onclick = () => { sliderIndices[pageKey] = idx; renderSlider(pageKey); };
+                dotsContainer.appendChild(dot);
+            });
+        }
+
+        function moveSlider(pageKey, direction) {
+            const items = sliderData[currentLang][pageKey];
+            let currentIdx = sliderIndices[pageKey];
+            currentIdx += direction;
+            if (currentIdx < 0) currentIdx = items.length - 1;
+            if (currentIdx >= items.length) currentIdx = 0;
+            sliderIndices[pageKey] = currentIdx;
+            renderSlider(pageKey);
+        }
+
+        function renderSlider(pageKey) {
+            const items = sliderData[currentLang][pageKey];
+            const currentIdx = sliderIndices[pageKey];
+            const pageOverlay = document.getElementById(`view-${pageKey}-page`);
+            if (!pageOverlay) return;
+
+            // 1. 联动更新卡片视差样式群 (Active, Prev, Next)
+            const cards = pageOverlay.querySelectorAll('.showcase-card');
+            cards.forEach((card, idx) => {
+                card.className = 'showcase-card';
+                if (idx === currentIdx) {
+                    card.classList.add('active');
+                } else if (idx === (currentIdx - 1 + items.length) % items.length && items.length > 1) {
+                    card.classList.add('prev');
+                } else if (idx === (currentIdx + 1) % items.length && items.length > 1) {
+                    card.classList.add('next');
+                }
+            });
+
+            // 2. 联动更新下方圆点指示灯
+            const dots = pageOverlay.querySelectorAll('.indicator-dot');
+            dots.forEach((dot, idx) => {
+                if(idx === currentIdx) dot.classList.add('active');
+                else dot.classList.remove('active');
+            });
+
+            // 3. 联动更新下方核心数据文本
+            const data = items[currentIdx];
+            document.getElementById(`${pageKey}-render-title`).innerText = data.title;
+            document.getElementById(`${pageKey}-render-quote`).innerText = data.quote;
+            document.getElementById(`${pageKey}-render-body`).innerHTML = data.body;
+        }
+
+        // --- 告示模块数据源 ---
+        const newsLangData = {
+            zh: {
                 ncMain: "系统广播中心", ncBack: "返回主页",
                 notiTitles: ["关于量子防卫矩阵同步更新说明", "梦想铁道一号线扩容维护公告"],
                 notiMetas: ["发布时间: 2026-05-17 // 授权层级: 最高安全部", "发布时间: 2026-05-10 // 授权层级: 轨交枢纽部"],
@@ -352,17 +460,6 @@
                 ]
             },
             en: {
-                logo: "MIRACLE CITY × DREAM", // 左上角Logo英文同步配置
-                nav: ["OVERVIEW", "WORLD", "SETTINGS", "BULLETIN", "MEDIA"],
-                heroTitle: "MIRACLE CITY", heroSub: "M I R A C L E · C I T Y",
-                heroQuote: "'...So you really are the designer here.' — Connection established. The Dream Railway train is passing through the central mainline smoothly.",
-                infoTitle: "SERVER SPECIFICATION & WORLD MATRIX", infoBody: "Type: Pure Vanilla Core<br>Season: S5 Era of Dreams<br>Status: High-performance nodes active.<br><br>This is a data hub built on a void high orbit. The consciousness stream of every architect converges here, forming an unbreakable 'Miracle Network'.",
-                dbTitle: "RAILWAY HUB INFRASTRUCTURE", dbBody: "Dream Rail: Central Mainline No.1<br>Haoze Transit: Sub-regional Light Rail<br>Base Protocol: Built on 1.19.2 Architecture.<br><br>Designers and residents are assigned exclusive digital keys here to synchronize behavior paths into the quantum defense matrix.",
-                mediaTitle: "MEDIA CENTER", mediaBody: "Audio-visual database offline. Awaiting Council broadcast authorization...",
-                backTxt: "BACK",
-                pageTitleInfo: "WORLDVIEW MATRIX CORE", 
-                pageTitleDb: "SETTINGS", 
-                pageTitleMedia: "MEDIA BROADCAST CENTER",
                 ncMain: "BROADCAST CENTER", ncBack: "BACK",
                 notiTitles: ["Quantum Matrix Synchronization Notes", "Dream Rail Mainline No.1 Expansion Notice"],
                 notiMetas: ["Date: 2026-05-17 // Auth: High Security Dep.", "Date: 2026-05-10 // Auth: Transit Hub Dep."],
@@ -373,103 +470,6 @@
             }
         };
 
-        // --- 核心无闪烁导航系统 ---
-        function navigateToPage(targetPageId) {
-            const stageEl = document.getElementById('main-stage');
-
-            if (targetPageId === 'home') {
-                document.querySelectorAll('.fullview-overlay').forEach(el => {
-                    el.classList.remove('active-page');
-                });
-                document.querySelectorAll('.nav-menu .nav-btn').forEach(b => b.classList.remove('active'));
-                
-                stageEl.classList.remove('stage-hidden'); 
-                document.getElementById('nav-home').classList.add('active');
-                return;
-            }
-
-            let overlayEl = null;
-            let navBtnEl = null;
-
-            if (targetPageId === 'info') { overlayEl = document.getElementById('view-info-page'); navBtnEl = document.getElementById('nav-info'); } 
-            else if (targetPageId === 'db') { overlayEl = document.getElementById('view-db-page'); navBtnEl = document.getElementById('nav-db'); } 
-            else if (targetPageId === 'news') { overlayEl = document.getElementById('view-news-page'); navBtnEl = document.getElementById('nav-news'); } 
-            else if (targetPageId === 'media') { overlayEl = document.getElementById('view-media-page'); navBtnEl = document.getElementById('nav-media'); }
-
-            if (overlayEl) {
-                stageEl.classList.add('stage-hidden'); 
-
-                document.querySelectorAll('.fullview-overlay').forEach(el => {
-                    if (el !== overlayEl) {
-                        el.classList.remove('active-page');
-                    }
-                });
-                document.querySelectorAll('.nav-menu .nav-btn').forEach(b => b.classList.remove('active'));
-
-                overlayEl.classList.add('active-page');
-                if (navBtnEl) navBtnEl.classList.add('active');
-            }
-        }
-
-        function movePrevTab() {
-            currentStageIdx--;
-            if (currentStageIdx < 0) currentStageIdx = stageTabs.length - 1;
-            updateStageDots();
-        }
-
-        function moveNextTab() {
-            currentStageIdx++;
-            if (currentStageIdx >= stageTabs.length) currentStageIdx = 0;
-            updateStageDots();
-        }
-
-        function updateStageDots() {
-            const dots = document.querySelectorAll('.dot');
-            dots.forEach(d => d.classList.remove('active'));
-            if(dots[currentStageIdx]) dots[currentStageIdx].classList.add('active');
-        }
-
-        function toggleLanguage() {
-            currentLang = (currentLang === 'zh') ? 'en' : 'zh';
-            updateLocalization();
-        }
-
-        function updateLocalization() {
-            const data = langData[currentLang];
-            document.getElementById('lang-indicator').innerText = currentLang === 'zh' ? 'EN' : '中文';
-            document.getElementById('logo-text').innerText = data.logo; // 切换语言时动态刷新左上角导航栏Logo
-            
-            document.getElementById('nav-home').innerText = data.nav[0];
-            document.getElementById('nav-info').innerText = data.nav[1];
-            document.getElementById('nav-db').innerText = data.nav[2]; 
-            document.getElementById('nav-news').innerText = data.nav[3];
-            document.getElementById('nav-media').innerText = data.nav[4];
-
-            document.getElementById('hero-title').innerText = data.heroTitle; 
-            document.getElementById('hero-sub-title').innerText = data.heroSub; 
-            document.getElementById('hero-quote').innerText = data.heroQuote;
-            
-            document.getElementById('ti-title').innerText = data.infoTitle;
-            document.getElementById('ti-body').innerHTML = data.infoBody;
-            document.getElementById('td-title').innerText = data.dbTitle;
-            document.getElementById('td-body').innerHTML = data.dbBody;
-            document.getElementById('tm-title').innerText = data.mediaTitle;
-            document.getElementById('tm-body').innerHTML = data.mediaBody;
-
-            document.getElementById('page-title-info').innerText = data.pageTitleInfo;
-            document.getElementById('page-title-db').innerText = data.pageTitleDb; 
-            document.getElementById('page-sub-db').innerText = "// " + data.pageTitleDb.toUpperCase(); 
-            document.getElementById('page-title-media').innerText = data.pageTitleMedia;
-            document.querySelectorAll('.back-home-txt').forEach(el => el.innerText = data.backTxt);
-
-            document.getElementById('nc-main-title').innerText = data.ncMain;
-            document.getElementById('nc-back-text').innerText = data.ncBack;
-            document.getElementById('ni-t0').innerText = data.notiTitles[0];
-            document.getElementById('ni-t1').innerText = data.notiTitles[1];
-            
-            refreshNotiDetailText();
-        }
-
         function switchNotiDetail(index, element) {
             document.querySelectorAll('.noti-item-card').forEach(card => card.classList.remove('item-active'));
             if(element) element.classList.add('item-active');
@@ -478,14 +478,53 @@
         }
 
         function refreshNotiDetailText() {
-            const data = langData[currentLang];
-            const tEl = document.getElementById('nd-title');
-            const mEl = document.getElementById('nd-meta');
-            const cEl = document.getElementById('nd-content');
+            const data = newsLangData[currentLang];
+            document.getElementById('nd-title').innerText = data.notiTitles[currentActiveNotiIdx];
+            document.getElementById('nd-meta').innerText = data.notiMetas[currentActiveNotiIdx];
+            document.getElementById('nd-content').innerHTML = data.notiContents[currentActiveNotiIdx];
+        }
+
+        // --- 全局本地化切换器 ---
+        function toggleLanguage() {
+            currentLang = (currentLang === 'zh') ? 'en' : 'zh';
+            updateLocalization();
+        }
+
+        function updateLocalization() {
+            const isZh = (currentLang === 'zh');
+            document.getElementById('lang-indicator').innerText = isZh ? 'EN' : '中文';
+            document.getElementById('logo-text').innerText = isZh ? "奇迹城 × 梦想" : "MIRACLE CITY × DREAM";
             
-            if(tEl) tEl.innerText = data.notiTitles[currentActiveNotiIdx];
-            if(mEl) mEl.innerText = data.notiMetas[currentActiveNotiIdx];
-            if(cEl) cEl.innerHTML = data.notiContents[currentActiveNotiIdx];
+            const navs = isZh ? ["主要概览", "世界观", "设定", "告示", "媒体"] : ["OVERVIEW", "WORLD", "SETTINGS", "BULLETIN", "MEDIA"];
+            document.getElementById('nav-home').innerText = navs[0];
+            document.getElementById('nav-info').innerText = navs[1];
+            document.getElementById('nav-db').innerText = navs[2]; 
+            document.getElementById('nav-news').innerText = navs[3];
+            document.getElementById('nav-media').innerText = navs[4];
+
+            document.getElementById('hero-title').innerText = isZh ? "奇迹城" : "MIRACLE CITY"; 
+            document.getElementById('hero-sub-title').innerText = "M I R A C L E · C I T Y"; 
+            document.getElementById('hero-quote').innerText = isZh ? "「……原来你真的是这里的设计师啊。」—— 链接已建立，梦想铁道列车正平稳通过中央干线。" : "'...So you really are the designer here.' — Connection established.";
+            
+            document.getElementById('page-title-info').innerText = isZh ? "世界观设定核心" : "WORLDVIEW MATRIX CORE";
+            document.getElementById('page-title-db').innerText = isZh ? "设定" : "SETTINGS"; 
+            document.getElementById('page-sub-db').innerText = isZh ? "// SETTINGS" : "// SETTINGS"; 
+            document.getElementById('page-title-media').innerText = isZh ? "媒体视听数据库" : "MEDIA BROADCAST CENTER";
+            document.querySelectorAll('.back-home-txt').forEach(el => el.innerText = isZh ? "返回主页" : "BACK");
+
+            // 告示页面本地化
+            const nData = newsLangData[currentLang];
+            document.getElementById('nc-main-title').innerText = nData.ncMain;
+            document.getElementById('nc-back-text').innerText = nData.ncBack;
+            document.getElementById('ni-t0').innerText = nData.notiTitles[0];
+            document.getElementById('ni-t1').innerText = nData.notiTitles[1];
+            refreshNotiDetailText();
+
+            // 初始化并刷新所有轮播页
+            ['info', 'db', 'media'].forEach(key => {
+                initSliderDots(key);
+                renderSlider(key);
+            });
         }
 
         // --- 粒子星空引擎 ---
@@ -497,16 +536,11 @@
         class Meteor {
             constructor() { this.reset(); }
             reset() {
-                this.x = Math.random() * canvas.width * 0.7;
-                this.y = Math.random() * (canvas.height * 0.3);
-                this.len = Math.random() * 100 + 60;
-                this.speed = Math.random() * 6 + 3;
+                this.x = Math.random() * canvas.width * 0.7; this.y = Math.random() * (canvas.height * 0.3);
+                this.len = Math.random() * 100 + 60; this.speed = Math.random() * 6 + 3;
                 this.color = colors[Math.floor(Math.random() * colors.length)];
             }
-            update() {
-                this.x += this.speed; this.y += this.speed * 0.4;
-                if (this.x > canvas.width || this.y > canvas.height) this.reset();
-            }
+            update() { this.x += this.speed; this.y += this.speed * 0.4; if (this.x > canvas.width || this.y > canvas.height) this.reset(); }
             draw() {
                 ctx.save(); ctx.beginPath();
                 let gradient = ctx.createLinearGradient(this.x, this.y, this.x - this.len, this.y - this.len * 0.4);
@@ -536,8 +570,7 @@
 
         function drawGhostTrain() {
             ctx.save(); ctx.globalAlpha = 0.04; ctx.strokeStyle = "rgba(0, 229, 255, 0.5)"; ctx.lineWidth = 1;
-            const trainY = canvas.height * 0.82; trainX += 1;
-            if (trainX > canvas.width + 600) trainX = -800;
+            const trainY = canvas.height * 0.82; trainX += 1; if (trainX > canvas.width + 600) trainX = -800;
             for(let i=0; i<6; i++) { 
                 let bx = trainX - (i * 125); ctx.strokeRect(bx, trainY, 115, 20);
                 for(let j=0; j<4; j++) ctx.strokeRect(bx + 8 + (j*26), trainY + 4, 18, 6);
@@ -554,9 +587,7 @@
 
         function animate() {
             ctx.fillStyle = 'rgba(3, 5, 13, 0.06)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-            drawGhostTrain();
-            stars.forEach(s => { s.update(); s.draw(); });
-            meteors.forEach(m => { m.update(); m.draw(); });
+            drawGhostTrain(); stars.forEach(s => { s.update(); s.draw(); }); meteors.forEach(m => { m.update(); m.draw(); });
             requestAnimationFrame(animate);
         }
 
