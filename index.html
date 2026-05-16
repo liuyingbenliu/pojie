@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>奇迹城 × MX | 梦想铁道官网</title>
+    <title>奇迹城 × MX | 官方网站</title>
     <style>
         :root {
             --accent: #00e5ff;
+            --accent-glow: rgba(0, 229, 255, 0.4);
             --bg-dark: #070913;
-            --nav-bg: rgba(7, 9, 19, 0.9);
             --glass-border: rgba(255, 255, 255, 0.08);
         }
 
@@ -20,11 +20,11 @@
             user-select: none;
         }
 
-        /* --- 顶部导航栏：最高层级，永远置顶常驻 --- */
+        /* --- 1. 顶部导航栏：最高优先级，永远置顶常驻 --- */
         .top-header {
             position: fixed; top: 0; left: 0; width: 100%; height: 64px;
             display: flex; justify-content: space-between; align-items: center;
-            padding: 0 4%; background: var(--nav-bg);
+            padding: 0 4%; background: rgba(7, 9, 19, 0.9);
             backdrop-filter: blur(16px); border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             z-index: 2000;
         }
@@ -41,16 +41,21 @@
             content: '+'; position: absolute; left: -14px; color: var(--accent); font-weight: bold;
         }
 
-        .header-right { display: flex; gap: 24px; color: rgba(255, 255, 255, 0.6); font-size: 1.1rem; }
+        .header-right { display: flex; gap: 24px; color: rgba(255, 255, 255, 0.6); font-size: 1.1rem; align-items: center; }
         .icon-btn { cursor: pointer; transition: 0.3s; }
         .icon-btn:hover { color: #fff; }
+        .lang-indicator { font-size: 0.75rem; letter-spacing: 1px; font-weight: bold; border: 1px solid rgba(255,255,255,0.3); padding: 2px 6px; border-radius: 3px; margin-left: 4px; }
 
-        /* --- 核心舞台容器 --- */
+        /* --- 2. 动态粒子背景层（置于底层） --- */
+        #star-canvas { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+        .background-dim-overlay { position: absolute; inset: 0; z-index: 2; background: rgba(7, 9, 19, 0.3); pointer-events: none; }
+
+        /* --- 3. 核心舞台中央视口区域 --- */
         #viewport-container {
             position: relative; width: 100%; height: 100%; z-index: 10;
         }
 
-        /* 页面视口基类：点击后瞬间切换 */
+        /* 页面视口基类 */
         .view-section {
             position: absolute; inset: 0; width: 100%; height: 100%;
             display: none; padding-top: 64px;
@@ -59,16 +64,16 @@
             display: block;
         }
 
-        /* --- TAB 1: 主要概览（斜切大图KV效果） --- */
+        /* --- TAB 1 样式: 主要概览（截图1的斜切大图KV） --- */
         .hero-banner {
             position: relative; width: 100%; height: 100%;
             background-image: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1920');
             background-size: cover; background-position: center;
         }
-        /* 对角线切片视觉层 */
+        /* 1:1 还原对角线视觉斜切蒙层 */
         .hero-banner::before {
             content: ''; position: absolute; inset: 0;
-            background: linear-gradient(135deg, rgba(7, 9, 19, 0.85) 0%, rgba(15, 23, 42, 0.3) 50%, transparent 50.01%);
+            background: linear-gradient(135deg, rgba(7, 9, 19, 0.85) 0%, rgba(15, 23, 42, 0.2) 50%, transparent 50.01%);
         }
         
         .center-hero-content {
@@ -86,37 +91,39 @@
             margin-top: 12vh; font-size: 0.9rem; color: rgba(255,255,255,0.5); letter-spacing: 2px;
         }
 
-        /* 左下角小播放器与切换箭头 */
+        /* 截图 1 左下角的精致小播放按钮及两侧箭头 */
         .ui-play-btn {
             position: absolute; left: 4%; top: 55%; width: 46px; height: 46px;
             border: 1px solid rgba(255,255,255,0.4); border-radius: 50%;
-            display: flex; justify-content: center; align-items: center; cursor: pointer;
+            display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 50;
         }
         .ui-play-btn::after {
             content: ''; border-style: solid; border-width: 5px 0 5px 8px; border-color: transparent transparent transparent #fff; margin-left: 3px;
         }
-        .ui-arrow { position: absolute; top: 55%; font-size: 1.5rem; color: rgba(255,255,255,0.4); cursor: pointer; }
+        .ui-arrow { position: absolute; top: 55%; font-size: 1.5rem; color: rgba(255,255,255,0.3); cursor: pointer; z-index: 50; transition: 0.2s; }
+        .ui-arrow:hover { color: #fff; text-shadow: 0 0 8px #fff; }
         .ui-arrow-left { left: 3%; } .ui-arrow-right { right: 3%; }
 
-        /* --- 其他TAB通用：横向轮播卡牌布局 --- */
+        /* --- TAB 2, 3, 4, 5 样式: 三联卡牌横向轮播（像素级还原截图2） --- */
         .showcase-container {
             width: 100%; height: 100%; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; padding: 40px 0;
+            justify-content: center; align-items: center; padding: 40px 0; position: relative; z-index: 5;
         }
 
-        /* 还原截图2：三联水平卡牌展示区 */
         .cards-slider-row {
             display: flex; align-items: center; justify-content: center; gap: 30px;
-            width: 100%; max-width: 1400px; height: 45vh; margin-top: 10px;
+            width: 100%; max-width: 1400px; height: 44vh; margin-top: 10px;
         }
+        /* 两侧被裁剪淡化的预览卡片 */
         .side-card-preview {
             width: 240px; height: 85%; background-size: cover; background-position: center;
-            opacity: 0.2; filter: blur(1px); transition: 0.3s;
+            opacity: 0.15; filter: blur(1.5px); transition: 0.3s;
             border: 1px solid var(--glass-border); position: relative;
         }
         .side-card-left { border-radius: 0 24px 24px 0; }
         .side-card-right { border-radius: 24px 0 0 24px; }
 
+        /* 中央高亮的主卡片 */
         .center-main-card {
             flex-grow: 1; max-width: 760px; height: 100%;
             background-size: cover; background-position: center;
@@ -124,22 +131,21 @@
             position: relative; overflow: hidden;
             box-shadow: 0 30px 60px rgba(0,0,0,0.5);
         }
-        /* 顶部圆角切边微调 */
         .center-main-card::after {
             content: ''; position: absolute; inset: 0;
             background: linear-gradient(to top, rgba(7,9,19,0.5), transparent);
         }
 
-        /* 还原截图2：下方说明文本区 */
+        /* 下方多层文本描述区（完美对齐截图2） --- */
         .description-panel {
             width: 100%; max-width: 760px; margin-top: 35px; padding: 0 10px;
         }
-        .desc-title { font-size: 1.8rem; font-weight: 500; margin: 0 0 8px 0; letter-spacing: 2px; }
+        .desc-title { font-size: 1.8rem; font-weight: 500; margin: 0 0 8px 0; letter-spacing: 2px; color: #fff; }
         .desc-subtitle { font-size: 0.9rem; color: var(--accent); letter-spacing: 1px; margin: 0 0 16px 0; }
         .desc-body { font-size: 0.9rem; color: rgba(255,255,255,0.6); line-height: 1.8; text-align: justify; margin: 0; }
         .desc-body p { margin: 0 0 10px 0; }
 
-        /* --- 底部通用指示器 --- */
+        /* --- 4. 底部公共控制组件（点状指示器） --- */
         .view-footer-controls {
             position: absolute; bottom: 4vh; left: 50%; transform: translateX(-50%);
             display: flex; flex-direction: column; align-items: center; gap: 12px; z-index: 100;
@@ -154,7 +160,7 @@
 
     <header class="top-header">
         <div class="header-left">
-            <div class="header-logo" onclick="jumpToSection('home')">奇迹城 × MX</div>
+            <div class="header-logo" id="logo-text" onclick="jumpToSection('home')">奇迹城 × MX</div>
             <nav class="nav-menu">
                 <div class="nav-btn active" id="btn-home" onclick="jumpToSection('home')">主要概览</div>
                 <div class="nav-btn" id="btn-world" onclick="jumpToSection('world')">世界观</div>
@@ -164,20 +170,24 @@
             </nav>
         </div>
         <div class="header-right">
-            <div class="icon-btn">🌐</div>
+            <div class="icon-btn" onclick="toggleLanguage()">🌐<span class="lang-indicator" id="lang-indicator">EN</span></div>
             <div class="icon-btn">🔔</div>
             <div class="icon-btn">🔗</div>
+            <div class="icon-btn">🔇</div>
         </div>
     </header>
+
+    <canvas id="star-canvas"></canvas>
+    <div class="background-dim-overlay"></div>
 
     <div id="viewport-container">
 
         <section id="view-home" class="view-section view-active">
             <div class="hero-banner">
                 <div class="center-hero-content">
-                    <h1 class="main-hero-title">奇迹城</h1>
+                    <h1 class="main-hero-title" id="hero-title">奇迹城</h1>
                     <div class="sub-hero-title">M I R A C L E · C I T Y</div>
-                    <p class="hero-quote">「……原来你真的是这里的设计师啊。」—— 链接已建立，梦想铁道列车正平稳通过中央干线。</p>
+                    <p class="hero-quote" id="hero-quote">「……原来你真的是这里的设计师啊。」—— 链接已建立，梦想铁道列车正平稳通过中央干线。</p>
                 </div>
                 <div class="ui-play-btn"></div>
                 <div class="ui-arrow ui-arrow-left">〈</div>
@@ -193,12 +203,13 @@
                     <div class="side-card-preview side-card-right" style="background-image: url('https://images.unsplash.com/photo-1504639725590-34d0984388bd?q=80&w=400');"></div>
                 </div>
                 <div class="description-panel">
-                    <h2 class="desc-title">领地</h2>
-                    <div class="desc-subtitle">「生命的根基，亦是魔法的基础」</div>
-                    <div class="desc-body">
+                    <h2 class="desc-title" id="tw-title">领地</h2>
+                    <div class="desc-subtitle" id="tw-sub">「生命的根基，亦是魔法的基础」</div>
+                    <div class="desc-body" id="tw-body">
                         <p>魔法会反映出魔法师居住的&lt;土地&gt;上的生活型态。</p>
-                        <p>自第五时代以来，魔法师借由&lt;行政&gt;这一概念作为理解世界的框架，将自身所需土地的行政概念系统化，并统称为&lt;魔法师的领地&gt;。最终使得行政系统在现代开始与魔法师的领地系统划上等号。</p>
-                        <p>浩泽区、新城边缘、中央车站枢纽、高架轨道网络……在现代架构下，不同功能性质的方块领地依行政区划被划分开来，它们之间相互独立却又精密交织。</p>
+                        <p>自第五时代以来，魔法师借由&lt;行政&gt;这一概念作为理解世界的框架，将自身所居土地的行政概念系统化，并统称为&lt;魔法师的领地&gt;。最终使得行政系统在现代开始与魔法师的领地系统划上等号。</p>
+                        <p>港区、新宿区、涩谷区、品川区、墨田区……<br>在现代东京，包含23个特别区在内，魔法师的领地依行政区划被分割开来，而彼此之间的冲突与对立，也逐渐演变为行政冲突。</p>
+                        <p>&lt;主任&gt;身为东京的公务员，同时也是魔法师的领地管理者，今后将不得不负责调停与协调这些魔法师之间的行政纠纷……</p>
                     </div>
                 </div>
             </div>
@@ -212,9 +223,9 @@
                     <div class="side-card-preview side-card-right" style="background-image: url('https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=400');"></div>
                 </div>
                 <div class="description-panel">
-                    <h2 class="desc-title">设计师名册</h2>
-                    <div class="desc-subtitle">「 协同筑造梦想铁道的核心观测者 」</div>
-                    <div class="desc-body">
+                    <h2 class="desc-title" id="tr-title">设计师名册</h2>
+                    <div class="desc-subtitle" id="tr-sub">「 协同筑造梦想铁道的核心观测者 」</div>
+                    <div class="desc-body" id="tr-body">
                         <p>每一位常驻奇迹城的设计师都有着其专属的职能序列。无论是精密轨道交通线的铺设者，还是高空浮岛建筑的设计家，都在 1.19.2 的协议框架下发挥着举足轻重的作用。</p>
                     </div>
                 </div>
@@ -229,9 +240,9 @@
                     <div class="side-card-preview side-card-right" style="background-image: url('https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=400');"></div>
                 </div>
                 <div class="description-panel">
-                    <h2 class="desc-title">系统核心告示</h2>
-                    <div class="desc-subtitle">// SYSTEM REVISIONS AND INFRASTRUCTURE LOGS</div>
-                    <div class="desc-body">
+                    <h2 class="desc-title" id="tn-title">系统核心告示</h2>
+                    <div class="desc-subtitle" id="tn-sub">// SYSTEM REVISIONS LOGS</div>
+                    <div class="desc-body" id="tn-body">
                         <p><strong>[2026-05-17] 量子防卫矩阵同步更新：</strong>全线量子纠缠防卫矩阵已成功适配服务器底层协议，优化次区域轻铁网络吞吐，星图同步率锁定 100%。</p>
                         <p><strong>[2026-05-10] 梦想铁道一号线扩容维护：</strong>核心中央主干线顺利完成热插拔式空间扩容，绿灯节点全面恢复。</p>
                     </div>
@@ -247,9 +258,9 @@
                     <div class="side-card-preview side-card-right" style="background-image: url('https://images.unsplash.com/photo-1516259762381-22954d7d3ad2?q=80&w=400');"></div>
                 </div>
                 <div class="description-panel">
-                    <h2 class="desc-title">视听数据库</h2>
-                    <div class="desc-subtitle">「 奇迹城高轨道星图快照与历史影像 」</div>
-                    <div class="desc-body">
+                    <h2 class="desc-title" id="tm-title">视听数据库</h2>
+                    <div class="desc-subtitle" id="tm-sub">「 奇迹城高轨道星图快照与历史影像 」</div>
+                    <div class="desc-body" id="tm-body">
                         <p>此模块汇集了历届赛季的建筑延时摄影、轨道交通一号线的运行记录以及玩家活动合影录像。目前分布式媒体资源模块已全部完成鉴权校验。</p>
                     </div>
                 </div>
@@ -270,16 +281,61 @@
     </div>
 
     <script>
-        // 核心无Bug瞬间物理切换逻辑
+        // --- 核心多语言机制包 ---
+        let currentLang = 'zh';
+        const langPack = {
+            zh: {
+                logo: "奇迹城 × MX",
+                nav: ["主要概览", "世界观", "角色", "消息", "媒体"],
+                heroTitle: "奇迹城",
+                heroQuote: "「……原来你真的是这里的设计师啊。」—— 链接已建立，梦想铁道列车正平稳通过中央干线。",
+                wTitle: "领地", wSub: "「生命的根基，亦是魔法的基础」",
+                rTitle: "设计师名册", rSub: "「 协同筑造梦想铁道的核心观测者 」",
+                nTitle: "系统核心告示", nSub: "// SYSTEM REVISIONS LOGS",
+                mTitle: "视听数据库", mSub: "「 奇迹城高轨道星图快照与历史影像 」"
+            },
+            en: {
+                logo: "MIRACLE CITY × MX",
+                nav: ["OVERVIEW", "WORLD", "CHARACTERS", "NEWS", "MEDIA"],
+                heroTitle: "MIRACLE CITY",
+                heroQuote: "'...So you really are the designer here.' — Connection established, the Dream Rail train is passing smoothly.",
+                wTitle: "TERRITORY", wSub: "\"The foundation of life, the base of magic.\"",
+                rTitle: "ARCHITECT REGISTRY", rSub: "\"Core observers co-building the dream mainline.\"",
+                nTitle: "CORE BULLETIN", nSub: "// SYSTEM REVISIONS LOGS",
+                mTitle: "MEDIA VAULT", mSub: "\"High-orbit star chart snapshots and records.\""
+            }
+        };
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'zh' ? 'en' : 'zh';
+            const data = langPack[currentLang];
+            
+            document.getElementById('lang-indicator').innerText = currentLang === 'zh' ? 'EN' : '中文';
+            document.getElementById('logo-text').innerText = data.logo;
+            document.getElementById('btn-home').innerText = data.nav[0];
+            document.getElementById('btn-world').innerText = data.nav[1];
+            document.getElementById('btn-roles').innerText = data.nav[2];
+            document.getElementById('btn-news').innerText = data.nav[3];
+            document.getElementById('btn-media').innerText = data.nav[4];
+            
+            document.getElementById('hero-title').innerText = data.heroTitle;
+            document.getElementById('hero-quote').innerText = data.heroQuote;
+            document.getElementById('tw-title').innerText = data.wTitle;
+            document.getElementById('tw-sub').innerText = data.wSub;
+            document.getElementById('tr-title').innerText = data.rTitle;
+            document.getElementById('tr-sub').innerText = data.rSub;
+            document.getElementById('tn-title').innerText = data.nTitle;
+            document.getElementById('tn-sub').innerText = data.nSub;
+            document.getElementById('tm-title').innerText = data.mTitle;
+            document.getElementById('tm-sub').innerText = data.mSub;
+        }
+
+        // --- 核心无 Bug 舞台瞬间轮换引擎 ---
         function jumpToSection(targetId) {
-            // 1. 清理导航菜单激活态
             document.querySelectorAll('.nav-menu .nav-btn').forEach(btn => btn.classList.remove('active'));
-            // 2. 清理舞台页面激活态
             document.querySelectorAll('.view-section').forEach(section => section.classList.remove('view-active'));
-            // 3. 清理底部点状指示器
             document.querySelectorAll('.dots-group .indicator-dot').forEach(dot => dot.classList.remove('dot-active'));
 
-            // 4. 精准激活对应的视图区域
             if (targetId === 'home') {
                 document.getElementById('btn-home').classList.add('active');
                 document.getElementById('view-home').classList.add('view-active');
@@ -302,6 +358,57 @@
                 document.getElementById('dot-4').classList.add('dot-active');
             }
         }
+
+        // --- 动态深空 Canvas 星球粒子轨迹引擎 ---
+        const canvas = document.getElementById('star-canvas');
+        const ctx = canvas.getContext('2d');
+        let stars = [], trainX = -600;
+
+        class Star {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 1.2 + 0.3;
+                this.speed = Math.random() * 0.05 + 0.02;
+            }
+            update() {
+                this.y -= this.speed;
+                if (this.y < 0) { this.y = canvas.height; this.x = Math.random() * canvas.width; }
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.fillStyle = 'rgba(0, 229, 255, ' + (Math.random() * 0.4 + 0.4) + ')';
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            stars = [];
+            for (let i = 0; i < 120; i++) stars.push(new Star());
+        }
+
+        function drawRouteTrain() {
+            ctx.save(); ctx.globalAlpha = 0.05; ctx.strokeStyle = "#00e5ff"; ctx.lineWidth = 1;
+            trainX += 0.8; if (trainX > canvas.width + 500) trainX = -500;
+            const trainY = canvas.height * 0.85;
+            for (let i = 0; i < 4; i++) {
+                ctx.strokeRect(trainX - (i * 85), trainY, 80, 14);
+            }
+            ctx.restore();
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            stars.forEach(s => { s.update(); s.draw(); });
+            drawRouteTrain();
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', initCanvas);
+        window.addEventListener('DOMContentLoaded', () => { initCanvas(); animate(); });
     </script>
 </body>
 </html>
