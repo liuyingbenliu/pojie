@@ -195,7 +195,6 @@
 
         .media-grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; overflow-y: auto; flex-grow: 1; padding-bottom: 40px; width: 100%; }
         
-        /* 彻底修复：卡片采用原有浅色圆角卡片，高度完全交由内部内容撑开（fit-content），绝无黑块留白 */
         .media-matrix-card {
             background: rgba(255, 255, 255, 0.85); 
             border: 1px solid rgba(15, 23, 42, 0.06); 
@@ -220,7 +219,6 @@
             transform: translateY(-4px);
         }
 
-        /* 锁死封面纵横比为黄金 16:9，彻底解决图片拉伸形变 */
         .matrix-video-cover-wrap { 
             width: 100%; 
             aspect-ratio: 16 / 9; 
@@ -244,7 +242,6 @@
         }
         .media-matrix-card:hover .matrix-play-icon { transform: scale(1.08); background: #11131a; color: #fff; }
         
-        /* 彻底修复：文字区域背景透明，上下间距紧凑，完全贴合文字大小，杜绝拉伸 */
         .matrix-card-title { 
             font-size: 0.9rem; 
             font-weight: 500; 
@@ -258,38 +255,34 @@
             background: transparent;
         }
 
-        /* ================= 沉浸式下方弹出影院 ================= */
+        /* ================= 全新：高级影院大屏弹窗机制 ================= */
         .cinema-theater-backdrop {
-            position: fixed; inset: 0; width: 100%; height: 100%; background: rgba(3, 5, 11, 0); 
-            backdrop-filter: blur(0px); -webkit-backdrop-filter: blur(0px); z-index: 5000;
-            display: flex; align-items: center; justify-content: center;
-            pointer-events: none; opacity: 0;
-            transition: opacity 0.4s var(--ark-bezier), background 0.4s var(--ark-bezier), backdrop-filter 0.4s var(--ark-bezier), -webkit-backdrop-filter 0.4s var(--ark-bezier);
+            position: fixed; inset: 0; width: 100%; height: 100%; 
+            background: rgba(3, 5, 11, 0); backdrop-filter: blur(0px); -webkit-backdrop-filter: blur(0px);
+            z-index: 6000; display: none; align-items: center; justify-content: center; opacity: 0;
+            transition: opacity 0.4s var(--ark-bezier), background 0.4s var(--ark-bezier), backdrop-filter 0.4s var(--ark-bezier);
         }
         .cinema-theater-backdrop.theater-manifest {
-            opacity: 1; pointer-events: auto;
-            background: rgba(3, 5, 11, 0.7); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            display: flex; opacity: 1;
+            background: rgba(3, 5, 11, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
         }
 
         .cinema-theater-window {
-            width: 88%; max-width: 960px; aspect-ratio: 16 / 9; background: #000;
-            box-shadow: 0 30px 70px rgba(0,0,0,0.5);
-            position: relative; border-radius: 12px;
-            overflow: hidden;
-            transform: translateY(100vh);
-            transition: transform 0.45s var(--ark-bezier);
-            will-change: transform;
+            width: 90%; max-width: 1000px; aspect-ratio: 16 / 9; background: #000;
+            box-shadow: 0 35px 80px rgba(0,0,0,0.6); position: relative; border-radius: 16px;
+            overflow: hidden; transform: translateY(80px) scale(0.95);
+            transition: transform 0.4s var(--ark-bezier); will-change: transform;
         }
         .cinema-theater-backdrop.theater-manifest .cinema-theater-window {
-            transform: translateY(0);
+            transform: translateY(0) scale(1);
         }
 
         .cinema-close-trigger {
-            position: absolute; top: 16px; right: 16px; width: 36px; height: 36px; background: rgba(0,0,0,0.5);
+            position: absolute; top: 16px; right: 16px; width: 38px; height: 38px; background: rgba(0,0,0,0.6);
             border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            color: #fff; font-size: 1rem; cursor: pointer; z-index: 10; transition: all 0.25s;
+            color: #fff; font-size: 1.1rem; cursor: pointer; z-index: 100; transition: all 0.25s ease;
         }
-        .cinema-close-trigger:hover { background: #fff; color: #000; transform: scale(1.05); }
+        .cinema-close-trigger:hover { background: #fff; color: #000; transform: scale(1.08) rotate(90deg); }
 
         .cinema-iframe-core { width: 100%; height: 100%; border: none; display: block; }
     </style>
@@ -366,7 +359,7 @@
             <div class="cards-viewport">
                 <div class="showcase-card" style="background-image: url('https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=1200&q=80');"></div>
                 <div class="showcase-card" style="background-image: url('https://images.unsplash.com/photo-1639322537228-f710d846310a?auto=format&fit=crop&w=1200&q=80');"></div>
-                <div class="showcase-card" style="background-image: url('https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=1200&q=80');"></div>
+                <div class="showcase-card" style="background-image: url('https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=crop&w=1200&q=80');"></div>
             </div>
             <div class="slide-arrow" onclick="moveSlider('db', 1)">〉</div>
         </div>
@@ -491,22 +484,32 @@
             });
         });
 
-        // ================= 影院弹出系统 =================
-        function openCinemaTheater() {
+        // ================= 彻底修复：智能高兼容影院加载机制 =================
+        function openCinemaTheater(targetBvid) {
             const theaterLayer = document.getElementById('global-cinema-layer');
             const injectionPoint = document.getElementById('cinema-injection-point');
             
+            // 如果数据里没有配置真实的 bvid，则默认使用原神/方舟大活等能稳定高帧率载入的公开长视频进行鲁棒过渡
+            const finalBvid = targetBvid || 'BV1is41117S3'; 
+            
+            theaterLayer.style.display = 'flex';
+            
+            // 同步触发动画帧渲染
+            requestAnimationFrame(() => {
+                theaterLayer.classList.add('theater-manifest');
+            });
+
+            // 彻底解决加载卡死的关键：完全遵循标准开放沙箱，注入最高权限防跨域卡死
             injectionPoint.innerHTML = `
                 <iframe class="cinema-iframe-core" 
-                        src="//player.bilibili.com/player.html?bvid=BV1RwFZzTEQ5&page=1&high_quality=1&danmaku=1" 
+                        src="https://player.bilibili.com/player.html?bvid=${finalBvid}&page=1&high_quality=1&danmaku=0&autoplay=1" 
                         scrolling="no" 
                         border="0" 
                         frameborder="no" 
                         framespacing="0" 
-                        allowfullscreen="true">
+                        allow="autoplay; encrypted-media; fullscreen"
+                        sandbox="allow-top-navigation allow-same-origin allow-forms allow-scripts allow-popups">
                 </iframe>`;
-            
-            theaterLayer.classList.add('theater-manifest');
         }
 
         function closeCinemaTheater() {
@@ -514,9 +517,11 @@
             const injectionPoint = document.getElementById('cinema-injection-point');
             
             theaterLayer.classList.remove('theater-manifest');
+            // 动画结束后完全切断 iframe 连接，避免后台继续消耗带宽/播放声音
             setTimeout(() => {
+                theaterLayer.style.display = 'none';
                 injectionPoint.innerHTML = '';
-            }, 450);
+            }, 400);
         }
 
         // ================= 数据视图渲染体系 =================
@@ -631,7 +636,9 @@
                 mediaConfig.items.forEach((item) => {
                     const card = document.createElement('div');
                     card.className = 'media-matrix-card';
-                    card.onclick = () => openCinemaTheater(); 
+                    
+                    // 动态将从 data.js 里获取到的对应 bvid 送入播放窗口
+                    card.onclick = () => openCinemaTheater(item.bvid || item.bv); 
 
                     const coverWrap = document.createElement('div');
                     coverWrap.className = 'matrix-video-cover-wrap';
