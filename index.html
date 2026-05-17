@@ -283,7 +283,6 @@
                 <h1 class="title-large">奇迹城</h1>
                 <div class="title-sub">M I R A C L E · C I T Y</div>
                 <p class="quote-text">「……原来你真的是这里的设计师啊。」—— 链接已建立，梦想铁道列车正平稳通过中央干线。</p>
-                <!-- 白色背景右箭头 —— 点击进入世界观 -->
                 <div class="hero-arrow-wrap" onclick="navigateToPage('info')" title="进入世界观">
                     <div class="hero-arrow-circle">
                         <svg viewBox="0 0 24 24">
@@ -390,25 +389,28 @@
     <script src="data.js"></script>
 
     <script>
-        // 从全局统一数据源绑定映射
-        const sliderData = { info: window.WEBSITE_DATA.info, db: window.WEBSITE_DATA.db || [] };
-        const newsData = window.WEBSITE_DATA.news;
-        const mediaConfig = window.WEBSITE_DATA.media;
+        // ================= 带有空值全面防御的数据源绑定 =================
+        const safeData = window.WEBSITE_DATA || { info: [], db: [], news: [], media: { tabs: [], items: [] } };
+
+        const sliderData = { 
+            info: safeData.info || [], 
+            db: safeData.db || [] 
+        };
+        const newsData = safeData.news || [];
+        const mediaConfig = safeData.media || { tabs: [], items: [] };
 
         let currentActiveNotiIdx = 0;
         let sliderIndices = { info: 0, db: 0 };
 
-        // ================= 核心 Hend 路由管理器 (完美兼容 GitHub Pages 后缀与防 404 刷新) =================
+        // ================= 核心 Hend 路由管理器 =================
         function navigateToPage(targetPageId, pushState = true) {
             const stageEl = document.getElementById('main-stage');
 
             if (pushState) {
-                // 如果是去首页，直接保持路径名；如果去功能页，带上 ?page= 后缀
                 const newUrl = targetPageId === 'home' ? window.location.pathname : `?page=${targetPageId}`;
                 window.history.pushState({ page: targetPageId }, '', newUrl);
             }
 
-            // 执行页面可见性切换 UI 动画
             if (targetPageId === 'home') {
                 document.querySelectorAll('.fullview-overlay').forEach(el => {
                     el.classList.remove('active-page');
@@ -442,7 +444,6 @@
                 if (navBtnEl) navBtnEl.classList.add('active');
                 overlayEl.scrollTop = 0;
 
-                // 按需渲染或执行进场动画
                 if (sliderIndices[targetPageId] !== undefined) {
                     renderSlider(targetPageId);
                 }
@@ -452,28 +453,22 @@
             }
         }
 
-        // 拦截与解析器：检测页面是不是被 GitHub 404 拦截重定向回来的
         function checkGitHubRedirectAndRoute() {
             const urlParams = new URLSearchParams(window.location.search);
 
             if (urlParams.get('p') !== null) {
-                // 从 404 隐藏通道提取出被重写的真实请求路由
                 const rawPath = urlParams.get('p');
-                // 瞬间抹除 404 产生的加密杂质，还原回原本纯净干净的真实历史记录
                 window.history.replaceState(null, null, window.location.pathname + (urlParams.get('q') ? '?' + urlParams.get('q').replace(/~and~/g, '&') : ''));
 
-                // 二次精准捕获原本的 page 参数，直达指定次级面板
                 const cleanParams = new URLSearchParams(window.location.search);
                 const pageParam = cleanParams.get('page');
                 if (pageParam) navigateToPage(pageParam, false);
             } else {
-                // 如果不是来自刷新重定向，直接判断普通点击链接参数进入
                 const pageParam = urlParams.get('page');
                 if (pageParam) navigateToPage(pageParam, false);
             }
         }
 
-        // 监听浏览器自带的「前进」与「后退」物理按键
         window.addEventListener('popstate', (event) => {
             const page = (event.state && event.state.page) || 'home';
             navigateToPage(page, false);
@@ -484,16 +479,19 @@
             const dotsContainer = document.getElementById(`dots-${pageKey}`);
             if (!dotsContainer) return;
             dotsContainer.innerHTML = '';
-            sliderData[pageKey].forEach((_, idx) => {
-                const dot = document.createElement('div');
-                dot.className = `indicator-dot ${idx === sliderIndices[pageKey] ? 'active' : ''}`;
-                dot.onclick = () => { sliderIndices[pageKey] = idx; renderSlider(pageKey); };
-                dotsContainer.appendChild(dot);
-            });
+            if (sliderData[pageKey]) {
+                sliderData[pageKey].forEach((_, idx) => {
+                    const dot = document.createElement('div');
+                    dot.className = `indicator-dot ${idx === sliderIndices[pageKey] ? 'active' : ''}`;
+                    dot.onclick = () => { sliderIndices[pageKey] = idx; renderSlider(pageKey); };
+                    dotsContainer.appendChild(dot);
+                });
+            }
         }
 
         function moveSlider(pageKey, direction) {
             const items = sliderData[pageKey];
+            if (!items || items.length === 0) return;
             let currentIdx = sliderIndices[pageKey];
             currentIdx += direction;
             if (currentIdx < 0) currentIdx = items.length - 1;
@@ -504,6 +502,7 @@
 
         function renderSlider(pageKey) {
             const items = sliderData[pageKey];
+            if (!items || items.length === 0) return;
             const currentIdx = sliderIndices[pageKey];
             const pageOverlay = document.getElementById(`view-${pageKey}-page`);
             if (!pageOverlay) return;
@@ -523,14 +522,16 @@
             });
 
             const data = items[currentIdx];
-            document.getElementById(`${pageKey}-render-title`).innerText = data.title;
-            document.getElementById(`${pageKey}-render-quote`).innerText = data.quote;
-            document.getElementById(`${pageKey}-render-body`).innerHTML = data.body;
+            if (data) {
+                document.getElementById(`${pageKey}-render-title`).innerText = data.title || '';
+                document.getElementById(`${pageKey}-render-quote`).innerText = data.quote || '';
+                document.getElementById(`${pageKey}-render-body`).innerHTML = data.body || '';
+            }
         }
 
         function buildNotificationList() {
             const listContainer = document.getElementById('noti-list-container');
-            if (!listContainer) return;
+            if (!listContainer || newsData.length === 0) return;
             listContainer.innerHTML = ''; 
 
             newsData.forEach((item, index) => {
@@ -561,11 +562,12 @@
         }
 
         function refreshNotiDetailText() {
+            if (newsData.length === 0) return;
             const data = newsData[currentActiveNotiIdx];
             if (!data) return;
-            document.getElementById('nd-title').innerText = data.title;
-            document.getElementById('nd-meta').innerText = data.meta;
-            document.getElementById('nd-content').innerHTML = data.content;
+            document.getElementById('nd-title').innerText = data.title || '';
+            document.getElementById('nd-meta').innerText = data.meta || '';
+            document.getElementById('nd-content').innerHTML = data.content || '';
         }
 
         function buildMediaLayout() {
@@ -574,40 +576,44 @@
             if (!capsuleContainer || !gridContainer) return;
 
             capsuleContainer.innerHTML = '';
-            mediaConfig.tabs.forEach((tabName) => {
-                const li = document.createElement('li');
-                li.className = 'media-capsule-btn capsule-active';
-                li.innerText = tabName;
-                capsuleContainer.appendChild(li);
-            });
+            if (mediaConfig.tabs) {
+                mediaConfig.tabs.forEach((tabName) => {
+                    const li = document.createElement('li');
+                    li.className = 'media-capsule-btn capsule-active';
+                    li.innerText = tabName;
+                    capsuleContainer.appendChild(li);
+                });
+            }
 
             gridContainer.innerHTML = '';
-            mediaConfig.items.forEach((item) => {
-                const card = document.createElement('div');
-                card.className = 'media-matrix-card';
+            if (mediaConfig.items) {
+                mediaConfig.items.forEach((item) => {
+                    const card = document.createElement('div');
+                    card.className = 'media-matrix-card';
 
-                const coverWrap = document.createElement('div');
-                coverWrap.className = 'matrix-video-cover-wrap';
-                coverWrap.style.backgroundImage = `url('${item.img}')`;
+                    const coverWrap = document.createElement('div');
+                    coverWrap.className = 'matrix-video-cover-wrap';
+                    coverWrap.style.backgroundImage = `url('${item.img}')`;
 
-                const playIndicator = document.createElement('div');
-                playIndicator.className = 'matrix-play-indicator';
+                    const playIndicator = document.createElement('div');
+                    playIndicator.className = 'matrix-play-indicator';
 
-                const playIcon = document.createElement('div');
-                playIcon.className = 'matrix-play-icon';
-                playIcon.innerText = '▶';
+                    const playIcon = document.createElement('div');
+                    playIcon.className = 'matrix-play-icon';
+                    playIcon.innerText = '▶';
 
-                playIndicator.appendChild(playIcon);
-                coverWrap.appendChild(playIndicator);
+                    playIndicator.appendChild(playIcon);
+                    coverWrap.appendChild(playIndicator);
 
-                const titleEl = document.createElement('div');
-                titleEl.className = 'matrix-card-title';
-                titleEl.innerText = item.title;
+                    const titleEl = document.createElement('div');
+                    titleEl.className = 'matrix-card-title';
+                    titleEl.innerText = item.title;
 
-                card.appendChild(coverWrap);
-                card.appendChild(titleEl);
-                gridContainer.appendChild(card);
-            });
+                    card.appendChild(coverWrap);
+                    card.appendChild(titleEl);
+                    gridContainer.appendChild(card);
+                });
+            }
         }
 
         function triggerMediaStaggerAnimation() {
@@ -684,15 +690,12 @@
 
         window.addEventListener('resize', initCanvas);
 
-        // 初始化流程入口
         window.addEventListener('DOMContentLoaded', () => {
             buildNotificationList();
             buildMediaLayout();
             ['info', 'db'].forEach(key => { initSliderDots(key); renderSlider(key); });
             initCanvas(); 
             animate();
-
-            // 【执行路由检查】防刷新死页面与参数跳转控制
             checkGitHubRedirectAndRoute();
         });
     </script>
