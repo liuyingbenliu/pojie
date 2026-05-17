@@ -10,8 +10,6 @@
             --accent-glow: rgba(0, 229, 255, 0.4);
             --bg-dark: #03050d;
             --glass-border: rgba(255, 255, 255, 0.08);
-            
-            /* 明日方舟风格：高爆发、快速切入、极速收尾的非线性曲线 */
             --ark-bezier: cubic-bezier(0.1, 0.8, 0.2, 1);
         }
 
@@ -92,7 +90,7 @@
         .hero-arrow-circle svg { width: 20px; height: 20px; fill: none; stroke: #0f172a; stroke-width: 2.5; }
         .hero-arrow-wrap:hover .hero-arrow-circle { transform: scale(1.1); }
 
-        /* ================= 方舟级视差切页引擎样式 ================= */
+        /* ================= 切页引擎 ================= */
         .fullview-overlay {
             position: fixed; inset: 0; width: 100%; height: 100%; z-index: 1500; 
             padding: 90px 6% 40px 6%;
@@ -116,7 +114,6 @@
         .fullview-overlay.exit-to-left  { opacity: 0; transform: translateX(-100%) scale(0.96); pointer-events: none !important; }
         .fullview-overlay.exit-to-right { opacity: 0; transform: translateX(100%) scale(0.96); pointer-events: none !important; }
 
-        /* 精致滚动条 */
         .fullview-overlay::-webkit-scrollbar, 
         .noti-sidebar-list::-webkit-scrollbar, 
         .generic-detail-panel::-webkit-scrollbar,
@@ -173,7 +170,7 @@
         .detail-content { line-height: 1.85; color: rgba(255,255,255,0.75); font-size: 0.92rem; text-align: justify; }
         .detail-content p { margin: 0 0 16px 0; }
 
-        /* ================= 媒体页面专属布局 ================= */
+        /* ================= 媒体页面（原有浅色高质感设计语言） ================= */
         .media-page-override {
             background: radial-gradient(circle at 50% 30%, rgba(245, 247, 250, 0.96) 0%, rgba(230, 235, 243, 0.98) 100%) !important;
             background-image: url('https://pub-c5e31b5cdafb419a82e69d040106134a.r2.dev/mock-map-bg.svg'), 
@@ -198,45 +195,103 @@
 
         .media-grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; overflow-y: auto; flex-grow: 1; padding-bottom: 40px; width: 100%; }
         
-        /* 修复：卡片本身高度不写死，不再使用 clip-path 以防内容区域和边框被暴力拉伸 */
+        /* 彻底修复：卡片采用原有浅色圆角卡片，高度完全交由内部内容撑开（fit-content），绝无黑块留白 */
         .media-matrix-card {
-            background: #fff; border: 1px solid rgba(15,23,42,0.08); padding: 7px; border-radius: 6px; 
-            box-shadow: 0 4px 14px rgba(15,23,42,0.03);
-            cursor: pointer; position: relative; width: 100%; height: fit-content;
-            opacity: 0; transform: translateX(-20px) scale(0.96);
-            display: flex; flex-direction: column;
+            background: rgba(255, 255, 255, 0.85); 
+            border: 1px solid rgba(15, 23, 42, 0.06); 
+            padding: 0; 
+            border-radius: 12px; 
+            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.04);
+            cursor: pointer; 
+            position: relative; 
+            width: 100%; 
+            height: fit-content;
+            overflow: hidden;
+            opacity: 0; 
+            transform: translateY(20px);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.4s var(--ark-bezier), box-shadow 0.4s var(--ark-bezier), border-color 0.4s var(--ark-bezier);
         }
-        .media-matrix-card.reveal-manifest { opacity: 1; transform: translateX(0) scale(1); transition: opacity 0.45s var(--ark-bezier), transform 0.45s var(--ark-bezier); }
-        .media-matrix-card:hover { border-color: #11131a; box-shadow: 0 8px 24px rgba(17,19,26,0.12); }
+        .media-matrix-card.reveal-manifest { opacity: 1; transform: translateY(0); transition: opacity 0.45s var(--ark-bezier), transform 0.45s var(--ark-bezier); }
+        .media-matrix-card:hover { 
+            border-color: rgba(15, 23, 42, 0.15); 
+            box-shadow: 0 16px 36px rgba(15, 23, 42, 0.08); 
+            transform: translateY(-4px);
+        }
 
-        /* 修复：将精细的方舟式右上、左下战术切角只限制在 16:9 的视频播放外壳上 */
+        /* 锁死封面纵横比为黄金 16:9，彻底解决图片拉伸形变 */
         .matrix-video-cover-wrap { 
-            width: 100%; aspect-ratio: 16 / 9; position: relative; overflow: hidden; 
-            clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
-            background: #000; flex-shrink: 0;
+            width: 100%; 
+            aspect-ratio: 16 / 9; 
+            position: relative; 
+            overflow: hidden; 
+            background: #000;
+            flex-shrink: 0;
         }
-        /* 锁死图片纵横比，不给任何拉伸的机会 */
         .matrix-video-cover-wrap img {
             width: 100%; height: 100%; object-fit: cover; display: block;
-            transition: transform 0.4s var(--ark-bezier);
+            transition: transform 0.5s var(--ark-bezier);
         }
-        .media-matrix-card:hover .matrix-video-cover-wrap img { transform: scale(1.05); }
+        .media-matrix-card:hover .matrix-video-cover-wrap img { transform: scale(1.04); }
 
-        .matrix-play-indicator { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.15); transition: background 0.3s; z-index: 2; }
-        .media-matrix-card:hover .matrix-play-indicator { background: rgba(0,0,0,0.3); }
+        .matrix-play-indicator { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.1); transition: background 0.3s; z-index: 2; }
+        .media-matrix-card:hover .matrix-play-indicator { background: rgba(0,0,0,0.25); }
         
         .matrix-play-icon {
-            width: 46px; height: 46px; background: rgba(255,255,255,0.95); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #11131a;
-            font-size: 1.1rem; padding-left: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: all 0.3s var(--ark-bezier);
+            width: 50px; height: 50px; background: #ffffff; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #11131a;
+            font-size: 1.2rem; padding-left: 4px; box-shadow: 0 6px 16px rgba(0,0,0,0.12); transition: all 0.3s var(--ark-bezier);
         }
-        .media-matrix-card:hover .matrix-play-icon { transform: scale(1.1); background: #11131a; color: #fff; box-shadow: 0 0 15px rgba(0, 229, 255, 0.4); }
+        .media-matrix-card:hover .matrix-play-icon { transform: scale(1.08); background: #11131a; color: #fff; }
         
-        /* 修复：文字紧贴图片下方，由文字内容自然撑起卡片下半部分，杜绝大片留白 */
+        /* 彻底修复：文字区域背景透明，上下间距紧凑，完全贴合文字大小，杜绝拉伸 */
         .matrix-card-title { 
-            font-size: 0.88rem; font-weight: 600; color: #1e293b; 
-            margin: 12px 4px 6px 4px; 
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: 0.5px; 
+            font-size: 0.9rem; 
+            font-weight: 500; 
+            color: #1e293b; 
+            margin: 0;
+            padding: 16px 14px 18px 14px;
+            white-space: nowrap; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+            letter-spacing: 0.3px; 
+            background: transparent;
         }
+
+        /* ================= 沉浸式下方弹出影院 ================= */
+        .cinema-theater-backdrop {
+            position: fixed; inset: 0; width: 100%; height: 100%; background: rgba(3, 5, 11, 0); 
+            backdrop-filter: blur(0px); -webkit-backdrop-filter: blur(0px); z-index: 5000;
+            display: flex; align-items: center; justify-content: center;
+            pointer-events: none; opacity: 0;
+            transition: opacity 0.4s var(--ark-bezier), background 0.4s var(--ark-bezier), backdrop-filter 0.4s var(--ark-bezier), -webkit-backdrop-filter 0.4s var(--ark-bezier);
+        }
+        .cinema-theater-backdrop.theater-manifest {
+            opacity: 1; pointer-events: auto;
+            background: rgba(3, 5, 11, 0.7); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+        }
+
+        .cinema-theater-window {
+            width: 88%; max-width: 960px; aspect-ratio: 16 / 9; background: #000;
+            box-shadow: 0 30px 70px rgba(0,0,0,0.5);
+            position: relative; border-radius: 12px;
+            overflow: hidden;
+            transform: translateY(100vh);
+            transition: transform 0.45s var(--ark-bezier);
+            will-change: transform;
+        }
+        .cinema-theater-backdrop.theater-manifest .cinema-theater-window {
+            transform: translateY(0);
+        }
+
+        .cinema-close-trigger {
+            position: absolute; top: 16px; right: 16px; width: 36px; height: 36px; background: rgba(0,0,0,0.5);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 1rem; cursor: pointer; z-index: 10; transition: all 0.25s;
+        }
+        .cinema-close-trigger:hover { background: #fff; color: #000; transform: scale(1.05); }
+
+        .cinema-iframe-core { width: 100%; height: 100%; border: none; display: block; }
     </style>
 </head>
 <body>
@@ -376,7 +431,7 @@
         const PAGE_SEQUENCE = ['home', 'info', 'db', 'news', 'media'];
         let currentPageId = 'home';
 
-        // ================= 方舟级视差切页路由分配引擎 =================
+        // ================= 路由分配引擎 =================
         function navigateToPage(targetPageId, pushState = true) {
             if (targetPageId === currentPageId) return;
 
