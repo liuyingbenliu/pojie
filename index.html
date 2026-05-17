@@ -17,7 +17,7 @@
             -webkit-tap-highlight-color: transparent !important;
             outline: none !important;
         }
-        
+
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
             background-color: var(--bg-dark) !important;
@@ -45,14 +45,14 @@
         }
         .header-left { display: flex; align-items: center; gap: clamp(20px, 3vw, 40px); }
         .header-logo { font-size: clamp(0.95rem, 1.2vw, 1.1rem); letter-spacing: 4px; font-weight: 600; color: #fff; white-space: nowrap; }
-        
+
         .nav-menu { display: flex; gap: clamp(15px, 2.5vw, 35px); height: 64px; align-items: center; }
         .nav-btn {
             font-size: clamp(0.8rem, 1vw, 0.9rem); color: rgba(255,255,255,0.7); cursor: pointer;
             transition: color 0.3s ease; position: relative; letter-spacing: 1px; white-space: nowrap;
             padding: 8px 0;
         }
-        
+
         .nav-btn::after {
             content: '';
             position: absolute;
@@ -93,10 +93,49 @@
         }
 
         .view-homepage-content { width: 100%; height: 100%; position: absolute; inset: 0; display: flex; justify-content: center; align-items: center; }
-        .center-hero { text-align: center; z-index: 5; pointer-events: none; }
+        .center-hero { text-align: center; z-index: 5; pointer-events: none; display: flex; flex-direction: column; align-items: center; }
         .title-large { font-size: clamp(2.5rem, 5vw, 4.5rem); letter-spacing: 12px; font-weight: 300; margin: 0; text-shadow: 0 0 40px rgba(0,0,0,0.8); }
         .title-sub { font-size: clamp(0.9rem, 1.5vw, 1.2rem); letter-spacing: 8px; color: rgba(255,255,255,0.6); margin: 15px 0 0 0; }
         .quote-text { margin-top: 5vh; font-size: clamp(0.75rem, 0.9vw, 0.85rem); color: rgba(255,255,255,0.4); letter-spacing: 3px; line-height: 1.8; max-width: 600px; }
+
+        /* --- 主页白色背景右箭头 --- */
+        .hero-arrow-wrap {
+            margin-top: 28px;
+            pointer-events: auto;
+            cursor: pointer;
+        }
+        .hero-arrow-circle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            background: #ffffff;
+            border-radius: 50%;
+            box-shadow: 0 0 28px rgba(255, 255, 255, 0.35), 0 4px 18px rgba(0, 0, 0, 0.3);
+            transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1),
+                        box-shadow 0.35s ease;
+        }
+        .hero-arrow-circle svg {
+            width: 20px;
+            height: 20px;
+            fill: none;
+            stroke: #0f172a;
+            stroke-width: 2.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .hero-arrow-wrap:hover .hero-arrow-circle {
+            transform: scale(1.12);
+            box-shadow: 0 0 42px rgba(255, 255, 255, 0.55), 0 6px 22px rgba(0, 0, 0, 0.35);
+        }
+        .hero-arrow-wrap:hover .hero-arrow-circle svg {
+            transform: translateX(3px);
+        }
+        .hero-arrow-wrap:active .hero-arrow-circle {
+            transform: scale(0.94);
+        }
 
         /* --- 全屏独立舞台基础样式 --- */
         .fullview-overlay {
@@ -120,7 +159,7 @@
         .noti-sidebar-list::-webkit-scrollbar-thumb, 
         .generic-detail-panel::-webkit-scrollbar-thumb,
         .media-grid-container::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.12); border-radius: 2px; }
-        
+
         /* 页面顶部标题与返回 */
         .page-header-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 15px; margin-bottom: 25px; flex-shrink: 0; }
         .page-main-title { font-size: clamp(1.4rem, 2.2vw, 2.2rem); font-weight: 300; margin: 0; letter-spacing: 3px; }
@@ -162,7 +201,7 @@
         .noti-item-date { font-size: 0.75rem; color: rgba(255,255,255,0.35); font-family: monospace; letter-spacing: 0.5px; }
         .noti-item-title { font-size: 0.88rem; margin: 6px 0 0 0; font-weight: 400; color: rgba(255,255,255,0.7); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .noti-item-card.item-active .noti-item-title { color: #fff; font-weight: 500; }
-        
+
         .generic-detail-panel { width: 68%; background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.03); border-radius: 8px; padding: 35px; overflow-y: auto; height: 100%; padding-bottom: 40px; }
         .detail-title { font-size: 1.4rem; font-weight: 400; margin: 0 0 10px 0; color: #fff; letter-spacing: 0.5px; line-height: 1.4; }
         .detail-meta { font-size: 0.8rem; color: rgba(255,255,255,0.4); font-family: monospace; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 14px; margin-bottom: 22px; }
@@ -244,6 +283,14 @@
                 <h1 class="title-large">奇迹城</h1>
                 <div class="title-sub">M I R A C L E · C I T Y</div>
                 <p class="quote-text">「……原来你真的是这里的设计师啊。」—— 链接已建立，梦想铁道列车正平稳通过中央干线。</p>
+                <!-- 白色背景右箭头 —— 点击进入世界观 -->
+                <div class="hero-arrow-wrap" onclick="navigateToPage('info')" title="进入世界观">
+                    <div class="hero-arrow-circle">
+                        <svg viewBox="0 0 24 24">
+                            <polyline points="8 5 16 12 8 19"></polyline>
+                        </svg>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -354,7 +401,7 @@
         // ================= 核心 Hend 路由管理器 (完美兼容 GitHub Pages 后缀与防 404 刷新) =================
         function navigateToPage(targetPageId, pushState = true) {
             const stageEl = document.getElementById('main-stage');
-            
+
             if (pushState) {
                 // 如果是去首页，直接保持路径名；如果去功能页，带上 ?page= 后缀
                 const newUrl = targetPageId === 'home' ? window.location.pathname : `?page=${targetPageId}`;
@@ -391,7 +438,7 @@
 
                 overlayEl.classList.add('active-page');
                 overlayEl.style.setProperty('pointer-events', 'auto', 'important'); 
-                
+
                 if (navBtnEl) navBtnEl.classList.add('active');
                 overlayEl.scrollTop = 0;
 
@@ -408,13 +455,13 @@
         // 拦截与解析器：检测页面是不是被 GitHub 404 拦截重定向回来的
         function checkGitHubRedirectAndRoute() {
             const urlParams = new URLSearchParams(window.location.search);
-            
+
             if (urlParams.get('p') !== null) {
                 // 从 404 隐藏通道提取出被重写的真实请求路由
                 const rawPath = urlParams.get('p');
                 // 瞬间抹除 404 产生的加密杂质，还原回原本纯净干净的真实历史记录
                 window.history.replaceState(null, null, window.location.pathname + (urlParams.get('q') ? '?' + urlParams.get('q').replace(/~and~/g, '&') : ''));
-                
+
                 // 二次精准捕获原本的 page 参数，直达指定次级面板
                 const cleanParams = new URLSearchParams(window.location.search);
                 const pageParam = cleanParams.get('page');
@@ -545,7 +592,7 @@
 
                 const playIndicator = document.createElement('div');
                 playIndicator.className = 'matrix-play-indicator';
-                
+
                 const playIcon = document.createElement('div');
                 playIcon.className = 'matrix-play-icon';
                 playIcon.innerText = '▶';
@@ -636,7 +683,7 @@
         }
 
         window.addEventListener('resize', initCanvas);
-        
+
         // 初始化流程入口
         window.addEventListener('DOMContentLoaded', () => {
             buildNotificationList();
@@ -644,7 +691,7 @@
             ['info', 'db'].forEach(key => { initSliderDots(key); renderSlider(key); });
             initCanvas(); 
             animate();
-            
+
             // 【执行路由检查】防刷新死页面与参数跳转控制
             checkGitHubRedirectAndRoute();
         });
