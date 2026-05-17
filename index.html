@@ -11,8 +11,8 @@
             --bg-dark: #03050d;
             --glass-border: rgba(255, 255, 255, 0.08);
             
-            /* 精密非线性曲线：高爆发、高缓动收尾（iOS / Fluent 风格） */
-            --ease-kinetic: cubic-bezier(0.16, 1, 0.3, 1);
+            /* 明日方舟风格：高爆发、快速切入、极速收尾的非线性曲线 */
+            --ark-bezier: cubic-bezier(0.1, 0.8, 0.2, 1);
         }
 
         * { 
@@ -29,17 +29,12 @@
             user-select: none;
         }
 
-        button, input, select, textarea, a, div {
-            -webkit-tap-highlight-color: transparent !important;
-            outline: none !important;
-        }
-
         /* --- 顶部导航栏 --- */
         .top-header {
             position: fixed; top: 0; left: 0; width: 100%; height: 64px;
             display: flex; justify-content: space-between; align-items: center;
-            padding: 0 4%; background: rgba(3, 5, 13, 0.9);
-            backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding: 0 4%; background: rgba(3, 5, 13, 0.85);
+            backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,0.05);
             z-index: 3000;
         }
         .header-left { display: flex; align-items: center; gap: clamp(20px, 3vw, 40px); }
@@ -47,16 +42,15 @@
 
         .nav-menu { display: flex; gap: clamp(15px, 2.5vw, 35px); height: 64px; align-items: center; }
         .nav-btn {
-            font-size: clamp(0.8rem, 1vw, 0.9rem); color: rgba(255,255,255,0.7); cursor: pointer;
-            transition: color 0.3s ease; position: relative; letter-spacing: 1px; white-space: nowrap;
+            font-size: clamp(0.8rem, 1vw, 0.9rem); color: rgba(255,255,255,0.6); cursor: pointer;
+            transition: color 0.2s linear; position: relative; letter-spacing: 1px; white-space: nowrap;
             padding: 8px 0;
         }
-
         .nav-btn::after {
             content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 2px;
             background-color: var(--accent); box-shadow: 0 0 8px var(--accent);
             transform: scaleX(0); transform-origin: left center;
-            transition: transform 0.4s var(--ease-kinetic);
+            transition: transform 0.3s var(--ark-bezier);
         }
         .nav-btn:hover, .nav-btn.active { color: #fff; }
         .nav-btn:hover::after, .nav-btn.active::after { transform: scaleX(1); }
@@ -66,11 +60,10 @@
             position: relative; width: 100%; height: 100%; z-index: 10; 
             background-color: var(--bg-dark); 
             opacity: 1; transform: scale(1);
-            transition: opacity 0.6s var(--ease-kinetic), transform 0.6s var(--ease-kinetic);
-            pointer-events: auto; 
+            transition: opacity 0.45s var(--ark-bezier), transform 0.45s var(--ark-bezier);
         }
         #main-stage.stage-hidden { 
-            opacity: 0; transform: scale(0.96);
+            opacity: 0; transform: scale(0.95);
             pointer-events: none !important; 
         }
         #star-canvas { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
@@ -86,65 +79,53 @@
         .title-sub { font-size: clamp(0.9rem, 1.5vw, 1.2rem); letter-spacing: 8px; color: rgba(255,255,255,0.6); margin: 15px 0 0 0; }
         .quote-text { margin-top: 5vh; font-size: clamp(0.75rem, 0.9vw, 0.85rem); color: rgba(255,255,255,0.4); letter-spacing: 3px; line-height: 1.8; max-width: 600px; }
 
-        /* 主页向右箭头 */
         .hero-arrow-wrap {
             margin-top: 28px; pointer-events: auto; cursor: pointer;
             animation: arrowFloatHorizontal 2.5s ease-in-out infinite alternate;
         }
-        @keyframes arrowFloatHorizontal {
-            0% { transform: translateX(-8px); }
-            100% { transform: translateX(8px); }
-        }
+        @keyframes arrowFloatHorizontal { 0% { transform: translateX(-8px); } 100% { transform: translateX(8px); } }
         .hero-arrow-circle {
             display: flex; align-items: center; justify-content: center; width: 48px; height: 48px;
-            background: #ffffff; border-radius: 50%;
-            box-shadow: 0 0 28px rgba(255, 255, 255, 0.35), 0 4px 18px rgba(0, 0, 0, 0.3);
-            transition: transform 0.35s var(--ease-kinetic), box-shadow 0.35s ease;
+            background: #ffffff; border-radius: 50%; box-shadow: 0 0 28px rgba(255, 255, 255, 0.35);
+            transition: transform 0.3s var(--ark-bezier);
         }
-        .hero-arrow-circle svg {
-            width: 20px; height: 20px; fill: none; stroke: #0f172a; stroke-width: 2.5;
-            stroke-linecap: round; stroke-linejoin: round; transition: transform 0.35s var(--ease-kinetic);
-        }
-        .hero-arrow-wrap:hover .hero-arrow-circle {
-            transform: scale(1.12); box-shadow: 0 0 42px rgba(255, 255, 255, 0.55), 0 6px 22px rgba(0, 0, 0, 0.35);
-        }
-        .hero-arrow-wrap:hover .hero-arrow-circle svg { transform: translateX(2px); }
-        .hero-arrow-wrap:active .hero-arrow-circle { transform: scale(0.94); }
+        .hero-arrow-circle svg { width: 20px; height: 20px; fill: none; stroke: #0f172a; stroke-width: 2.5; }
+        .hero-arrow-wrap:hover .hero-arrow-circle { transform: scale(1.1); }
 
-        /* ================= 全屏层非线性多态切换引擎 ================= */
+        /* ================= 方舟级视差切页引擎样式 ================= */
         .fullview-overlay {
             position: fixed; inset: 0; width: 100%; height: 100%; z-index: 1500; 
             padding: 90px 6% 40px 6%;
-            background: rgba(3, 5, 13, 0.98); backdrop-filter: blur(30px);
+            background: rgba(4, 6, 14, 0.97); backdrop-filter: blur(25px);
             display: flex; flex-direction: column; overflow-y: auto; 
             
-            /* 初始离屏及不可见状态 */
-            opacity: 0;
-            visibility: hidden;
+            /* 默认隐藏在视口之外，pointer-events 关闭切断干扰 */
             pointer-events: none !important;
+            display: none; 
+            opacity: 0;
             
-            /* 多属性独立平滑响应 */
-            transition: opacity 0.55s var(--ease-kinetic), 
-                        transform 0.55s var(--ease-kinetic),
-                        visibility 0.55s var(--ease-kinetic);
+            /* 极速响应时间 0.45s，全面开启 GPU 加速 */
+            transition: opacity 0.45s var(--ark-bezier), transform 0.45s var(--ark-bezier);
             will-change: transform, opacity;
         }
 
-        /* 方向基准准备位 */
-        .fullview-overlay.prepare-from-right { transform: translateX(100%) scale(1); }
-        .fullview-overlay.prepare-from-left  { transform: translateX(-100%) scale(1); }
+        /* 状态控制显隐 */
+        .fullview-overlay.render-block { display: flex; }
 
-        /* 激活展现态 */
+        /* 始发等待位（方舟经典纯轴平移） */
+        .fullview-overlay.prepare-from-right { opacity: 0; transform: translateX(100%); }
+        .fullview-overlay.prepare-from-left  { opacity: 0; transform: translateX(-100%); }
+
+        /* 激活展现位（完美居中） */
         .fullview-overlay.active-page { 
             opacity: 1; 
-            visibility: visible;
             transform: translateX(0) scale(1) !important;
             pointer-events: auto !important; 
         }
 
-        /* 迁出失活态（带有轻微视差缩放） */
-        .fullview-overlay.exit-to-left  { opacity: 0; transform: translateX(-100%) scale(0.97); }
-        .fullview-overlay.exit-to-right { opacity: 0; transform: translateX(100%) scale(0.97); }
+        /* 迁出失活位（向相反方向滑出，带有微弱视差收缩） */
+        .fullview-overlay.exit-to-left  { opacity: 0; transform: translateX(-100%) scale(0.96); pointer-events: none !important; }
+        .fullview-overlay.exit-to-right { opacity: 0; transform: translateX(100%) scale(0.96); pointer-events: none !important; }
 
         /* 统一精致滚动条 */
         .fullview-overlay::-webkit-scrollbar, 
@@ -171,7 +152,7 @@
         .cards-viewport { display: flex; align-items: center; justify-content: center; width: 85%; height: clamp(240px, 32vh, 380px); position: relative; overflow: hidden; }
         .showcase-card {
             position: absolute; width: 55%; height: 100%; background-size: cover; background-position: center; border: 1px solid rgba(255,255,255,0.1);
-            clip-path: polygon(0 0, calc(100% - 40px) 0, 100% 40px, 100% 100%, 40px 100%, 0 calc(100% - 40px)); transition: all 0.5s var(--ease-kinetic); opacity: 0; pointer-events: none; z-index: 1;
+            clip-path: polygon(0 0, calc(100% - 40px) 0, 100% 40px, 100% 100%, 40px 100%, 0 calc(100% - 40px)); transition: all 0.45s var(--ark-bezier); opacity: 0; pointer-events: none; z-index: 1;
         }
         .showcase-card.active { opacity: 1; pointer-events: auto; transform: scale(1) translateX(0); z-index: 3; border-color: var(--accent); }
         .showcase-card.prev { opacity: 0.25; transform: scale(0.85) translateX(-70%); z-index: 2; }
@@ -219,29 +200,24 @@
         .media-capsule-btn {
             padding: 8px 24px; font-size: 0.88rem; font-weight: 500; color: #475569;
             background: #fff; border: 1px solid rgba(15,23,42,0.08); border-radius: 30px;
-            cursor: pointer; transition: all 0.3s var(--ease-kinetic);
+            cursor: pointer; transition: all 0.3s var(--ark-bezier);
             letter-spacing: 2px; position: relative; box-shadow: 0 2px 6px rgba(0,0,0,0.02);
         }
         .media-capsule-btn.capsule-active {
             background: #11131a; color: #fff; border-color: #11131a; font-weight: 600;
             box-shadow: 0 4px 12px rgba(17,19,26,0.15);
         }
-        .media-capsule-btn.capsule-active::before, .media-capsule-btn.capsule-active::after {
-            content: '+'; position: absolute; font-size: 0.65rem; color: rgba(255,255,255,0.4); font-family: sans-serif; top: 50%; transform: translateY(-50%);
-        }
-        .media-capsule-btn.capsule-active::before { left: 8px; }
-        .media-capsule-btn.capsule-active::after { right: 8px; }
 
         .media-grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 25px; overflow-y: auto; flex-grow: 1; padding-bottom: 40px; width: 100%; }
         .media-matrix-card {
             background: #fff; border: 1px solid rgba(15,23,42,0.06); padding: 5px; border-radius: 4px; box-shadow: 0 4px 14px rgba(15,23,42,0.03);
             clip-path: polygon(0 0, calc(100% - 24px) 0, 100% 24px, 100% 100%, 24px 100%, 0 calc(100% - 24px)); cursor: pointer; position: relative; width: 100%; opacity: 0; transform: translateX(-20px) scale(0.96);
         }
-        .media-matrix-card.reveal-manifest { opacity: 1; transform: translateX(0) scale(1); transition: opacity 0.6s var(--ease-kinetic), transform 0.6s var(--ease-kinetic); }
+        .media-matrix-card.reveal-manifest { opacity: 1; transform: translateX(0) scale(1); transition: opacity 0.45s var(--ark-bezier), transform 0.45s var(--ark-bezier); }
         .media-matrix-card:hover { border-color: #11131a; box-shadow: 0 6px 20px rgba(17,19,26,0.1); }
 
         .matrix-video-cover-wrap { width: 100%; aspect-ratio: 16 / 9; background-size: cover; background-position: center; position: relative; overflow: hidden; clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 22px, 100% 100%, 22px 100%, 0 calc(100% - 22px)); }
-        .matrix-play-indicator { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.15); transition: 0.3s; }
+        .matrix-play-indicator { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.15); }
         .matrix-play-icon {
             width: 44px; height: 44px; background: rgba(255,255,255,0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #11131a;
             font-size: 1.1rem; padding-left: 3px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); transition: 0.25s;
@@ -275,9 +251,7 @@
                 <p class="quote-text">「……原来你真的是这里的设计师啊。」—— 链接已建立，梦想铁道列车正平稳通过中央干线。</p>
                 <div class="hero-arrow-wrap" onclick="navigateToPage('info')" title="进入世界观">
                     <div class="hero-arrow-circle">
-                        <svg viewBox="0 0 24 24">
-                            <polyline points="8 5 16 12 8 19"></polyline>
-                        </svg>
+                        <svg viewBox="0 0 24 24"><polyline points="8 5 16 12 8 19"></polyline></svg>
                     </div>
                 </div>
             </div>
@@ -381,12 +355,10 @@
 
         const PAGE_SEQUENCE = ['home', 'info', 'db', 'news', 'media'];
         let currentPageId = 'home';
-        let isAnimating = false; // 防抖锁
 
-        // ================= 核心：非线性精准帧过渡路由驱动 =================
+        // ================= 方舟级强切流体路由分配引擎 =================
         function navigateToPage(targetPageId, pushState = true) {
-            if (targetPageId === currentPageId || isAnimating) return;
-            isAnimating = true;
+            if (targetPageId === currentPageId) return;
 
             const stageEl = document.getElementById('main-stage');
             const oldIndex = PAGE_SEQUENCE.indexOf(currentPageId);
@@ -401,7 +373,14 @@
             let oldOverlayEl = document.getElementById(`view-${currentPageId}-page`);
             let targetOverlayEl = document.getElementById(`view-${targetPageId}-page`);
 
-            // 1. 处理迁出页面的过渡动作
+            // 【核心修复一】直接物理清理除新旧页面外的全部底层元素状态，绝不生成状态积累
+            document.querySelectorAll('.fullview-overlay').forEach(el => {
+                if (el !== oldOverlayEl && el !== targetOverlayEl) {
+                    el.className = 'fullview-overlay';
+                }
+            });
+
+            // 1. 处理离开组件的动画
             if (currentPageId === 'home') {
                 stageEl.classList.add('stage-hidden');
             } else if (oldOverlayEl) {
@@ -409,47 +388,43 @@
                 oldOverlayEl.classList.add(isTargetOnRight ? 'exit-to-left' : 'exit-to-right');
             }
 
-            // 2. 预备引入新页面 
+            // 2. 调度切入组件的动画
             if (targetPageId !== 'home' && targetOverlayEl) {
-                // 彻底清除历史残留样式
-                targetOverlayEl.classList.remove('active-page', 'exit-to-left', 'exit-to-right', 'prepare-from-left', 'prepare-from-right');
-                
-                // 第一帧：先放到离屏待命位置并显示容器
+                // 【核心修复二】先清空目的页的历史失活样式，强行切换块级显隐
+                targetOverlayEl.classList.remove('exit-to-left', 'exit-to-right');
+                targetOverlayEl.classList.add('render-block');
                 targetOverlayEl.classList.add(isTargetOnRight ? 'prepare-from-right' : 'prepare-from-left');
-                targetOverlayEl.style.visibility = 'visible';
 
-                // 第二帧：等浏览器确认初始坐标后，滑入主屏
-                requestAnimationFrame(() => {
-                    requestAnimationFrame(() => {
-                        targetOverlayEl.classList.add('active-page');
-                    });
-                });
+                // 强制同步计算定位，无任何延迟开销
+                targetOverlayEl.getBoundingClientRect();
+
+                // 释放滑入位移
+                targetOverlayEl.classList.add('active-page');
             } else if (targetPageId === 'home') {
                 stageEl.classList.remove('stage-hidden');
             }
 
-            // 3. 头部导航高亮
+            // 3. 页面同步和高亮切换
+            currentPageId = targetPageId;
             document.querySelectorAll('.nav-menu .nav-btn').forEach(b => b.classList.remove('active'));
             const navBtnEl = document.getElementById(`nav-${targetPageId}`);
             if (navBtnEl) navBtnEl.classList.add('active');
 
-            currentPageId = targetPageId;
-
-            // 4. 内部动态组件初始化
+            // 4. 组件内容按需渲染
             if (sliderIndices[targetPageId] !== undefined) renderSlider(targetPageId);
             if (targetPageId === 'media') triggerMediaStaggerAnimation();
-
-            // 动画过渡保护：550ms（匹配CSS中的0.55s）后解除锁定并隐藏非活跃组件
-            setTimeout(() => {
-                document.querySelectorAll('.fullview-overlay').forEach(el => {
-                    if (el !== targetOverlayEl) {
-                        el.style.visibility = 'hidden';
-                        el.classList.remove('prepare-from-left', 'prepare-from-right', 'exit-to-left', 'exit-to-right');
-                    }
-                });
-                isAnimating = false;
-            }, 550);
         }
+
+        // 监听所有动画完结，物理切断 display:none，最大化节约系统资源
+        document.querySelectorAll('.fullview-overlay').forEach(el => {
+            el.addEventListener('transitionend', (e) => {
+                if (e.propertyName === 'transform' || e.propertyName === 'opacity') {
+                    if (!el.classList.contains('active-page')) {
+                        el.classList.remove('render-block', 'prepare-from-left', 'prepare-from-right', 'exit-to-left', 'exit-to-right');
+                    }
+                }
+            });
+        });
 
         function checkGitHubRedirectAndRoute() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -468,7 +443,7 @@
             navigateToPage(page, false);
         });
 
-        // ================= 原数据渲染体系与动画逻辑 =================
+        // ================= 数据视图渲染体系 =================
         function initSliderDots(pageKey) {
             const dotsContainer = document.getElementById(`dots-${pageKey}`);
             if (!dotsContainer) return;
@@ -509,9 +484,7 @@
             });
 
             const dots = pageOverlay.querySelectorAll('.indicator-dot');
-            dots.forEach((dot, idx) => {
-                dot.classList.toggle('active', idx === currentIdx);
-            });
+            dots.forEach((dot, idx) => { dot.classList.toggle('active', idx === currentIdx); });
 
             const data = items[currentIdx];
             if (data) {
@@ -612,11 +585,11 @@
             const cards = document.querySelectorAll('.media-matrix-card');
             cards.forEach((card, index) => {
                 card.classList.remove('reveal-manifest');
-                setTimeout(() => { card.classList.add('reveal-manifest'); }, index * 80); 
+                setTimeout(() => { card.classList.add('reveal-manifest'); }, index * 40); 
             });
         }
 
-        // ================= 星空与背景动效逻辑 =================
+        // ================= 星空物理画布动效 =================
         const canvas = document.getElementById('star-canvas');
         const ctx = canvas.getContext('2d');
         let stars = [], meteors = [], trainX = -1000;
@@ -696,8 +669,8 @@
                 let targetOverlayEl = document.getElementById(`view-${initialPage}-page`);
                 if (targetOverlayEl) {
                     document.getElementById('main-stage').classList.add('stage-hidden');
+                    targetOverlayEl.classList.add('render-block');
                     targetOverlayEl.classList.add('active-page');
-                    targetOverlayEl.style.visibility = 'visible';
                     document.querySelectorAll('.nav-menu .nav-btn').forEach(b => b.classList.remove('active'));
                     let navBtnEl = document.getElementById(`nav-${initialPage}`);
                     if (navBtnEl) navBtnEl.classList.add('active');
