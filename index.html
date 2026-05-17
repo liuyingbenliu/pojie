@@ -76,10 +76,19 @@
         #main-stage { 
             position: relative; width: 100%; height: 100%; z-index: 10; 
             background-color: var(--bg-dark); 
-            opacity: 1; transition: opacity 0.3s ease-in-out;
+            opacity: 1;
+            transform: scale(1);
+            transition: opacity 0.5s cubic-bezier(0.25, 1, 0.5, 1), transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
             pointer-events: auto; 
         }
-        #main-stage.stage-hidden { opacity: 0; pointer-events: none !important; }
+        
+        /* 首页淡出离开时的平滑微缩动画 */
+        #main-stage.stage-hidden { 
+            opacity: 0; 
+            transform: scale(0.96);
+            pointer-events: none !important; 
+        }
+        
         #star-canvas { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
         .character-split-layer {
             position: absolute; inset: 0; z-index: 2;
@@ -93,22 +102,17 @@
         .title-sub { font-size: clamp(0.9rem, 1.5vw, 1.2rem); letter-spacing: 8px; color: rgba(255,255,255,0.6); margin: 15px 0 0 0; }
         .quote-text { margin-top: 5vh; font-size: clamp(0.75rem, 0.9vw, 0.85rem); color: rgba(255,255,255,0.4); letter-spacing: 3px; line-height: 1.8; max-width: 600px; }
 
-        /* --- 主页白色背景右箭头（带慢速左右平滑移动动画） --- */
+        /* --- 主页白色背景右箭头（慢速左右平滑往复） --- */
         .hero-arrow-wrap {
             margin-top: 28px;
             pointer-events: auto;
             cursor: pointer;
-            /* 绑定慢速往复移动动画：历时2.5秒，无限循环，双向往复，平滑过渡 */
             animation: arrowFloatHorizontal 2.5s ease-in-out infinite alternate;
         }
         
         @keyframes arrowFloatHorizontal {
-            0% {
-                transform: translateX(-8px);
-            }
-            100% {
-                transform: translateX(8px);
-            }
+            0% { transform: translateX(-8px); }
+            100% { transform: translateX(8px); }
         }
 
         .hero-arrow-circle {
@@ -120,8 +124,7 @@
             background: #ffffff;
             border-radius: 50%;
             box-shadow: 0 0 28px rgba(255, 255, 255, 0.35), 0 4px 18px rgba(0, 0, 0, 0.3);
-            transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1),
-                        box-shadow 0.35s ease;
+            transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.35s ease;
         }
         .hero-arrow-circle svg {
             width: 20px;
@@ -133,7 +136,6 @@
             stroke-linejoin: round;
             transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1);
         }
-        /* 鼠标悬停时在原有动画基础上放大 */
         .hero-arrow-wrap:hover .hero-arrow-circle {
             transform: scale(1.12);
             box-shadow: 0 0 42px rgba(255, 255, 255, 0.55), 0 6px 22px rgba(0, 0, 0, 0.35);
@@ -145,18 +147,49 @@
             transform: scale(0.94);
         }
 
-        /* --- 全屏独立舞台基础样式 --- */
+        /* ================= 全屏独立舞台核心切换动画样式 ================= */
         .fullview-overlay {
             position: fixed; inset: 0; width: 100%; height: 100%; z-index: 1500; 
             padding: 90px 6% 40px 6%;
             background: rgba(3, 5, 13, 0.98); backdrop-filter: blur(30px);
             display: flex; flex-direction: column; 
-            opacity: 0; 
-            pointer-events: none !important; 
-            transition: opacity 0.3s ease-in-out;
             overflow-y: auto; 
+            
+            /* 初始状态：完全透明，且不响应鼠标 */
+            opacity: 0;
+            pointer-events: none !important;
+            
+            /* 页面切换动画过渡曲线：平滑视差流变 */
+            transition: opacity 0.5s cubic-bezier(0.25, 1, 0.5, 1), 
+                        transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
         }
-        .fullview-overlay.active-page { opacity: 1; pointer-events: auto !important; }
+
+        /* 状态A：当目标页面在右边时，准备从右侧进入 */
+        .fullview-overlay.prepare-from-right {
+            transform: translateX(100%);
+        }
+
+        /* 状态B：当目标页面在左边时，准备从左侧进入 */
+        .fullview-overlay.prepare-from-left {
+            transform: translateX(-100%);
+        }
+
+        /* 状态C：激活态，全部回归屏幕中心 */
+        .fullview-overlay.active-page { 
+            opacity: 1; 
+            transform: translateX(0) scale(1) !important;
+            pointer-events: auto !important; 
+        }
+
+        /* 状态D：被替换掉的老页面往相反方向滑出淡出 */
+        .fullview-overlay.exit-to-left {
+            opacity: 0;
+            transform: translateX(-100%);
+        }
+        .fullview-overlay.exit-to-right {
+            opacity: 0;
+            transform: translateX(100%);
+        }
 
         /* 统一精致滚动条 */
         .fullview-overlay::-webkit-scrollbar, 
@@ -275,7 +308,7 @@
                 <div class="nav-btn" id="nav-media" onclick="navigateToPage('media')">媒体</div>
             </nav>
         </div>
-        </header>
+    </header>
 
     <div id="main-stage">
         <canvas id="star-canvas"></canvas>
@@ -404,48 +437,73 @@
         let currentActiveNotiIdx = 0;
         let sliderIndices = { info: 0, db: 0 };
 
-        // ================= 核心 Hend 路由管理器 =================
+        // 建立一个标准页面顺序，用来比较新老页面谁在左边，谁在右边
+        const PAGE_SEQUENCE = ['home', 'info', 'db', 'news', 'media'];
+        let currentPageId = 'home'; // 缓存当前所在的页面ID
+
+        // ================= 核心 Hend 智能路由管理器 =================
         function navigateToPage(targetPageId, pushState = true) {
+            if (targetPageId === currentPageId) return; // 点击当前页不作反应
+
             const stageEl = document.getElementById('main-stage');
+
+            // 1. 判断新旧页面的先后顺序（谁在左，谁在右）
+            const oldIndex = PAGE_SEQUENCE.indexOf(currentPageId);
+            const newIndex = PAGE_SEQUENCE.indexOf(targetPageId);
+            const isTargetOnRight = newIndex > oldIndex;
 
             if (pushState) {
                 const newUrl = targetPageId === 'home' ? window.location.pathname : `?page=${targetPageId}`;
                 window.history.pushState({ page: targetPageId }, '', newUrl);
             }
 
+            // 2. 清理所有页面的过渡动画样式混淆类
+            document.querySelectorAll('.fullview-overlay').forEach(el => {
+                el.classList.remove('prepare-from-right', 'prepare-from-left', 'exit-to-left', 'exit-to-right');
+            });
+
+            // 获取老页面和新页面的 DOM 节点
+            let oldOverlayEl = document.getElementById(`view-${currentPageId}-page`);
+            let targetOverlayEl = document.getElementById(`view-${targetPageId}-page`);
+
+            // 3. 处理老页面的淡出/滑出效果
+            if (currentPageId === 'home') {
+                stageEl.classList.add('stage-hidden');
+            } else if (oldOverlayEl) {
+                oldOverlayEl.classList.remove('active-page');
+                // 如果新页面在右边，老页面就往左边滑出；反之往右边滑出
+                oldOverlayEl.classList.add(isTargetOnRight ? 'exit-to-left' : 'exit-to-right');
+            }
+
+            // 更新当前页面标记
+            currentPageId = targetPageId;
+
+            // 4. 高亮头部导航栏菜单按钮
+            document.querySelectorAll('.nav-menu .nav-btn').forEach(b => b.classList.remove('active'));
+
+            // 5. 回到首页的逻辑
             if (targetPageId === 'home') {
-                document.querySelectorAll('.fullview-overlay').forEach(el => {
-                    el.classList.remove('active-page');
-                    el.style.setProperty('pointer-events', 'none', 'important'); 
-                });
-                document.querySelectorAll('.nav-menu .nav-btn').forEach(b => b.classList.remove('active'));
                 stageEl.classList.remove('stage-hidden'); 
-                stageEl.style.setProperty('pointer-events', 'auto', 'important'); 
                 document.getElementById('nav-home').classList.add('active');
                 return;
             }
 
-            let overlayEl = document.getElementById(`view-${targetPageId}-page`);
-            let navBtnEl = document.getElementById(`nav-${targetPageId}`);
+            // 6. 前往子页面的逻辑（核心平移过渡触发点）
+            if (targetOverlayEl) {
+                // 如果目标在右边，则提前将它放到右边边缘等待滑入；如果在左边，则放到左边边缘
+                targetOverlayEl.classList.add(isTargetOnRight ? 'prepare-from-right' : 'prepare-from-left');
 
-            if (overlayEl) {
-                stageEl.classList.add('stage-hidden'); 
-                stageEl.style.setProperty('pointer-events', 'none', 'important'); 
+                // 强制浏览器重绘，确保初始动画节点定位生效
+                targetOverlayEl.offsetHeight;
 
-                document.querySelectorAll('.fullview-overlay').forEach(el => { 
-                    if (el !== overlayEl) {
-                        el.classList.remove('active-page');
-                        el.style.setProperty('pointer-events', 'none', 'important'); 
-                    }
-                });
-                document.querySelectorAll('.nav-menu .nav-btn').forEach(b => b.classList.remove('active'));
+                // 注入激活类名，使其平滑滑入到视野中央
+                targetOverlayEl.classList.add('active-page');
 
-                overlayEl.classList.add('active-page');
-                overlayEl.style.setProperty('pointer-events', 'auto', 'important'); 
-
+                let navBtnEl = document.getElementById(`nav-${targetPageId}`);
                 if (navBtnEl) navBtnEl.classList.add('active');
-                overlayEl.scrollTop = 0;
+                targetOverlayEl.scrollTop = 0;
 
+                // 触发对应子页面的内部UI组件渲染
                 if (sliderIndices[targetPageId] !== undefined) {
                     renderSlider(targetPageId);
                 }
@@ -698,6 +756,22 @@
             ['info', 'db'].forEach(key => { initSliderDots(key); renderSlider(key); });
             initCanvas(); 
             animate();
+            
+            // 读取初始 URL 参数路由，并设置当前页面缓存状态
+            const urlParams = new URLSearchParams(window.location.search);
+            const initialPage = urlParams.get('page') || 'home';
+            if (PAGE_SEQUENCE.includes(initialPage) && initialPage !== 'home') {
+                currentPageId = initialPage;
+                let targetOverlayEl = document.getElementById(`view-${initialPage}-page`);
+                if (targetOverlayEl) {
+                    document.getElementById('main-stage').classList.add('stage-hidden');
+                    targetOverlayEl.classList.add('active-page');
+                    document.querySelectorAll('.nav-menu .nav-btn').forEach(b => b.classList.remove('active'));
+                    let navBtnEl = document.getElementById(`nav-${initialPage}`);
+                    if (navBtnEl) navBtnEl.classList.add('active');
+                    ['info', 'db'].forEach(key => { if(initialPage === key) renderSlider(key); });
+                }
+            }
             checkGitHubRedirectAndRoute();
         });
     </script>
