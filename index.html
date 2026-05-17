@@ -6,8 +6,8 @@
     <title>MX server | 未来与奇迹</title>
     <style>
         :root {
-            --accent: #00e5ff;
-            --accent-glow: rgba(0, 229, 255, 0.35);
+            --accent: #ffffff; /* 统一修改核心高亮为白色 */
+            --accent-glow: rgba(255, 255, 255, 0.4); /* 白色霓虹光晕 */
             --bg-dark: #03050d;
             --glass-bg: rgba(255, 255, 255, 0.03);
             --glass-border: rgba(255, 255, 255, 0.06);
@@ -42,17 +42,19 @@
 
         .nav-menu { display: flex; gap: clamp(15px, 2.5vw, 35px); height: 64px; align-items: center; }
         .nav-btn {
-            font-size: clamp(0.8rem, 1vw, 0.9rem); color: rgba(255,255,255,0.6); cursor: pointer;
-            transition: color 0.2s linear; position: relative; letter-spacing: 1px; white-space: nowrap;
+            font-size: clamp(0.8rem, 1vw, 0.9rem); color: rgba(255,255,255,0.4); cursor: pointer;
+            transition: color 0.25s linear; position: relative; letter-spacing: 1px; white-space: nowrap;
             padding: 8px 0;
         }
+        
+        /* 导航栏点击和悬浮的线条样式改为：白色线条 + 白色粒子光晕 */
         .nav-btn::after {
             content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 2px;
-            background-color: var(--accent); box-shadow: 0 0 8px var(--accent);
+            background-color: var(--accent); box-shadow: 0 0 10px var(--accent-glow);
             transform: scaleX(0); transform-origin: left center;
             transition: transform 0.3s var(--ark-bezier);
         }
-        .nav-btn:hover, .nav-btn.active { color: #fff; }
+        .nav-btn:hover, .nav-btn.active { color: #ffffff !important; }
         .nav-btn:hover::after, .nav-btn.active::after { transform: scaleX(1); }
 
         /* --- 主舞台（大厅视界） --- */
@@ -127,12 +129,12 @@
 
         .page-header-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid var(--glass-border); padding-bottom: 15px; margin-bottom: 25px; flex-shrink: 0; }
         .page-main-title { font-size: clamp(1.4rem, 2.2vw, 2.2rem); font-weight: 300; margin: 0; letter-spacing: 3px; color: #fff; }
-        .page-sub-title { font-size: 0.75rem; color: var(--accent); letter-spacing: 2px; margin-top: 5px; font-family: monospace; }
+        .page-sub-title { font-size: 0.75rem; color: #00e5ff; letter-spacing: 2px; margin-top: 5px; font-family: monospace; }
         .page-back-btn {
             display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: rgba(255,255,255,0.6);
             cursor: pointer; transition: 0.3s; border: 1px solid rgba(255,255,255,0.15); padding: 6px 16px; border-radius: 20px;
         }
-        .page-back-btn:hover { color: #fff; border-color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); }
+        .page-back-btn:hover { color: #fff; border-color: #fff; box-shadow: 0 0 15px var(--accent-glow); }
 
         /* ================= 世界观 / 设定 卡片轮播 ================= */
         .slider-showcase-container { display: flex; align-items: center; justify-content: center; width: 100%; gap: 30px; position: relative; margin-top: 10px; flex-shrink: 0; }
@@ -141,19 +143,19 @@
             position: absolute; width: 55%; height: 100%; background-size: cover; background-position: center; border: 1px solid var(--glass-border);
             clip-path: polygon(0 0, calc(100% - 40px) 0, 100% 40px, 100% 100%, 40px 100%, 0 calc(100% - 40px)); transition: all 0.45s var(--ark-bezier); opacity: 0; pointer-events: none; z-index: 1;
         }
-        .showcase-card.active { opacity: 1; pointer-events: auto; transform: scale(1) translateX(0); z-index: 3; border-color: var(--accent); box-shadow: 0 0 30px rgba(0, 229, 255, 0.15); }
+        .showcase-card.active { opacity: 1; pointer-events: auto; transform: scale(1) translateX(0); z-index: 3; border-color: #00e5ff; box-shadow: 0 0 30px rgba(0, 229, 255, 0.15); }
         .showcase-card.prev { opacity: 0.25; transform: scale(0.85) translateX(-70%); z-index: 2; }
         .showcase-card.next { opacity: 0.25; transform: scale(0.85) translateX(70%); z-index: 2; }
         .slide-arrow { font-size: 2rem; color: rgba(255,255,255,0.3); cursor: pointer; transition: 0.3s; padding: 10px; z-index: 10; user-select: none; }
-        .slide-arrow:hover { color: #fff; text-shadow: 0 0 10px var(--accent); }
+        .slide-arrow:hover { color: #fff; text-shadow: 0 0 10px #00e5ff; }
         .indicator-dots { display: flex; justify-content: center; gap: 12px; margin: 20px 0; align-items: center; flex-shrink: 0; }
         .indicator-dot { width: 6px; height: 6px; background: rgba(255,255,255,0.25); border-radius: 50%; transition: 0.3s; cursor: pointer; }
-        .indicator-dot.active { background: #fff; transform: scale(1.3); box-shadow: 0 0 10px #fff, 0 0 4px var(--accent); }
+        .indicator-dot.active { background: #fff; transform: scale(1.3); box-shadow: 0 0 10px #fff, 0 0 4px #00e5ff; }
 
         .content-display-panel { width: 100%; max-width: 900px; margin: 10px auto 0 auto; text-align: left; }
         .dynamic-title-group { margin-bottom: 16px; }
         .dynamic-main-title { font-size: 1.7rem; font-weight: 500; margin: 0 0 8px 0; color: #fff; letter-spacing: 1px; }
-        .dynamic-sub-quote { font-size: 0.95rem; color: var(--accent); font-weight: bold; letter-spacing: 1px; margin-bottom: 20px; display: block; }
+        .dynamic-sub-quote { font-size: 0.95rem; color: #00e5ff; font-weight: bold; letter-spacing: 1px; margin-bottom: 20px; display: block; }
         .dynamic-body-text { font-size: 0.95rem; color: rgba(255,255,255,0.7); line-height: 1.9; text-align: justify; padding-bottom: 60px; }
 
         /* ================= 告示页面分栏布局 ================= */
@@ -161,7 +163,7 @@
         .noti-sidebar-list { width: 32%; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; padding-right: 6px; height: 100%; padding-bottom: 40px; }
         .noti-item-card { background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 15px; border-radius: 6px; cursor: pointer; transition: 0.25s; flex-shrink: 0; }
         .noti-item-card:hover { background: rgba(255,255,255,0.06); border-color: rgba(0, 229, 255, 0.3); }
-        .noti-item-card.item-active { background: rgba(0, 229, 255, 0.06); border-color: var(--accent); box-shadow: inset 0 0 15px rgba(0, 229, 255, 0.05); }
+        .noti-item-card.item-active { background: rgba(0, 229, 255, 0.06); border-color: #00e5ff; box-shadow: inset 0 0 15px rgba(0, 229, 255, 0.05); }
         .noti-item-date { font-size: 0.75rem; color: rgba(255,255,255,0.35); font-family: monospace; letter-spacing: 0.5px; }
         .noti-item-title { font-size: 0.88rem; margin: 6px 0 0 0; font-weight: 400; color: rgba(255,255,255,0.7); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .noti-item-card.item-active .noti-item-title { color: #fff; font-weight: 500; }
@@ -180,8 +182,8 @@
             cursor: pointer; transition: all 0.3s var(--ark-bezier); letter-spacing: 2px;
         }
         .media-capsule-btn.capsule-active {
-            background: rgba(0, 229, 255, 0.08); color: var(--accent); border-color: var(--accent);
-            box-shadow: 0 0 15px var(--accent-glow); font-weight: 600;
+            background: rgba(0, 229, 255, 0.08); color: #00e5ff; border-color: #00e5ff;
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.35); font-weight: 600;
         }
 
         .media-grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; overflow-y: auto; flex-grow: 1; padding-bottom: 40px; width: 100%; }
@@ -197,7 +199,7 @@
         }
         .media-matrix-card.reveal-manifest { opacity: 1; transform: translateY(0); transition: opacity 0.45s var(--ark-bezier), transform 0.45s var(--ark-bezier); }
         .media-matrix-card:hover { 
-            border-color: var(--accent); 
+            border-color: #00e5ff; 
             box-shadow: 0 12px 30px rgba(0, 229, 255, 0.15); 
             transform: translateY(-4px);
         }
@@ -217,7 +219,7 @@
             width: 52px; height: 52px; background: rgba(3, 5, 13, 0.8); border: 1px solid rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff;
             font-size: 1.1rem; padding-left: 4px; backdrop-filter: blur(8px); transition: all 0.3s var(--ark-bezier);
         }
-        .media-matrix-card:hover .matrix-play-icon { transform: scale(1.1); border-color: var(--accent); color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); }
+        .media-matrix-card:hover .matrix-play-icon { transform: scale(1.1); border-color: #00e5ff; color: #00e5ff; box-shadow: 0 0 15px rgba(0, 229, 255, 0.35); }
         
         .matrix-card-title { 
             font-size: 0.9rem; font-weight: 400; color: rgba(255,255,255,0.85); margin: 0;
@@ -253,7 +255,7 @@
             border: 1px solid var(--glass-border); border-radius: 50%; display: flex; align-items: center; justify-content: center;
             color: rgba(255,255,255,0.7); font-size: 0.9rem; cursor: pointer; z-index: 100; backdrop-filter: blur(4px); transition: all 0.25s ease;
         }
-        .cinema-close-trigger:hover { border-color: var(--accent); color: var(--accent); transform: scale(1.05) rotate(90deg); box-shadow: 0 0 10px var(--accent-glow); }
+        .cinema-close-trigger:hover { border-color: #00e5ff; color: #00e5ff; transform: scale(1.05) rotate(90deg); box-shadow: 0 0 10px rgba(0, 229, 255, 0.35); }
 
         .cinema-iframe-core { width: 100%; height: 100%; border: none; display: block; background: #000; }
 
@@ -265,8 +267,8 @@
         }
         .fallback-text { font-size: 0.8rem; color: rgba(255, 255, 255, 0.4); letter-spacing: 0.5px; }
         .fallback-action-btn {
-            font-size: 0.8rem; color: var(--accent); text-decoration: none; font-weight: 500;
-            border-bottom: 1px dashed var(--accent); padding-bottom: 1px; transition: opacity 0.2s;
+            font-size: 0.8rem; color: #00e5ff; text-decoration: none; font-weight: 500;
+            border-bottom: 1px dashed #00e5ff; padding-bottom: 1px; transition: opacity 0.2s;
         }
         .fallback-action-btn:hover { opacity: 0.8; }
     </style>
@@ -472,32 +474,27 @@
             });
         });
 
-        // ================= 彻底修复：100% 动态数据源渲染与极速开播引擎 =================
+        // ================= 精准映射目标 BV1RwFZzTEQ5 核心播放引擎 =================
         function openCinemaTheater(targetBvid) {
             const theaterLayer = document.getElementById('global-cinema-layer');
             const injectionPoint = document.getElementById('cinema-injection-point');
             const fallbackAnchor = document.getElementById('cinema-fallback-anchor');
             
-            // 严格清洗你从 data.js 里传过来的任何 BV 字段信息
-            let cleanBvid = String(targetBvid || '').replace(/\s+/g, '');
+            // 严格采用您指定的 B 站长效链接视频号：BV1RwFZzTEQ5
+            const finalBvid = "BV1RwFZzTEQ5";
             
-            // 数据托底安全保护：如果没有有效链接，则自动加载最新的通用官方链接作为预览
-            if (!cleanBvid || cleanBvid === 'undefined' || cleanBvid === 'null') {
-                cleanBvid = 'BV1w6421h7H6'; 
-            }
-            
-            // 同步修正外部依赖跳转锚点
-            fallbackAnchor.href = `https://www.bilibili.com/video/${cleanBvid}`;
+            // 同步外部备用跳转链接
+            fallbackAnchor.href = `https://www.bilibili.com/video/${finalBvid}`;
 
             theaterLayer.style.display = 'flex';
             requestAnimationFrame(() => {
                 theaterLayer.classList.add('theater-manifest');
             });
 
-            // 核心 Iframe 构建：注入最新的官方防盗链参数规范
+            // 核心 Iframe 构建：安全加载并允许自动播放
             injectionPoint.innerHTML = `
                 <iframe class="cinema-iframe-core" 
-                        src="https://player.bilibili.com/player.html?bvid=${cleanBvid}&page=1&high_quality=1&danmaku=0&autoplay=1" 
+                        src="https://player.bilibili.com/player.html?bvid=${finalBvid}&page=1&high_quality=1&danmaku=0&autoplay=1" 
                         scrolling="no" 
                         border="0" 
                         frameborder="no" 
@@ -610,7 +607,7 @@
             document.getElementById('nd-content').innerHTML = data.content || '';
         }
 
-        // ================= 严格动态多媒体布局系统 =================
+        // ================= 严格多媒体布局渲染 =================
         function buildMediaLayout() {
             const capsuleContainer = document.getElementById('media-capsules-wrap');
             const gridContainer = document.getElementById('media-matrix-grid');
@@ -632,9 +629,8 @@
                     const card = document.createElement('div');
                     card.className = 'media-matrix-card';
                     
-                    // 动态感知解构：优先提取 item.bvid，其次兼容 item.bv 或者 item.id 
-                    const dynamicBvNumber = item.bvid || item.bv || item.id;
-                    card.onclick = () => openCinemaTheater(dynamicBvNumber); 
+                    // 统一拉起目标剧场播放
+                    card.onclick = () => openCinemaTheater(); 
 
                     const coverWrap = document.createElement('div');
                     coverWrap.className = 'matrix-video-cover-wrap';
