@@ -6,7 +6,7 @@
     <title>MX server | 未来与奇迹</title>
     <style>
         :root {
-            --accent: #a3d7ff; /* 导航栏与整体激活色：已改为淡冰蓝 */
+            --accent: #a3d7ff; /* 导航栏与整体激活色：淡冰蓝 */
             --accent-glow: rgba(163, 215, 255, 0.25); 
             --bg-dark: #03050d;
             --glass-bg: rgba(255, 255, 255, 0.03);
@@ -197,7 +197,7 @@
         .detail-content { line-height: 1.85; color: rgba(255,255,255,0.75); font-size: 0.92rem; text-align: justify; }
         .detail-content p { margin: 0 0 16px 0; }
 
-        /* ================= 媒体页面（彻底修复高度溢出与挤压 Bug） ================= */
+        /* ================= 媒体页面 ================= */
         .media-capsule-container { display: flex; gap: 14px; margin: 5px 0 20px 0; flex-shrink: 0; list-style: none; padding: 0; }
         .media-capsule-btn {
             padding: 6px 20px; font-size: 0.82rem; font-weight: 500; color: rgba(255,255,255,0.6);
@@ -209,13 +209,12 @@
             box-shadow: 0 0 15px rgba(255, 255, 255, 0.25); font-weight: 600;
         }
 
-        /* 修复：使用绝对高度限制网格容器，防止弹性容器無限长、脱离滚动视区 */
         .media-grid-container { 
             display: grid; 
             grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
             gap: 20px; 
             overflow-y: auto; 
-            height: calc(100vh - 220px); /* 严格限制高度，确保内容在当前视口内安全滚动 */
+            height: calc(100vh - 220px); 
             padding-bottom: 40px; 
             width: 100%; 
         }
@@ -225,17 +224,25 @@
             border: 1px solid var(--white-border); 
             padding: 0; border-radius: 10px; 
             cursor: pointer; position: relative; width: 100%;
-            height: fit-content; /* 修复：卡片本身高度自适应内部元素，绝不拉伸变形 */
-            overflow: hidden; opacity: 0; transform: translateY(15px);
+            height: fit-content; 
+            overflow: hidden; 
+            opacity: 0; 
+            transform: translateY(15px);
             display: flex; flex-direction: column;
-            transition: transform 0.4s var(--ark-bezier), box-shadow 0.4s var(--ark-bezier), border-color 0.4s var(--ark-bezier);
+            /* 关键修复：显现动画的核心过渡定义 */
+            transition: opacity 0.45s var(--ark-bezier), transform 0.45s var(--ark-bezier), box-shadow 0.4s var(--ark-bezier), border-color 0.4s var(--ark-bezier);
         }
-        .media-matrix-card.reveal-manifest { opacity: 1; transform: translateY(0); transition: opacity 0.45s var(--ark-bezier), transform 0.45s var(--ark-bezier); }
+        
+        /* 强制显现类 */
+        .media-matrix-card.reveal-manifest { 
+            opacity: 1 !important; 
+            transform: translateY(0) !important; 
+        }
         
         .media-matrix-card:hover { 
             border-color: #ffffff; 
             box-shadow: 0 8px 24px rgba(255, 255, 255, 0.15); 
-            transform: translateY(-4px);
+            transform: translateY(-4px) !important;
         }
 
         .matrix-video-cover-wrap { 
@@ -703,13 +710,19 @@
                     gridContainer.appendChild(card);
                 });
             }
+            
+            // 核心修复：生成 DOM 后，立即触发一次动画类绑定，防止直接刷入或重新载入时变空
+            triggerMediaStaggerAnimation();
         }
 
         function triggerMediaStaggerAnimation() {
             const cards = document.querySelectorAll('.media-matrix-card');
             cards.forEach((card, index) => {
+                // 核心修复：清空先前状态，并采用逐个递增延时赋予 reveal-manifest
                 card.classList.remove('reveal-manifest');
-                setTimeout(() => { card.classList.add('reveal-manifest'); }, index * 40); 
+                setTimeout(() => { 
+                    card.classList.add('reveal-manifest'); 
+                }, index * 60); 
             });
         }
 
@@ -756,8 +769,8 @@
 
         function drawGhostTrain() {
             ctx.save(); 
-            ctx.globalAlpha = 0.35; /* 降低透明度，让列车变淡 */
-            ctx.strokeStyle = "#a3d7ff"; /* 列车已同步修改为冰蓝色 #a3d7ff */
+            ctx.globalAlpha = 0.35; 
+            ctx.strokeStyle = "#a3d7ff"; 
             ctx.lineWidth = 1.5; 
             ctx.shadowBlur = 8; 
             ctx.shadowColor = "rgba(163, 215, 255, 0.3)"; 
@@ -813,7 +826,7 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             buildNotificationList();
-            buildMediaLayout();
+            buildMediaLayout(); // 优先同步建立底层媒体卡片
             ['info', 'db'].forEach(key => { initSliderDots(key); renderSlider(key); });
             initCanvas(); 
             animate();
@@ -832,6 +845,8 @@
                     let navBtnEl = document.getElementById(`nav-${initialPage}`);
                     if (navBtnEl) navBtnEl.classList.add('active');
                     if (['info', 'db'].includes(initialPage)) renderSlider(initialPage);
+                    // 核心修复：如果是直入或刷新 media 页，强制补齐显现类
+                    if (initialPage === 'media') triggerMediaStaggerAnimation();
                 }
             }
             
