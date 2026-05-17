@@ -198,22 +198,24 @@
 
         .media-grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; overflow-y: auto; flex-grow: 1; padding-bottom: 40px; width: 100%; }
         
-        /* 视频模块主卡片架构（方舟战术折边切角） */
+        /* 修复：卡片本身高度不写死，不再使用 clip-path 以防内容区域和边框被暴力拉伸 */
         .media-matrix-card {
-            background: #fff; border: 1px solid rgba(15,23,42,0.06); padding: 6px; border-radius: 2px; box-shadow: 0 4px 14px rgba(15,23,42,0.03);
-            clip-path: polygon(0 0, calc(100% - 24px) 0, 100% 24px, 100% 100%, 24px 100%, 0 calc(100% - 24px)); 
-            cursor: pointer; position: relative; width: 100%; opacity: 0; transform: translateX(-20px) scale(0.96);
+            background: #fff; border: 1px solid rgba(15,23,42,0.08); padding: 7px; border-radius: 6px; 
+            box-shadow: 0 4px 14px rgba(15,23,42,0.03);
+            cursor: pointer; position: relative; width: 100%; height: fit-content;
+            opacity: 0; transform: translateX(-20px) scale(0.96);
+            display: flex; flex-direction: column;
         }
         .media-matrix-card.reveal-manifest { opacity: 1; transform: translateX(0) scale(1); transition: opacity 0.45s var(--ark-bezier), transform 0.45s var(--ark-bezier); }
         .media-matrix-card:hover { border-color: #11131a; box-shadow: 0 8px 24px rgba(17,19,26,0.12); }
 
-        /* 【核心修复】强制封锁 16:9 物理纵横比，彻底杜绝拉伸变形 */
+        /* 修复：将精细的方舟式右上、左下战术切角只限制在 16:9 的视频播放外壳上 */
         .matrix-video-cover-wrap { 
             width: 100%; aspect-ratio: 16 / 9; position: relative; overflow: hidden; 
-            clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 18px 100%, 0 calc(100% - 18px));
-            background: #000;
+            clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
+            background: #000; flex-shrink: 0;
         }
-        /* 子元素填充，利用 object-fit 完美解耦图像本身的约束限制 */
+        /* 锁死图片纵横比，不给任何拉伸的机会 */
         .matrix-video-cover-wrap img {
             width: 100%; height: 100%; object-fit: cover; display: block;
             transition: transform 0.4s var(--ark-bezier);
@@ -228,47 +230,13 @@
             font-size: 1.1rem; padding-left: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: all 0.3s var(--ark-bezier);
         }
         .media-matrix-card:hover .matrix-play-icon { transform: scale(1.1); background: #11131a; color: #fff; box-shadow: 0 0 15px rgba(0, 229, 255, 0.4); }
-        .matrix-card-title { font-size: 0.88rem; font-weight: 600; color: #1e293b; margin: 12px 6px 8px 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: 0.5px; }
-
-        /* ================= 沉浸式下方弹窗流影院架构 ================= */
-        .cinema-theater-backdrop {
-            position: fixed; inset: 0; width: 100%; height: 100%; background: rgba(3, 5, 11, 0); 
-            backdrop-filter: blur(0px); -webkit-backdrop-filter: blur(0px); z-index: 5000;
-            display: flex; align-items: center; justify-content: center;
-            pointer-events: none; opacity: 0;
-            transition: opacity 0.45s var(--ark-bezier), background 0.45s var(--ark-bezier), backdrop-filter 0.45s var(--ark-bezier), -webkit-backdrop-filter 0.45s var(--ark-bezier);
+        
+        /* 修复：文字紧贴图片下方，由文字内容自然撑起卡片下半部分，杜绝大片留白 */
+        .matrix-card-title { 
+            font-size: 0.88rem; font-weight: 600; color: #1e293b; 
+            margin: 12px 4px 6px 4px; 
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: 0.5px; 
         }
-        /* 剧场唤醒态 */
-        .cinema-theater-backdrop.theater-manifest {
-            opacity: 1; pointer-events: auto;
-            background: rgba(3, 5, 11, 0.75); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-        }
-
-        /* 核心播放器外壳（方舟战术级底部弹出模态窗） */
-        .cinema-theater-window {
-            width: 90%; max-width: 1000px; aspect-ratio: 16 / 9; background: #000;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.8), 0 0 1px rgba(255,255,255,0.15);
-            position: relative; border-radius: 4px; border: 1px solid rgba(255,255,255,0.06);
-            overflow: hidden;
-            
-            /* 预设物理极点：正下方偏移 100% 并带有轻微俯仰倾斜 */
-            transform: translateY(100vh) rotateX(-10deg);
-            transition: transform 0.5s var(--ark-bezier);
-            will-change: transform;
-        }
-        /* 弹窗激活态 */
-        .cinema-theater-backdrop.theater-manifest .cinema-theater-window {
-            transform: translateY(0) rotateX(0deg);
-        }
-
-        .cinema-close-trigger {
-            position: absolute; top: 16px; right: 16px; width: 36px; height: 36px; background: rgba(0,0,0,0.5);
-            border: 1px solid rgba(255,255,255,0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            color: rgba(255,255,255,0.7); font-size: 1.2rem; cursor: pointer; z-index: 10; transition: all 0.25s;
-        }
-        .cinema-close-trigger:hover { background: #fff; color: #000; transform: rotate(90deg); border-color: #fff; }
-
-        .cinema-iframe-core { width: 100%; height: 100%; border: none; display: block; }
     </style>
 </head>
 <body>
@@ -443,7 +411,7 @@
                 targetOverlayEl.classList.add('render-block');
                 targetOverlayEl.classList.add(isTargetOnRight ? 'prepare-from-right' : 'prepare-from-left');
 
-                targetOverlayEl.getBoundingClientRect(); // 强行触发重绘
+                targetOverlayEl.getBoundingClientRect(); 
                 targetOverlayEl.classList.add('active-page');
             } else if (targetPageId === 'home') {
                 stageEl.classList.remove('stage-hidden');
@@ -468,13 +436,11 @@
             });
         });
 
-        // ================= 影院弹出系统（Theater Architecture） =================
+        // ================= 影院弹出系统 =================
         function openCinemaTheater() {
             const theaterLayer = document.getElementById('global-cinema-layer');
             const injectionPoint = document.getElementById('cinema-injection-point');
             
-            // 组装 B 站标准高质量嵌入式播放流 (使用指定的BV号：BV1RwFZzTEQ5)
-            // high_quality=1 开启高清自适应，danmaku=1 挂载弹幕系统
             injectionPoint.innerHTML = `
                 <iframe class="cinema-iframe-core" 
                         src="//player.bilibili.com/player.html?bvid=BV1RwFZzTEQ5&page=1&high_quality=1&danmaku=1" 
@@ -493,7 +459,6 @@
             const injectionPoint = document.getElementById('cinema-injection-point');
             
             theaterLayer.classList.remove('theater-manifest');
-            // 立即物理摧毁 Iframe，防止关闭弹窗后后台音频继续播放
             setTimeout(() => {
                 injectionPoint.innerHTML = '';
             }, 450);
@@ -611,12 +576,11 @@
                 mediaConfig.items.forEach((item) => {
                     const card = document.createElement('div');
                     card.className = 'media-matrix-card';
-                    card.onclick = () => openCinemaTheater(); // 点击卡片全局映射至弹出播放层
+                    card.onclick = () => openCinemaTheater(); 
 
                     const coverWrap = document.createElement('div');
                     coverWrap.className = 'matrix-video-cover-wrap';
 
-                    // 【核心修改】转换为标准的 Image DOM 控制，解除 CSS 背景约束限制
                     const coverImg = document.createElement('img');
                     coverImg.src = item.img;
                     coverImg.alt = item.title;
