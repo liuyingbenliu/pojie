@@ -255,7 +255,7 @@
             background: transparent;
         }
 
-        /* ================= 全新：高级影院大屏弹窗机制 ================= */
+        /* ================= 高级影院防卡死/安全加载面板 ================= */
         .cinema-theater-backdrop {
             position: fixed; inset: 0; width: 100%; height: 100%; 
             background: rgba(3, 5, 11, 0); backdrop-filter: blur(0px); -webkit-backdrop-filter: blur(0px);
@@ -284,7 +284,21 @@
         }
         .cinema-close-trigger:hover { background: #fff; color: #000; transform: scale(1.08) rotate(90deg); }
 
-        .cinema-iframe-core { width: 100%; height: 100%; border: none; display: block; }
+        .cinema-iframe-core { width: 100%; height: 100%; border: none; display: block; background: #000; }
+
+        /* 防跨域拦截：底层弹层降级交互组件 */
+        .cinema-fallback-dock {
+            position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+            display: flex; align-items: center; gap: 14px; background: rgba(255, 255, 255, 0.08);
+            padding: 8px 20px; border-radius: 30px; border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px); z-index: 50; pointer-events: auto;
+        }
+        .fallback-text { font-size: 0.8rem; color: rgba(255, 255, 255, 0.5); letter-spacing: 0.5px; }
+        .fallback-action-btn {
+            font-size: 0.8rem; color: #00e5ff; text-decoration: none; font-weight: 600;
+            border-bottom: 1px dashed #00e5ff; padding-bottom: 1px; transition: opacity 0.2s;
+        }
+        .fallback-action-btn:hover { opacity: 0.8; }
     </style>
 </head>
 <body>
@@ -407,6 +421,10 @@
         <div class="cinema-theater-window" onclick="event.stopPropagation()">
             <div class="cinema-close-trigger" onclick="closeCinemaTheater()">✕</div>
             <div id="cinema-injection-point" style="width:100%; height:100%;"></div>
+            <div class="cinema-fallback-dock">
+                <span class="fallback-text">若视频载入遭遇拦截或 404</span>
+                <a href="#" id="cinema-fallback-anchor" target="_blank" class="fallback-action-btn">直接前往 B 站观看 ↗</a>
+            </div>
         </div>
     </div>
 
@@ -484,25 +502,32 @@
             });
         });
 
-        // ================= 彻底修复：智能高兼容影院加载机制 =================
+        // ================= 彻底修复：防 404 及跨域拦截加载引擎 =================
         function openCinemaTheater(targetBvid) {
             const theaterLayer = document.getElementById('global-cinema-layer');
             const injectionPoint = document.getElementById('cinema-injection-point');
+            const fallbackAnchor = document.getElementById('cinema-fallback-anchor');
             
-            // 如果数据里没有配置真实的 bvid，则默认使用原神/方舟大活等能稳定高帧率载入的公开长视频进行鲁棒过渡
-            const finalBvid = targetBvid || 'BV1is41117S3'; 
+            // 数据清洗：强行去除用户在 data.js 里可能误输入的左右空格
+            let cleanBvid = String(targetBvid || '').replace(/\s+/g, '');
             
+            // 鲁棒过渡：如果清洗后发现没有传入合法的 bvid，降级为展示长视频，防止弹窗变白屏
+            if (!cleanBvid || cleanBvid === 'undefined' || cleanBvid === 'null') {
+                cleanBvid = 'BV1is41117S3'; 
+            }
+            
+            // 同步设置下方降级跳转按钮的真实外链地址
+            fallbackAnchor.href = `https://www.bilibili.com/video/${cleanBvid}`;
+
             theaterLayer.style.display = 'flex';
-            
-            // 同步触发动画帧渲染
             requestAnimationFrame(() => {
                 theaterLayer.classList.add('theater-manifest');
             });
 
-            // 彻底解决加载卡死的关键：完全遵循标准开放沙箱，注入最高权限防跨域卡死
+            // 使用最新的高兼容防跨域参数结构进行拼装拼接，防止返回 404
             injectionPoint.innerHTML = `
                 <iframe class="cinema-iframe-core" 
-                        src="https://player.bilibili.com/player.html?bvid=${finalBvid}&page=1&high_quality=1&danmaku=0&autoplay=1" 
+                        src="https://player.bilibili.com/player.html?bvid=${cleanBvid}&page=1&high_quality=1&danmaku=0&autoplay=0" 
                         scrolling="no" 
                         border="0" 
                         frameborder="no" 
@@ -517,7 +542,6 @@
             const injectionPoint = document.getElementById('cinema-injection-point');
             
             theaterLayer.classList.remove('theater-manifest');
-            // 动画结束后完全切断 iframe 连接，避免后台继续消耗带宽/播放声音
             setTimeout(() => {
                 theaterLayer.style.display = 'none';
                 injectionPoint.innerHTML = '';
@@ -637,8 +661,9 @@
                     const card = document.createElement('div');
                     card.className = 'media-matrix-card';
                     
-                    // 动态将从 data.js 里获取到的对应 bvid 送入播放窗口
-                    card.onclick = () => openCinemaTheater(item.bvid || item.bv); 
+                    // 双重兼容性取值：优先读取 item.bvid，其次兼容 item.bv 或者 item.id
+                    const finalTargetBv = item.bvid || item.bv || item.id;
+                    card.onclick = () => openCinemaTheater(finalTargetBv); 
 
                     const coverWrap = document.createElement('div');
                     coverWrap.className = 'matrix-video-cover-wrap';
