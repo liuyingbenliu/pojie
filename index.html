@@ -72,11 +72,6 @@
             transform: scaleX(1);
         }
 
-        .header-right { display: flex; gap: 24px; color: rgba(255,255,255,0.6); font-size: 0.95rem; align-items: center; }
-        .icon-btn { cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 4px; position: relative; }
-        .icon-btn:hover { color: #fff; }
-        .lang-text { font-size: 0.75rem; letter-spacing: 1px; font-weight: bold; border: 1px solid rgba(255,255,255,0.3); padding: 2px 6px; border-radius: 3px; }
-
         /* --- 主舞台（首页层） --- */
         #main-stage { 
             position: relative; width: 100%; height: 100%; z-index: 10; 
@@ -98,12 +93,24 @@
         .title-sub { font-size: clamp(0.9rem, 1.5vw, 1.2rem); letter-spacing: 8px; color: rgba(255,255,255,0.6); margin: 15px 0 0 0; }
         .quote-text { margin-top: 5vh; font-size: clamp(0.75rem, 0.9vw, 0.85rem); color: rgba(255,255,255,0.4); letter-spacing: 3px; line-height: 1.8; max-width: 600px; }
 
-        /* --- 主页白色背景右箭头 --- */
+        /* --- 主页白色背景右箭头（带慢速左右平滑移动动画） --- */
         .hero-arrow-wrap {
             margin-top: 28px;
             pointer-events: auto;
             cursor: pointer;
+            /* 绑定慢速往复移动动画：历时2.5秒，无限循环，双向往复，平滑过渡 */
+            animation: arrowFloatHorizontal 2.5s ease-in-out infinite alternate;
         }
+        
+        @keyframes arrowFloatHorizontal {
+            0% {
+                transform: translateX(-8px);
+            }
+            100% {
+                transform: translateX(8px);
+            }
+        }
+
         .hero-arrow-circle {
             display: flex;
             align-items: center;
@@ -126,12 +133,13 @@
             stroke-linejoin: round;
             transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1);
         }
+        /* 鼠标悬停时在原有动画基础上放大 */
         .hero-arrow-wrap:hover .hero-arrow-circle {
             transform: scale(1.12);
             box-shadow: 0 0 42px rgba(255, 255, 255, 0.55), 0 6px 22px rgba(0, 0, 0, 0.35);
         }
         .hero-arrow-wrap:hover .hero-arrow-circle svg {
-            transform: translateX(3px);
+            transform: translateX(2px);
         }
         .hero-arrow-wrap:active .hero-arrow-circle {
             transform: scale(0.94);
@@ -267,13 +275,7 @@
                 <div class="nav-btn" id="nav-media" onclick="navigateToPage('media')">媒体</div>
             </nav>
         </div>
-        <div class="header-right">
-            <div class="icon-btn" onclick="location.href='index_en.html'">
-                <span>🌐</span><span class="lang-text">EN</span>
-            </div>
-            <span class="icon-btn" onclick="window.open('https://www.bing.com', '_blank')">🔗</span>
-        </div>
-    </header>
+        </header>
 
     <div id="main-stage">
         <canvas id="star-canvas"></canvas>
