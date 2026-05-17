@@ -98,36 +98,25 @@
             padding: 90px 6% 40px 6%;
             background: rgba(4, 6, 14, 0.97); backdrop-filter: blur(25px);
             display: flex; flex-direction: column; overflow-y: auto; 
-            
-            /* 默认隐藏在视口之外，pointer-events 关闭切断干扰 */
             pointer-events: none !important;
             display: none; 
             opacity: 0;
-            
-            /* 极速响应时间 0.45s，全面开启 GPU 加速 */
             transition: opacity 0.45s var(--ark-bezier), transform 0.45s var(--ark-bezier);
             will-change: transform, opacity;
         }
 
-        /* 状态控制显隐 */
         .fullview-overlay.render-block { display: flex; }
-
-        /* 始发等待位（方舟经典纯轴平移） */
         .fullview-overlay.prepare-from-right { opacity: 0; transform: translateX(100%); }
         .fullview-overlay.prepare-from-left  { opacity: 0; transform: translateX(-100%); }
-
-        /* 激活展现位（完美居中） */
         .fullview-overlay.active-page { 
             opacity: 1; 
             transform: translateX(0) scale(1) !important;
             pointer-events: auto !important; 
         }
-
-        /* 迁出失活位（向相反方向滑出，带有微弱视差收缩） */
         .fullview-overlay.exit-to-left  { opacity: 0; transform: translateX(-100%) scale(0.96); pointer-events: none !important; }
         .fullview-overlay.exit-to-right { opacity: 0; transform: translateX(100%) scale(0.96); pointer-events: none !important; }
 
-        /* 统一精致滚动条 */
+        /* 精致滚动条 */
         .fullview-overlay::-webkit-scrollbar, 
         .noti-sidebar-list::-webkit-scrollbar, 
         .generic-detail-panel::-webkit-scrollbar,
@@ -137,7 +126,6 @@
         .generic-detail-panel::-webkit-scrollbar-thumb,
         .media-grid-container::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.12); border-radius: 2px; }
 
-        /* 页面顶部标题与返回 */
         .page-header-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 15px; margin-bottom: 25px; flex-shrink: 0; }
         .page-main-title { font-size: clamp(1.4rem, 2.2vw, 2.2rem); font-weight: 300; margin: 0; letter-spacing: 3px; }
         .page-sub-title { font-size: 0.75rem; color: var(--accent); letter-spacing: 2px; margin-top: 5px; font-family: monospace; }
@@ -185,7 +173,7 @@
         .detail-content { line-height: 1.85; color: rgba(255,255,255,0.75); font-size: 0.92rem; text-align: justify; }
         .detail-content p { margin: 0 0 16px 0; }
 
-        /* ================= 媒体页面专属浅色科幻层 ================= */
+        /* ================= 媒体页面专属布局 ================= */
         .media-page-override {
             background: radial-gradient(circle at 50% 30%, rgba(245, 247, 250, 0.96) 0%, rgba(230, 235, 243, 0.98) 100%) !important;
             background-image: url('https://pub-c5e31b5cdafb419a82e69d040106134a.r2.dev/mock-map-bg.svg'), 
@@ -208,22 +196,79 @@
             box-shadow: 0 4px 12px rgba(17,19,26,0.15);
         }
 
-        .media-grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 25px; overflow-y: auto; flex-grow: 1; padding-bottom: 40px; width: 100%; }
+        .media-grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; overflow-y: auto; flex-grow: 1; padding-bottom: 40px; width: 100%; }
+        
+        /* 视频模块主卡片架构（方舟战术折边切角） */
         .media-matrix-card {
-            background: #fff; border: 1px solid rgba(15,23,42,0.06); padding: 5px; border-radius: 4px; box-shadow: 0 4px 14px rgba(15,23,42,0.03);
-            clip-path: polygon(0 0, calc(100% - 24px) 0, 100% 24px, 100% 100%, 24px 100%, 0 calc(100% - 24px)); cursor: pointer; position: relative; width: 100%; opacity: 0; transform: translateX(-20px) scale(0.96);
+            background: #fff; border: 1px solid rgba(15,23,42,0.06); padding: 6px; border-radius: 2px; box-shadow: 0 4px 14px rgba(15,23,42,0.03);
+            clip-path: polygon(0 0, calc(100% - 24px) 0, 100% 24px, 100% 100%, 24px 100%, 0 calc(100% - 24px)); 
+            cursor: pointer; position: relative; width: 100%; opacity: 0; transform: translateX(-20px) scale(0.96);
         }
         .media-matrix-card.reveal-manifest { opacity: 1; transform: translateX(0) scale(1); transition: opacity 0.45s var(--ark-bezier), transform 0.45s var(--ark-bezier); }
-        .media-matrix-card:hover { border-color: #11131a; box-shadow: 0 6px 20px rgba(17,19,26,0.1); }
+        .media-matrix-card:hover { border-color: #11131a; box-shadow: 0 8px 24px rgba(17,19,26,0.12); }
 
-        .matrix-video-cover-wrap { width: 100%; aspect-ratio: 16 / 9; background-size: cover; background-position: center; position: relative; overflow: hidden; clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 22px, 100% 100%, 22px 100%, 0 calc(100% - 22px)); }
-        .matrix-play-indicator { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.15); }
-        .matrix-play-icon {
-            width: 44px; height: 44px; background: rgba(255,255,255,0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #11131a;
-            font-size: 1.1rem; padding-left: 3px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); transition: 0.25s;
+        /* 【核心修复】强制封锁 16:9 物理纵横比，彻底杜绝拉伸变形 */
+        .matrix-video-cover-wrap { 
+            width: 100%; aspect-ratio: 16 / 9; position: relative; overflow: hidden; 
+            clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 18px 100%, 0 calc(100% - 18px));
+            background: #000;
         }
-        .media-matrix-card:hover .matrix-play-icon { transform: scale(1.1); background: #11131a; color: #fff; }
-        .matrix-card-title { font-size: 0.85rem; font-weight: 600; color: #1e293b; margin: 12px 6px 8px 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: 0.5px; }
+        /* 子元素填充，利用 object-fit 完美解耦图像本身的约束限制 */
+        .matrix-video-cover-wrap img {
+            width: 100%; height: 100%; object-fit: cover; display: block;
+            transition: transform 0.4s var(--ark-bezier);
+        }
+        .media-matrix-card:hover .matrix-video-cover-wrap img { transform: scale(1.05); }
+
+        .matrix-play-indicator { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.15); transition: background 0.3s; z-index: 2; }
+        .media-matrix-card:hover .matrix-play-indicator { background: rgba(0,0,0,0.3); }
+        
+        .matrix-play-icon {
+            width: 46px; height: 46px; background: rgba(255,255,255,0.95); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #11131a;
+            font-size: 1.1rem; padding-left: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: all 0.3s var(--ark-bezier);
+        }
+        .media-matrix-card:hover .matrix-play-icon { transform: scale(1.1); background: #11131a; color: #fff; box-shadow: 0 0 15px rgba(0, 229, 255, 0.4); }
+        .matrix-card-title { font-size: 0.88rem; font-weight: 600; color: #1e293b; margin: 12px 6px 8px 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: 0.5px; }
+
+        /* ================= 沉浸式下方弹窗流影院架构 ================= */
+        .cinema-theater-backdrop {
+            position: fixed; inset: 0; width: 100%; height: 100%; background: rgba(3, 5, 11, 0); 
+            backdrop-filter: blur(0px); -webkit-backdrop-filter: blur(0px); z-index: 5000;
+            display: flex; align-items: center; justify-content: center;
+            pointer-events: none; opacity: 0;
+            transition: opacity 0.45s var(--ark-bezier), background 0.45s var(--ark-bezier), backdrop-filter 0.45s var(--ark-bezier), -webkit-backdrop-filter 0.45s var(--ark-bezier);
+        }
+        /* 剧场唤醒态 */
+        .cinema-theater-backdrop.theater-manifest {
+            opacity: 1; pointer-events: auto;
+            background: rgba(3, 5, 11, 0.75); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+        }
+
+        /* 核心播放器外壳（方舟战术级底部弹出模态窗） */
+        .cinema-theater-window {
+            width: 90%; max-width: 1000px; aspect-ratio: 16 / 9; background: #000;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.8), 0 0 1px rgba(255,255,255,0.15);
+            position: relative; border-radius: 4px; border: 1px solid rgba(255,255,255,0.06);
+            overflow: hidden;
+            
+            /* 预设物理极点：正下方偏移 100% 并带有轻微俯仰倾斜 */
+            transform: translateY(100vh) rotateX(-10deg);
+            transition: transform 0.5s var(--ark-bezier);
+            will-change: transform;
+        }
+        /* 弹窗激活态 */
+        .cinema-theater-backdrop.theater-manifest .cinema-theater-window {
+            transform: translateY(0) rotateX(0deg);
+        }
+
+        .cinema-close-trigger {
+            position: absolute; top: 16px; right: 16px; width: 36px; height: 36px; background: rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            color: rgba(255,255,255,0.7); font-size: 1.2rem; cursor: pointer; z-index: 10; transition: all 0.25s;
+        }
+        .cinema-close-trigger:hover { background: #fff; color: #000; transform: rotate(90deg); border-color: #fff; }
+
+        .cinema-iframe-core { width: 100%; height: 100%; border: none; display: block; }
     </style>
 </head>
 <body>
@@ -342,6 +387,13 @@
         <div class="media-grid-container" id="media-matrix-grid"></div>
     </div>
 
+    <div class="cinema-theater-backdrop" id="global-cinema-layer" onclick="closeCinemaTheater()">
+        <div class="cinema-theater-window" onclick="event.stopPropagation()">
+            <div class="cinema-close-trigger" onclick="closeCinemaTheater()">✕</div>
+            <div id="cinema-injection-point" style="width:100%; height:100%;"></div>
+        </div>
+    </div>
+
     <script src="data.js"></script>
 
     <script>
@@ -356,7 +408,7 @@
         const PAGE_SEQUENCE = ['home', 'info', 'db', 'news', 'media'];
         let currentPageId = 'home';
 
-        // ================= 方舟级强切流体路由分配引擎 =================
+        // ================= 方舟级视差切页路由分配引擎 =================
         function navigateToPage(targetPageId, pushState = true) {
             if (targetPageId === currentPageId) return;
 
@@ -373,14 +425,12 @@
             let oldOverlayEl = document.getElementById(`view-${currentPageId}-page`);
             let targetOverlayEl = document.getElementById(`view-${targetPageId}-page`);
 
-            // 【核心修复一】直接物理清理除新旧页面外的全部底层元素状态，绝不生成状态积累
             document.querySelectorAll('.fullview-overlay').forEach(el => {
                 if (el !== oldOverlayEl && el !== targetOverlayEl) {
                     el.className = 'fullview-overlay';
                 }
             });
 
-            // 1. 处理离开组件的动画
             if (currentPageId === 'home') {
                 stageEl.classList.add('stage-hidden');
             } else if (oldOverlayEl) {
@@ -388,34 +438,26 @@
                 oldOverlayEl.classList.add(isTargetOnRight ? 'exit-to-left' : 'exit-to-right');
             }
 
-            // 2. 调度切入组件的动画
             if (targetPageId !== 'home' && targetOverlayEl) {
-                // 【核心修复二】先清空目的页的历史失活样式，强行切换块级显隐
                 targetOverlayEl.classList.remove('exit-to-left', 'exit-to-right');
                 targetOverlayEl.classList.add('render-block');
                 targetOverlayEl.classList.add(isTargetOnRight ? 'prepare-from-right' : 'prepare-from-left');
 
-                // 强制同步计算定位，无任何延迟开销
-                targetOverlayEl.getBoundingClientRect();
-
-                // 释放滑入位移
+                targetOverlayEl.getBoundingClientRect(); // 强行触发重绘
                 targetOverlayEl.classList.add('active-page');
             } else if (targetPageId === 'home') {
                 stageEl.classList.remove('stage-hidden');
             }
 
-            // 3. 页面同步和高亮切换
             currentPageId = targetPageId;
             document.querySelectorAll('.nav-menu .nav-btn').forEach(b => b.classList.remove('active'));
             const navBtnEl = document.getElementById(`nav-${targetPageId}`);
             if (navBtnEl) navBtnEl.classList.add('active');
 
-            // 4. 组件内容按需渲染
             if (sliderIndices[targetPageId] !== undefined) renderSlider(targetPageId);
             if (targetPageId === 'media') triggerMediaStaggerAnimation();
         }
 
-        // 监听所有动画完结，物理切断 display:none，最大化节约系统资源
         document.querySelectorAll('.fullview-overlay').forEach(el => {
             el.addEventListener('transitionend', (e) => {
                 if (e.propertyName === 'transform' || e.propertyName === 'opacity') {
@@ -426,22 +468,36 @@
             });
         });
 
-        function checkGitHubRedirectAndRoute() {
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('p') !== null) {
-                window.history.replaceState(null, null, window.location.pathname + (urlParams.get('q') ? '?' + urlParams.get('q').replace(/~and~/g, '&') : ''));
-                const pageParam = new URLSearchParams(window.location.search).get('page');
-                if (pageParam) navigateToPage(pageParam, false);
-            } else {
-                const pageParam = urlParams.get('page');
-                if (pageParam) navigateToPage(pageParam, false);
-            }
+        // ================= 影院弹出系统（Theater Architecture） =================
+        function openCinemaTheater() {
+            const theaterLayer = document.getElementById('global-cinema-layer');
+            const injectionPoint = document.getElementById('cinema-injection-point');
+            
+            // 组装 B 站标准高质量嵌入式播放流 (使用指定的BV号：BV1RwFZzTEQ5)
+            // high_quality=1 开启高清自适应，danmaku=1 挂载弹幕系统
+            injectionPoint.innerHTML = `
+                <iframe class="cinema-iframe-core" 
+                        src="//player.bilibili.com/player.html?bvid=BV1RwFZzTEQ5&page=1&high_quality=1&danmaku=1" 
+                        scrolling="no" 
+                        border="0" 
+                        frameborder="no" 
+                        framespacing="0" 
+                        allowfullscreen="true">
+                </iframe>`;
+            
+            theaterLayer.classList.add('theater-manifest');
         }
 
-        window.addEventListener('popstate', (event) => {
-            const page = (event.state && event.state.page) || 'home';
-            navigateToPage(page, false);
-        });
+        function closeCinemaTheater() {
+            const theaterLayer = document.getElementById('global-cinema-layer');
+            const injectionPoint = document.getElementById('cinema-injection-point');
+            
+            theaterLayer.classList.remove('theater-manifest');
+            // 立即物理摧毁 Iframe，防止关闭弹窗后后台音频继续播放
+            setTimeout(() => {
+                injectionPoint.innerHTML = '';
+            }, 450);
+        }
 
         // ================= 数据视图渲染体系 =================
         function initSliderDots(pageKey) {
@@ -555,10 +611,15 @@
                 mediaConfig.items.forEach((item) => {
                     const card = document.createElement('div');
                     card.className = 'media-matrix-card';
+                    card.onclick = () => openCinemaTheater(); // 点击卡片全局映射至弹出播放层
 
                     const coverWrap = document.createElement('div');
                     coverWrap.className = 'matrix-video-cover-wrap';
-                    coverWrap.style.backgroundImage = `url('${item.img}')`;
+
+                    // 【核心修改】转换为标准的 Image DOM 控制，解除 CSS 背景约束限制
+                    const coverImg = document.createElement('img');
+                    coverImg.src = item.img;
+                    coverImg.alt = item.title;
 
                     const playIndicator = document.createElement('div');
                     playIndicator.className = 'matrix-play-indicator';
@@ -568,6 +629,7 @@
                     playIcon.innerText = '▶';
 
                     playIndicator.appendChild(playIcon);
+                    coverWrap.appendChild(coverImg);
                     coverWrap.appendChild(playIndicator);
 
                     const titleEl = document.createElement('div');
@@ -652,6 +714,23 @@
             drawGhostTrain(); stars.forEach(s => { s.update(); s.draw(); }); meteors.forEach(m => { m.update(); m.draw(); });
             requestAnimationFrame(animate);
         }
+
+        function checkGitHubRedirectAndRoute() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('p') !== null) {
+                window.history.replaceState(null, null, window.location.pathname + (urlParams.get('q') ? '?' + urlParams.get('q').replace(/~and~/g, '&') : ''));
+                const pageParam = new URLSearchParams(window.location.search).get('page');
+                if (pageParam) navigateToPage(pageParam, false);
+            } else {
+                const pageParam = urlParams.get('page');
+                if (pageParam) navigateToPage(pageParam, false);
+            }
+        }
+
+        window.addEventListener('popstate', (event) => {
+            const page = (event.state && event.state.page) || 'home';
+            navigateToPage(page, false);
+        });
 
         window.addEventListener('resize', initCanvas);
 
