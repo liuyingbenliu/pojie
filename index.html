@@ -6,12 +6,13 @@
     <title>MX server | 未来与奇迹</title>
     <style>
         :root {
-            --accent: #4cafff; /* 蔚蓝档案官方风：标志性清爽淡蓝 */
-            --accent-glow: rgba(76, 175, 255, 0.3); 
+            --accent: #a3d7ff; /* 导航栏与整体激活色：已改为淡冰蓝 */
+            --accent-glow: rgba(163, 215, 255, 0.25); 
             --bg-dark: #03050d;
             --glass-bg: rgba(255, 255, 255, 0.03);
             --glass-border: rgba(255, 255, 255, 0.06);
-            --ark-bezier: cubic-bezier(0.25, 1, 0.5, 1); /* 更轻快灵动的蔚蓝档案阻尼感 */
+            --white-border: rgba(255, 255, 255, 0.2); 
+            --ark-bezier: cubic-bezier(0.25, 1, 0.5, 1); 
         }
 
         * { 
@@ -196,7 +197,7 @@
         .detail-content { line-height: 1.85; color: rgba(255,255,255,0.75); font-size: 0.92rem; text-align: justify; }
         .detail-content p { margin: 0 0 16px 0; }
 
-        /* ================= 媒体页面（重构：缩小尺寸与彻底修复重叠Bug） ================= */
+        /* ================= 媒体页面（彻底修复高度溢出与挤压 Bug） ================= */
         .media-capsule-container { display: flex; gap: 14px; margin: 5px 0 20px 0; flex-shrink: 0; list-style: none; padding: 0; }
         .media-capsule-btn {
             padding: 6px 20px; font-size: 0.82rem; font-weight: 500; color: rgba(255,255,255,0.6);
@@ -208,23 +209,23 @@
             box-shadow: 0 0 15px rgba(255, 255, 255, 0.25); font-weight: 600;
         }
 
-        /* 缩小网格卡片的基础列宽（从 280px 调小至 220px） */
+        /* 修复：使用绝对高度限制网格容器，防止弹性容器無限长、脱离滚动视区 */
         .media-grid-container { 
             display: grid; 
             grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
             gap: 20px; 
             overflow-y: auto; 
-            flex-grow: 1; 
-            padding-bottom: 60px; 
+            height: calc(100vh - 220px); /* 严格限制高度，确保内容在当前视口内安全滚动 */
+            padding-bottom: 40px; 
             width: 100%; 
         }
         
-        /* 移除固定高度，改为由内部元素完美撑开的流式布局，彻底抹除重叠 Bug */
         .media-matrix-card {
             background: rgba(255, 255, 255, 0.02); 
-            border: 1px solid var(--glass-border); 
+            border: 1px solid var(--white-border); 
             padding: 0; border-radius: 10px; 
-            cursor: pointer; position: relative; width: 100%; height: auto;
+            cursor: pointer; position: relative; width: 100%;
+            height: fit-content; /* 修复：卡片本身高度自适应内部元素，绝不拉伸变形 */
             overflow: hidden; opacity: 0; transform: translateY(15px);
             display: flex; flex-direction: column;
             transition: transform 0.4s var(--ark-bezier), box-shadow 0.4s var(--ark-bezier), border-color 0.4s var(--ark-bezier);
@@ -233,7 +234,7 @@
         
         .media-matrix-card:hover { 
             border-color: #ffffff; 
-            box-shadow: 0 8px 24px rgba(255, 255, 255, 0.12); 
+            box-shadow: 0 8px 24px rgba(255, 255, 255, 0.15); 
             transform: translateY(-4px);
         }
 
@@ -248,14 +249,12 @@
         .matrix-play-indicator { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.15); transition: background 0.3s; z-index: 2; }
         .media-matrix-card:hover .matrix-play-indicator { background: rgba(0,0,0,0.35); }
         
-        /* 缩小播放按钮尺寸（从 52px 缩减至 38px），使其更加精致细腻 */
         .matrix-play-icon {
             width: 38px; height: 38px; background: rgba(3, 5, 13, 0.8); border: 1px solid rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff;
             font-size: 0.85rem; padding-left: 3px; backdrop-filter: blur(8px); transition: all 0.3s var(--ark-bezier);
         }
         .media-matrix-card:hover .matrix-play-icon { transform: scale(1.1); border-color: #ffffff; color: #ffffff; box-shadow: 0 0 12px rgba(255, 255, 255, 0.35); }
         
-        /* 精简内边距与字体大小，平滑衔接，完美杜绝溢出重叠 */
         .matrix-card-title { 
             font-size: 0.82rem; font-weight: 400; color: rgba(255,255,255,0.85); margin: 0;
             padding: 10px 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: 0.5px;
@@ -757,11 +756,11 @@
 
         function drawGhostTrain() {
             ctx.save(); 
-            ctx.globalAlpha = 0.55; 
-            ctx.strokeStyle = "#4cafff"; 
-            ctx.lineWidth = 2; 
-            ctx.shadowBlur = 12; 
-            ctx.shadowColor = "rgba(76, 175, 255, 0.4)"; 
+            ctx.globalAlpha = 0.35; /* 降低透明度，让列车变淡 */
+            ctx.strokeStyle = "#a3d7ff"; /* 列车已同步修改为冰蓝色 #a3d7ff */
+            ctx.lineWidth = 1.5; 
+            ctx.shadowBlur = 8; 
+            ctx.shadowColor = "rgba(163, 215, 255, 0.3)"; 
             
             const trainY = canvas.height * 0.82; 
             trainX += 1.2; 
