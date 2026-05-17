@@ -40,7 +40,6 @@
         .header-left { display: flex; align-items: center; gap: clamp(20px, 3vw, 40px); }
         .header-logo { font-size: clamp(0.95rem, 1.2vw, 1.1rem); letter-spacing: 4px; font-weight: 600; color: #fff; white-space: nowrap; }
 
-        /* 统一管理导航容器，用于绝对定位白条 */
         .nav-menu { display: flex; gap: clamp(15px, 2.5vw, 35px); height: 64px; align-items: center; position: relative; }
         
         .nav-btn {
@@ -49,13 +48,12 @@
             padding: 20px 0; z-index: 2;
         }
         
-        /* 悬浮与激活态改为蔚蓝档案清爽淡蓝 */
         .nav-btn:hover, .nav-btn.active { color: var(--accent) !important; }
 
         /* 独家定制：智能跟踪定位滑动白条 */
         .nav-slider-line {
             position: absolute; bottom: 0; left: 0; height: 3px;
-            background-color: #ffffff; /* 严格白色条 */
+            background-color: #ffffff; 
             box-shadow: 0 0 12px rgba(255, 255, 255, 0.6);
             transition: left 0.38s var(--ark-bezier), width 0.38s var(--ark-bezier);
             pointer-events: none; z-index: 1;
@@ -141,14 +139,29 @@
         }
         .page-back-btn:hover { color: #fff; border-color: #fff; box-shadow: 0 0 15px var(--accent-glow); }
 
-        /* ================= 世界观 / 设定 卡片轮播 ================= */
+        /* ================= 世界观 / 设定 卡片轮播（已同步媒体页视频卡片样式） ================= */
         .slider-showcase-container { display: flex; align-items: center; justify-content: center; width: 100%; gap: 30px; position: relative; margin-top: 10px; flex-shrink: 0; }
         .cards-viewport { display: flex; align-items: center; justify-content: center; width: 85%; height: clamp(240px, 32vh, 380px); position: relative; overflow: hidden; }
+        
         .showcase-card {
-            position: absolute; width: 55%; height: 100%; background-size: cover; background-position: center; border: 1px solid var(--glass-border);
-            clip-path: polygon(0 0, calc(100% - 40px) 0, 100% 40px, 100% 100%, 40px 100%, 0 calc(100% - 40px)); transition: all 0.45s var(--ark-bezier); opacity: 0; pointer-events: none; z-index: 1;
+            position: absolute; width: 55%; height: 100%; 
+            background-size: cover; background-position: center; 
+            border: 1px solid var(--glass-border);
+            border-radius: 12px; /* 同步视频页圆角 */
+            overflow: hidden; /* 裁剪溢出边界 */
+            clip-path: none; /* 彻底取消原本的斜角裁剪 */
+            transition: all 0.45s var(--ark-bezier); 
+            opacity: 0; pointer-events: none; z-index: 1;
         }
-        .showcase-card.active { opacity: 1; pointer-events: auto; transform: scale(1) translateX(0); z-index: 3; border-color: #ffffff; box-shadow: 0 0 30px rgba(255, 255, 255, 0.15); }
+        /* 激活态时改为纯白边框，附带细腻光晕阴影 */
+        .showcase-card.active { 
+            opacity: 1; 
+            pointer-events: auto; 
+            transform: scale(1) translateX(0); 
+            z-index: 3; 
+            border-color: #ffffff; /* 严格白色边框 */
+            box-shadow: 0 12px 30px rgba(255, 255, 255, 0.15); /* 同步视频页阴影质感 */
+        }
         .showcase-card.prev { opacity: 0.25; transform: scale(0.85) translateX(-70%); z-index: 2; }
         .showcase-card.next { opacity: 0.25; transform: scale(0.85) translateX(70%); z-index: 2; }
         .slide-arrow { font-size: 2rem; color: rgba(255,255,255,0.3); cursor: pointer; transition: 0.3s; padding: 10px; z-index: 10; user-select: none; }
@@ -163,7 +176,7 @@
         .dynamic-sub-quote { font-size: 0.95rem; color: #ffffff; font-weight: bold; letter-spacing: 1px; margin-bottom: 20px; display: block; }
         .dynamic-body-text { font-size: 0.95rem; color: rgba(255,255,255,0.7); line-height: 1.9; text-align: justify; padding-bottom: 60px; }
 
-        /* ================= 告示页面分栏布局（全面改白） ================= */
+        /* ================= 告示页面分栏布局 ================= */
         .page-layout-container { display: flex; gap: 30px; flex-grow: 1; height: calc(100vh - 220px); min-height: 400px; overflow: hidden; }
         .noti-sidebar-list { width: 32%; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; padding-right: 6px; height: 100%; padding-bottom: 40px; }
         .noti-item-card { background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 15px; border-radius: 6px; cursor: pointer; transition: 0.25s; flex-shrink: 0; }
@@ -184,7 +197,7 @@
         .detail-content { line-height: 1.85; color: rgba(255,255,255,0.75); font-size: 0.92rem; text-align: justify; }
         .detail-content p { margin: 0 0 16px 0; }
 
-        /* ================= 媒体页面重构（视频板块悬浮点击白色） ================= */
+        /* ================= 媒体页面重构 ================= */
         .media-capsule-container { display: flex; gap: 14px; margin: 5px 0 25px 0; flex-shrink: 0; list-style: none; padding: 0; }
         .media-capsule-btn {
             padding: 8px 24px; font-size: 0.88rem; font-weight: 500; color: rgba(255,255,255,0.6);
@@ -432,11 +445,9 @@
             const line = document.getElementById('global-nav-line');
             if (!btn || !line) return;
 
-            // 获取按钮相对于共同父容器（.nav-menu）的坐标与物理宽度
             const leftPos = btn.offsetLeft;
             const btnWidth = btn.offsetWidth;
 
-            // 严格对齐至文字下方
             line.style.left = `${leftPos}px`;
             line.style.width = `${btnWidth}px`;
         }
@@ -487,7 +498,6 @@
             const navBtnEl = document.getElementById(`nav-${targetPageId}`);
             if (navBtnEl) navBtnEl.classList.add('active');
 
-            // 触发白条滑行动画
             updateNavSliderLine(targetPageId);
 
             if (sliderIndices[targetPageId] !== undefined) renderSlider(targetPageId);
@@ -504,7 +514,7 @@
             });
         });
 
-        // ================= 精准映射目标 BV1RwFZzTEQ5 核心播放引擎 =================
+        // ================= 播放引擎 =================
         function openCinemaTheater() {
             const theaterLayer = document.getElementById('global-cinema-layer');
             const injectionPoint = document.getElementById('cinema-injection-point');
@@ -774,7 +784,6 @@
             navigateToPage(page, false);
         });
 
-        // 缩放窗口时重构画布，并校准滑动条物理宽度
         window.addEventListener('resize', () => {
             initCanvas();
             updateNavSliderLine(currentPageId);
@@ -804,7 +813,6 @@
                 }
             }
             
-            // 首屏初始化白条定位
             setTimeout(() => {
                 updateNavSliderLine(currentPageId);
             }, 100);
