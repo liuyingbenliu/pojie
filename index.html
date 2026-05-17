@@ -28,9 +28,9 @@
             user-select: none;
         }
 
-        /* --- 顶部全局导航栏（精简高度与宽度，更显精致美观） --- */
+        /* --- 顶部全局导航栏 --- */
         .top-header {
-            position: fixed; top: 0; left: 0; width: 100%; height: 48px; /* 从 64px 压缩至 48px */
+            position: fixed; top: 0; left: 0; width: 100%; height: 48px;
             display: flex; justify-content: space-between; align-items: center;
             padding: 0 4%; background: rgba(3, 5, 13, 0.85);
             backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
@@ -45,7 +45,7 @@
         .nav-btn {
             font-size: clamp(0.75rem, 0.95vw, 0.85rem); color: rgba(255,255,255,0.4); cursor: pointer;
             transition: color 0.25s linear; position: relative; letter-spacing: 1px; white-space: nowrap;
-            padding: 12px 0; z-index: 2; /* 优化内边距平衡高度 */
+            padding: 12px 0; z-index: 2;
         }
         
         .nav-btn:hover, .nav-btn.active { color: var(--accent) !important; }
@@ -100,7 +100,7 @@
         /* ================= 高级视窗切换控制引擎 ================= */
         .fullview-overlay {
             position: fixed; inset: 0; width: 100%; height: 100%; z-index: 1500; 
-            padding: 75px 6% 40px 6%; /* 顶部缩减，呼应更窄的导航栏 */
+            padding: 75px 6% 40px 6%;
             background: rgba(4, 6, 14, 0.96); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
             display: flex; flex-direction: column; overflow-y: auto; 
             pointer-events: none !important;
@@ -196,26 +196,36 @@
         .detail-content { line-height: 1.85; color: rgba(255,255,255,0.75); font-size: 0.92rem; text-align: justify; }
         .detail-content p { margin: 0 0 16px 0; }
 
-        /* ================= 媒体页面重构 ================= */
-        .media-capsule-container { display: flex; gap: 14px; margin: 5px 0 25px 0; flex-shrink: 0; list-style: none; padding: 0; }
+        /* ================= 媒体页面（重构：缩小尺寸与彻底修复重叠Bug） ================= */
+        .media-capsule-container { display: flex; gap: 14px; margin: 5px 0 20px 0; flex-shrink: 0; list-style: none; padding: 0; }
         .media-capsule-btn {
-            padding: 8px 24px; font-size: 0.88rem; font-weight: 500; color: rgba(255,255,255,0.6);
+            padding: 6px 20px; font-size: 0.82rem; font-weight: 500; color: rgba(255,255,255,0.6);
             background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 30px;
-            cursor: pointer; transition: all 0.3s var(--ark-bezier); letter-spacing: 2px;
+            cursor: pointer; transition: all 0.3s var(--ark-bezier); letter-spacing: 1px;
         }
         .media-capsule-btn.capsule-active {
             background: rgba(255, 255, 255, 0.08); color: #ffffff; border-color: #ffffff;
             box-shadow: 0 0 15px rgba(255, 255, 255, 0.25); font-weight: 600;
         }
 
-        .media-grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; overflow-y: auto; flex-grow: 1; padding-bottom: 40px; width: 100%; }
+        /* 缩小网格卡片的基础列宽（从 280px 调小至 220px） */
+        .media-grid-container { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
+            gap: 20px; 
+            overflow-y: auto; 
+            flex-grow: 1; 
+            padding-bottom: 60px; 
+            width: 100%; 
+        }
         
+        /* 移除固定高度，改为由内部元素完美撑开的流式布局，彻底抹除重叠 Bug */
         .media-matrix-card {
             background: rgba(255, 255, 255, 0.02); 
             border: 1px solid var(--glass-border); 
-            padding: 0; border-radius: 12px; 
-            cursor: pointer; position: relative; width: 100%; height: fit-content;
-            overflow: hidden; opacity: 0; transform: translateY(20px);
+            padding: 0; border-radius: 10px; 
+            cursor: pointer; position: relative; width: 100%; height: auto;
+            overflow: hidden; opacity: 0; transform: translateY(15px);
             display: flex; flex-direction: column;
             transition: transform 0.4s var(--ark-bezier), box-shadow 0.4s var(--ark-bezier), border-color 0.4s var(--ark-bezier);
         }
@@ -223,7 +233,7 @@
         
         .media-matrix-card:hover { 
             border-color: #ffffff; 
-            box-shadow: 0 12px 30px rgba(255, 255, 255, 0.15); 
+            box-shadow: 0 8px 24px rgba(255, 255, 255, 0.12); 
             transform: translateY(-4px);
         }
 
@@ -235,19 +245,21 @@
         }
         .media-matrix-card:hover .matrix-video-cover-wrap img { transform: scale(1.05); }
 
-        .matrix-play-indicator { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.2); transition: background 0.3s; z-index: 2; }
-        .media-matrix-card:hover .matrix-play-indicator { background: rgba(0,0,0,0.4); }
+        .matrix-play-indicator { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.15); transition: background 0.3s; z-index: 2; }
+        .media-matrix-card:hover .matrix-play-indicator { background: rgba(0,0,0,0.35); }
         
+        /* 缩小播放按钮尺寸（从 52px 缩减至 38px），使其更加精致细腻 */
         .matrix-play-icon {
-            width: 52px; height: 52px; background: rgba(3, 5, 13, 0.8); border: 1px solid rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff;
-            font-size: 1.1rem; padding-left: 4px; backdrop-filter: blur(8px); transition: all 0.3s var(--ark-bezier);
+            width: 38px; height: 38px; background: rgba(3, 5, 13, 0.8); border: 1px solid rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff;
+            font-size: 0.85rem; padding-left: 3px; backdrop-filter: blur(8px); transition: all 0.3s var(--ark-bezier);
         }
-        .media-matrix-card:hover .matrix-play-icon { transform: scale(1.1); border-color: #ffffff; color: #ffffff; box-shadow: 0 0 15px rgba(255, 255, 255, 0.35); }
+        .media-matrix-card:hover .matrix-play-icon { transform: scale(1.1); border-color: #ffffff; color: #ffffff; box-shadow: 0 0 12px rgba(255, 255, 255, 0.35); }
         
+        /* 精简内边距与字体大小，平滑衔接，完美杜绝溢出重叠 */
         .matrix-card-title { 
-            font-size: 0.9rem; font-weight: 400; color: rgba(255,255,255,0.85); margin: 0;
-            padding: 16px 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: 0.5px;
-            transition: color 0.3s;
+            font-size: 0.82rem; font-weight: 400; color: rgba(255,255,255,0.85); margin: 0;
+            padding: 10px 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: 0.5px;
+            transition: color 0.3s; flex-shrink: 0;
         }
         .media-matrix-card:hover .matrix-card-title { color: #fff; }
 
@@ -642,7 +654,7 @@
             document.getElementById('nd-content').innerHTML = data.content || '';
         }
 
-        // ================= 严格多媒体布局渲染 =================
+        // ================= 多媒体布局渲染 =================
         function buildMediaLayout() {
             const capsuleContainer = document.getElementById('media-capsules-wrap');
             const gridContainer = document.getElementById('media-matrix-grid');
@@ -743,14 +755,13 @@
             }
         }
 
-        // 梦想铁道量子列车——已全线换装蔚蓝档案官方主题淡蓝色
         function drawGhostTrain() {
             ctx.save(); 
             ctx.globalAlpha = 0.55; 
-            ctx.strokeStyle = "#4cafff"; // 严格复刻导航栏蓝色同款
+            ctx.strokeStyle = "#4cafff"; 
             ctx.lineWidth = 2; 
             ctx.shadowBlur = 12; 
-            ctx.shadowColor = "rgba(76, 175, 255, 0.4)"; // 赋予淡蓝色唯美极光发光特效
+            ctx.shadowColor = "rgba(76, 175, 255, 0.4)"; 
             
             const trainY = canvas.height * 0.82; 
             trainX += 1.2; 
