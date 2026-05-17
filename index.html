@@ -53,7 +53,6 @@
             padding: 8px 0;
         }
         
-        /* 核心修改：下划线从左到右滑出动画 */
         .nav-btn::after {
             content: '';
             position: absolute;
@@ -68,7 +67,6 @@
             transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        /* 悬停与激活状态表现 */
         .nav-btn:hover, .nav-btn.active { color: #fff; }
         .nav-btn:hover::after, .nav-btn.active::after {
             transform: scaleX(1);
@@ -342,44 +340,28 @@
         <div class="media-grid-container" id="media-matrix-grid"></div>
     </div>
 
+    <script src="data.js"></script>
+
     <script>
+        // 从全局统一数据源绑定映射
+        const sliderData = { info: window.WEBSITE_DATA.info, db: window.WEBSITE_DATA.db || [] };
+        const newsData = window.WEBSITE_DATA.news;
+        const mediaConfig = window.WEBSITE_DATA.media;
+
         let currentActiveNotiIdx = 0;
-
-        const sliderData = {
-            info: [
-                { title: "概要", quote: "「梦想与奇迹」", body: "在一个平平无奇的假期里里，奇迹城诞生了，奇迹城是创意市升级后的作品，在奇迹城诞生后创意市因未知原因消失。<br>怀着希望与梦想的「梦想家」，与其他的「梦想家」共同让奇迹城走向未来。<br>但，危机也一次次的降临奇迹城。" },
-                { title: "骇客", quote: "「梦想的毁灭者」", body: "骇客会使用旧核心的已知&lt;漏洞&gt;进行攻击。<br>自一周目以来，「梦想家」使用&lt;骇客&gt;这一概念作为理解破坏世界的凶手，并统称为&lt;毁灭者&gt;。<br>最终使得安全系统只能以一些体验为代价以保安全。<br><br>新城（虚拟）、云梦（虚拟）……是奇迹城的第一批城市。而彼此之间的冲突也在一周目得到解决。" },
-                { title: "奇迹城", quote: "「拥有梦想的城市」", body: "每一位「梦想家」的意识流在这里高频交汇，凝聚成了坚不可摧的数字城建网络。在此构成城市的完整轮廓。" }
-            ],
-            db: [
-                { title: "铁道枢纽人员编制", quote: "「梦想铁道：一号中央主干线」", body: "梦想铁道一号主干线运行极其平稳。设计师与旅居市民在此分配专属的数字密钥。作为主干线的巡读员或区域轻铁网络的构筑者，每个实体的底层行为轨迹都将深度同步到量子防卫矩阵之中。" },
-                { title: "轨道交通网络", quote: "「浩泽轨交：次区域级轻铁网」", body: "作为覆盖城市群边缘及枢纽外围的次区域轨道供给链，浩泽轨交通过自动化无人列车，将源源不断的离散态数字流安全回传至中央干线进行协议收束。" },
-                { title: "量子底层防卫协议", quote: "「底层系统：安全托管与协议隔离」", body: "系统底层架构基于 1.19.2 精密协议打造，坚守公益初衷。安全层级完全交由理事会最高安全部联合托管，全线屏蔽外部未知溢出，为设计主干提供最纯净的意识流隔离舱环境。" }
-            ]
-        };
-
-        const newsData = [
-            { date: "2026-05-17", title: "01/ 关于量子防卫矩阵同步更新说明", meta: "发布时间: 2026-05-17 01:11 // 授权层级: 最高安全部", content: `<p>亲爱的设计师及旅居市民：</p><p>奇迹市全线量子纠缠防卫矩阵目前已成功更新至底层 1.19.2 精密协议架构。本次技术调整优化了次区域轻铁网络的数据吞吐性能，使高轨道星图同步率恒定保持在 100% 阈值。</p><p>感谢您一直以来对奇迹城×MX服务器节点的协同与筑造，祝您本次航行愉快。</p>` },
-            { date: "2026-05-10", title: "02/ 梦想铁道一号线扩容维护公告", meta: "发布时间: 2026-05-10 03:00 // 授权层级: 轨交枢纽部", content: `<p>调度通告：</p><p>为了应对日益增长 of 意识流过载，核心一号中央主干线于今日凌晨进行热插拔式空间扩容。维护期间次区域轻型轨交网络采用备用信道传输，当前绿灯节点已全面恢复。</p>` },
-            { date: "2026-05-01", title: "03/ 边缘数据节点高频震荡排查报告", meta: "发布时间: 2026-05-01 14:20 // 授权层级: 矩阵研发部", content: `<p>排查报告：</p><p>监测到位于外围虚空交界处的三个子节点出现周期性高频震荡，经核查为意识外溢冲突导致。已调派逻辑隔离舱进行协议压制，目前波形已恢复正弦常态。</p>` },
-            { date: "2026-04-25", title: "04/ 第二季筑造度设计密钥下发通知", meta: "发布时间: 2026-04-25 09:00 // 授权层级: 理事会行政厅", content: `<p>下发通知：</p><p>新一季的数字资产身份密钥已通过高轨广播投递。请各位常驻设计师及时登入特区厅终端进行特征码比对与降噪同步，过期未校验的节点将转入静默托管状态。</p>` },
-            { date: "2026-04-18", title: "05/ 公益核心节点全功能绿灯常驻检查", meta: "发布时间: 2026-04-18 23:45 // 授权层级: 最高安全部", content: `<p>例型安全报告：</p><p>全功能核心矩阵绿灯天线已连续平稳闭环运行超过 3000 循环时。底层协议未见任何未知溢出污染。感谢所有巡读员在暗处的长效观测。</p>` }
-        ];
-
-        const mediaConfig = {
-            tabs: ["视频"],
-            items: [
-                { title: "超级前导特殊概念视频", img: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=600&q=80" },
-                { title: "特区厅深邃概念PV第一弹", img: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=600&q=80" },
-                { title: "梦想交通中央干线特写实录", img: "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=1200&q=80" },
-                { title: "量子深域防卫协议解析广播", img: "https://images.unsplash.com/photo-1639322537228-f710d846310a?auto=format&fit=crop&w=1200&q=80" }
-            ]
-        };
-
         let sliderIndices = { info: 0, db: 0 };
 
-        function navigateToPage(targetPageId) {
+        // ================= 核心 Hend 路由管理器 (完美兼容 GitHub Pages 后缀与防 404 刷新) =================
+        function navigateToPage(targetPageId, pushState = true) {
             const stageEl = document.getElementById('main-stage');
+            
+            if (pushState) {
+                // 如果是去首页，直接保持路径名；如果去功能页，带上 ?page= 后缀
+                const newUrl = targetPageId === 'home' ? window.location.pathname : `?page=${targetPageId}`;
+                window.history.pushState({ page: targetPageId }, '', newUrl);
+            }
+
+            // 执行页面可见性切换 UI 动画
             if (targetPageId === 'home') {
                 document.querySelectorAll('.fullview-overlay').forEach(el => {
                     el.classList.remove('active-page');
@@ -413,6 +395,7 @@
                 if (navBtnEl) navBtnEl.classList.add('active');
                 overlayEl.scrollTop = 0;
 
+                // 按需渲染或执行进场动画
                 if (sliderIndices[targetPageId] !== undefined) {
                     renderSlider(targetPageId);
                 }
@@ -422,6 +405,34 @@
             }
         }
 
+        // 拦截与解析器：检测页面是不是被 GitHub 404 拦截重定向回来的
+        function checkGitHubRedirectAndRoute() {
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            if (urlParams.get('p') !== null) {
+                // 从 404 隐藏通道提取出被重写的真实请求路由
+                const rawPath = urlParams.get('p');
+                // 瞬间抹除 404 产生的加密杂质，还原回原本纯净干净的真实历史记录
+                window.history.replaceState(null, null, window.location.pathname + (urlParams.get('q') ? '?' + urlParams.get('q').replace(/~and~/g, '&') : ''));
+                
+                // 二次精准捕获原本的 page 参数，直达指定次级面板
+                const cleanParams = new URLSearchParams(window.location.search);
+                const pageParam = cleanParams.get('page');
+                if (pageParam) navigateToPage(pageParam, false);
+            } else {
+                // 如果不是来自刷新重定向，直接判断普通点击链接参数进入
+                const pageParam = urlParams.get('page');
+                if (pageParam) navigateToPage(pageParam, false);
+            }
+        }
+
+        // 监听浏览器自带的「前进」与「后退」物理按键
+        window.addEventListener('popstate', (event) => {
+            const page = (event.state && event.state.page) || 'home';
+            navigateToPage(page, false);
+        });
+
+        // ================= 数据动态驱动与原 UI 面板渲染逻辑 =================
         function initSliderDots(pageKey) {
             const dotsContainer = document.getElementById(`dots-${pageKey}`);
             if (!dotsContainer) return;
@@ -560,7 +571,7 @@
             });
         }
 
-        // --- 粒子星空背景 ---
+        // ================= 粒子星空与中央主干线幽灵轻轨背景逻辑 =================
         const canvas = document.getElementById('star-canvas');
         const ctx = canvas.getContext('2d');
         let stars = [], meteors = [], trainX = -1000;
@@ -625,11 +636,17 @@
         }
 
         window.addEventListener('resize', initCanvas);
+        
+        // 初始化流程入口
         window.addEventListener('DOMContentLoaded', () => {
             buildNotificationList();
             buildMediaLayout();
             ['info', 'db'].forEach(key => { initSliderDots(key); renderSlider(key); });
-            initCanvas(); animate();
+            initCanvas(); 
+            animate();
+            
+            // 【执行路由检查】防刷新死页面与参数跳转控制
+            checkGitHubRedirectAndRoute();
         });
     </script>
 </body>
