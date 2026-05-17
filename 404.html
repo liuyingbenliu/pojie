@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Miracle City Matrix</title>
+    <script type="text/javascript">
+        // 核心黑客逻辑：把当前的错误路径转换成参数，重定向回首页
+        var l = window.location;
+        l.replace(
+            l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+            l.pathname.split('/').slice(0, 1 + l.pathname.split('/').reduce(function(a, e, i) {
+                return e === l.pathname.split('/').splice(-1, 1)[0] ? a.concat(i) : a;
+            }, [])[0]).join('/') + '/?p=' +
+            l.pathname.slice(1).replace(/&/g, '~and~') +
+            (l.search ? '&q=' + l.search.slice(1).replace(/&/g, '~and~') : '') +
+            l.hash
+        );
+    </script>
+</head>
+<body>
+</body>
+</html>
