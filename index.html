@@ -13,6 +13,8 @@
             --glass-border: rgba(255, 255, 255, 0.06);
             --white-border: rgba(255, 255, 255, 0.2); 
             --ark-bezier: cubic-bezier(0.25, 1, 0.5, 1); 
+            /* 升级：专属多米诺快速流畅出场曲线 */
+            --domino-bezier: cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         * { 
@@ -226,14 +228,17 @@
             cursor: pointer; position: relative; width: 100%;
             height: fit-content; 
             overflow: hidden; 
+            
+            /* 升级核心：让初始隐藏状态的向下位移更大（30px），强化跃出动态感 */
             opacity: 0; 
-            transform: translateY(15px);
+            transform: translateY(30px);
             display: flex; flex-direction: column;
-            /* 关键修复：显现动画的核心过渡定义 */
-            transition: opacity 0.45s var(--ark-bezier), transform 0.45s var(--ark-bezier), box-shadow 0.4s var(--ark-bezier), border-color 0.4s var(--ark-bezier);
+            
+            /* 升级核心：缩短过渡周期（0.28s），改用高弹性流畅曲线，提升干练速度感 */
+            transition: opacity 0.28s var(--domino-bezier), transform 0.28s var(--domino-bezier), box-shadow 0.4s var(--ark-bezier), border-color 0.4s var(--ark-bezier);
         }
         
-        /* 强制显现类 */
+        /* 快速展开形态 */
         .media-matrix-card.reveal-manifest { 
             opacity: 1 !important; 
             transform: translateY(0) !important; 
@@ -469,7 +474,7 @@
             line.style.width = `${btnWidth}px`;
         }
 
-        // ================= 核心路由系统 =================
+        // ================= 核心路由 system =================
         function navigateToPage(targetPageId, pushState = true) {
             if (targetPageId === currentPageId) return;
 
@@ -711,18 +716,17 @@
                 });
             }
             
-            // 核心修复：生成 DOM 后，立即触发一次动画类绑定，防止直接刷入或重新载入时变空
             triggerMediaStaggerAnimation();
         }
 
         function triggerMediaStaggerAnimation() {
             const cards = document.querySelectorAll('.media-matrix-card');
             cards.forEach((card, index) => {
-                // 核心修复：清空先前状态，并采用逐个递增延时赋予 reveal-manifest
                 card.classList.remove('reveal-manifest');
+                // 升级：缩短时间错位间隔（从 60ms 压缩到 35ms），出场更紧凑流畅
                 setTimeout(() => { 
                     card.classList.add('reveal-manifest'); 
-                }, index * 60); 
+                }, index * 35); 
             });
         }
 
@@ -826,7 +830,7 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             buildNotificationList();
-            buildMediaLayout(); // 优先同步建立底层媒体卡片
+            buildMediaLayout(); 
             ['info', 'db'].forEach(key => { initSliderDots(key); renderSlider(key); });
             initCanvas(); 
             animate();
@@ -845,7 +849,6 @@
                     let navBtnEl = document.getElementById(`nav-${initialPage}`);
                     if (navBtnEl) navBtnEl.classList.add('active');
                     if (['info', 'db'].includes(initialPage)) renderSlider(initialPage);
-                    // 核心修复：如果是直入或刷新 media 页，强制补齐显现类
                     if (initialPage === 'media') triggerMediaStaggerAnimation();
                 }
             }
