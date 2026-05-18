@@ -13,7 +13,6 @@
             --glass-border: rgba(255, 255, 255, 0.06);
             --white-border: rgba(255, 255, 255, 0.2); 
             --ark-bezier: cubic-bezier(0.25, 1, 0.5, 1); 
-            /* 升级：专属多米诺快速流畅出场曲线 */
             --domino-bezier: cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
@@ -29,6 +28,59 @@
             overflow: hidden; 
             color: #fff; font-family: "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
             user-select: none;
+        }
+
+        /* ================= 专属科技感全屏加载遮罩 ================= */
+        #global-app-loading-container {
+            position: fixed; inset: 0; width: 100%; height: 100%;
+            background-color: var(--bg-dark);
+            z-index: 9999; display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            /* 退出时带有缩放与淡出，与大厅视界无缝衔接 */
+            transition: opacity 0.6s var(--ark-bezier), transform 0.6s var(--ark-bezier);
+            will-change: transform, opacity;
+        }
+        
+        /* 退出动画类 */
+        #global-app-loading-container.loader-vanish {
+            opacity: 0; pointer-events: none; transform: scale(1.05);
+        }
+
+        .loading-quantum-box {
+            width: 260px; display: flex; flex-direction: column; gap: 14px; text-align: left;
+        }
+
+        .loading-status-row {
+            display: flex; justify-content: space-between; align-items: flex-end;
+        }
+
+        .loading-brand-tag {
+            font-size: 0.75rem; font-weight: 600; letter-spacing: 4px; color: var(--accent);
+            text-shadow: 0 0 10px var(--accent-glow); font-family: monospace;
+        }
+
+        .loading-percentage-num {
+            font-size: 0.85rem; font-family: monospace; color: rgba(255, 255, 255, 0.8);
+            letter-spacing: 1px;
+        }
+
+        /* 极简能量条轨道 */
+        .loading-track-bar {
+            width: 100%; height: 2px; background: rgba(255, 255, 255, 0.05);
+            border-radius: 1px; overflow: hidden; position: relative;
+        }
+
+        /* 能量填充条 */
+        .loading-fill-runner {
+            position: absolute; left: 0; top: 0; height: 100%; width: 0%;
+            background: linear-gradient(90deg, transparent, #ffffff, var(--accent));
+            box-shadow: 0 0 10px #ffffff, 0 0 4px var(--accent);
+            transition: width 0.35s ease-out; /* 平滑模拟填充 */
+        }
+
+        .loading-system-tip {
+            font-size: 0.65rem; color: rgba(255, 255, 255, 0.3); letter-spacing: 1px;
+            text-transform: uppercase; margin-top: -4px;
         }
 
         /* --- 顶部全局导航栏 --- */
@@ -228,17 +280,12 @@
             cursor: pointer; position: relative; width: 100%;
             height: fit-content; 
             overflow: hidden; 
-            
-            /* 升级核心：让初始隐藏状态的向下位移更大（30px），强化跃出动态感 */
             opacity: 0; 
             transform: translateY(30px);
             display: flex; flex-direction: column;
-            
-            /* 升级核心：缩短过渡周期（0.28s），改用高弹性流畅曲线，提升干练速度感 */
             transition: opacity 0.28s var(--domino-bezier), transform 0.28s var(--domino-bezier), box-shadow 0.4s var(--ark-bezier), border-color 0.4s var(--ark-bezier);
         }
         
-        /* 快速展开形态 */
         .media-matrix-card.reveal-manifest { 
             opacity: 1 !important; 
             transform: translateY(0) !important; 
@@ -320,6 +367,19 @@
     </style>
 </head>
 <body>
+
+    <div id="global-app-loading-container">
+        <div class="loading-quantum-box">
+            <div class="loading-status-row">
+                <span class="loading-brand-tag">MIRACLE SYSTEM</span>
+                <span class="loading-percentage-num" id="load-num-node">0%</span>
+            </div>
+            <div class="loading-track-bar">
+                <div class="loading-fill-runner" id="load-bar-node"></div>
+            </div>
+            <div class="loading-system-tip">Connecting to central matrix...</div>
+        </div>
+    </div>
 
     <header class="top-header">
         <div class="header-left">
@@ -460,6 +520,52 @@
 
         const PAGE_SEQUENCE = ['home', 'info', 'db', 'news', 'media'];
         let currentPageId = 'home';
+
+        // ================= 智能仿生进度条核心驱动 =================
+        let simulatedProgress = 0;
+        const progressNumNode = document.getElementById('load-num-node');
+        const progressFillNode = document.getElementById('load-bar-node');
+        const loaderContainer = document.getElementById('global-app-loading-container');
+
+        // 利用定时器进行前段快速预加载模拟，即便网络快也有细腻的视觉停留
+        const loadingInterval = setInterval(() => {
+            if (simulatedProgress < 85) {
+                simulatedProgress += Math.floor(Math.random() * 7) + 2;
+                if (simulatedProgress > 85) simulatedProgress = 85;
+                applyLoadingUpdate(simulatedProgress);
+            }
+        }, 60);
+
+        function applyLoadingUpdate(val) {
+            if(progressNumNode) progressNumNode.innerText = `${val}%`;
+            if(progressFillNode) progressFillNode.style.width = `${val}%`;
+        }
+
+        // 终极生命周期：当 DOM、外部脚本、Unsplash/Picui 高清图片资产全部加载就 anker
+        window.addEventListener('load', () => {
+            clearInterval(loadingInterval);
+            // 从当前进度流畅冲刺到 100%
+            let currentTrack = simulatedProgress;
+            const finishRunner = setInterval(() => {
+                currentTrack += 5;
+                if (currentTrack >= 100) {
+                    currentTrack = 100;
+                    clearInterval(finishRunner);
+                    applyLoadingUpdate(100);
+                    
+                    // 停留 200 毫秒展示完美满条，随后执行淡出淡出动画
+                    setTimeout(() => {
+                        if(loaderContainer) {
+                            loaderContainer.classList.add('loader-vanish');
+                        }
+                        // 触发一次当前路由卡片的连锁入场动效
+                        if (currentPageId === 'media') triggerMediaStaggerAnimation();
+                    }, 200);
+                } else {
+                    applyLoadingUpdate(currentTrack);
+                }
+            }, 15);
+        });
 
         // ================= 白条滑动跟随定位引擎 =================
         function updateNavSliderLine(targetId) {
@@ -720,10 +826,12 @@
         }
 
         function triggerMediaStaggerAnimation() {
+            // 如果全屏加载遮罩还没淡出完成，暂不播放多米诺动画，确保用户进入时能亲眼看到出场
+            if (loaderContainer && !loaderContainer.classList.contains('loader-vanish')) return;
+
             const cards = document.querySelectorAll('.media-matrix-card');
             cards.forEach((card, index) => {
                 card.classList.remove('reveal-manifest');
-                // 升级：缩短时间错位间隔（从 60ms 压缩到 35ms），出场更紧凑流畅
                 setTimeout(() => { 
                     card.classList.add('reveal-manifest'); 
                 }, index * 35); 
@@ -849,7 +957,6 @@
                     let navBtnEl = document.getElementById(`nav-${initialPage}`);
                     if (navBtnEl) navBtnEl.classList.add('active');
                     if (['info', 'db'].includes(initialPage)) renderSlider(initialPage);
-                    if (initialPage === 'media') triggerMediaStaggerAnimation();
                 }
             }
             
