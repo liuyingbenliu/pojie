@@ -36,12 +36,10 @@
             background-color: var(--bg-dark);
             z-index: 9999; display: flex; flex-direction: column;
             justify-content: center; align-items: center;
-            /* 退出时带有缩放与淡出，与大厅视界无缝衔接 */
             transition: opacity 0.6s var(--ark-bezier), transform 0.6s var(--ark-bezier);
             will-change: transform, opacity;
         }
         
-        /* 退出动画类 */
         #global-app-loading-container.loader-vanish {
             opacity: 0; pointer-events: none; transform: scale(1.05);
         }
@@ -64,18 +62,16 @@
             letter-spacing: 1px;
         }
 
-        /* 极简能量条轨道 */
         .loading-track-bar {
             width: 100%; height: 2px; background: rgba(255, 255, 255, 0.05);
             border-radius: 1px; overflow: hidden; position: relative;
         }
 
-        /* 能量填充条 */
         .loading-fill-runner {
             position: absolute; left: 0; top: 0; height: 100%; width: 0%;
             background: linear-gradient(90deg, transparent, #ffffff, var(--accent));
             box-shadow: 0 0 10px #ffffff, 0 0 4px var(--accent);
-            transition: width 0.35s ease-out; /* 平滑模拟填充 */
+            transition: width 0.35s ease-out;
         }
 
         .loading-system-tip {
@@ -105,7 +101,6 @@
         
         .nav-btn:hover, .nav-btn.active { color: var(--accent) !important; }
 
-        /* 智能跟踪定位滑动白条 */
         .nav-slider-line {
             position: absolute; bottom: 0; left: 0; height: 3px;
             background-color: #ffffff; 
@@ -204,7 +199,6 @@
             border: 1px solid var(--glass-border);
             border-radius: 12px; 
             overflow: hidden; 
-            clip-path: none; 
             transition: all 0.45s var(--ark-bezier); 
             opacity: 0; pointer-events: none; z-index: 1;
         }
@@ -364,6 +358,182 @@
             border-bottom: 1px dashed #ffffff; padding-bottom: 1px; transition: opacity 0.2s;
         }
         .fallback-action-btn:hover { opacity: 0.8; }
+
+        /* ==========================================================================
+           完美移动端竖屏（Responsive Mobile）适配补丁引擎 
+           ========================================================================== */
+        @media screen and (max-width: 768px) and (orientation: portrait), screen and (max-width: 500px) {
+            .top-header {
+                padding: 0 16px;
+                height: 56px;
+            }
+            .header-left {
+                width: 100%;
+                gap: 12px;
+                justify-content: space-between;
+            }
+            .header-logo {
+                font-size: 0.9rem;
+                letter-spacing: 1px;
+            }
+            .nav-menu {
+                height: 56px;
+                overflow-x: auto;
+                overflow-y: hidden;
+                -webkit-overflow-scrolling: touch;
+                gap: 16px;
+                padding-right: 16px;
+            }
+            .nav-menu::-webkit-scrollbar {
+                display: none;
+            }
+            .nav-btn {
+                padding: 18px 0;
+                font-size: 0.8rem;
+            }
+            .nav-slider-line {
+                bottom: 4px;
+            }
+
+            .title-large {
+                font-size: 2.6rem;
+                letter-spacing: 6px;
+            }
+            .title-sub {
+                font-size: 0.8rem;
+                letter-spacing: 4px;
+            }
+            .quote-text {
+                padding: 0 24px;
+                font-size: 0.75rem;
+                margin-top: 4vh;
+                line-height: 1.6;
+            }
+
+            .fullview-overlay {
+                padding: 76px 16px 24px 16px;
+            }
+            .page-header-area {
+                padding-bottom: 8px;
+                margin-bottom: 16px;
+            }
+            .page-main-title {
+                font-size: 1.2rem;
+            }
+
+            .slider-showcase-container {
+                gap: 10px;
+            }
+            .cards-viewport {
+                width: 100%;
+                height: 200px;
+            }
+            .showcase-card {
+                width: 80%;
+            }
+            .showcase-card.prev {
+                transform: scale(0.85) translateX(-85%);
+                opacity: 0.15;
+            }
+            .showcase-card.next {
+                transform: scale(0.85) translateX(85%);
+                opacity: 0.15;
+            }
+            .slide-arrow {
+                font-size: 1.5rem;
+                padding: 4px;
+            }
+            .dynamic-main-title {
+                font-size: 1.3rem;
+            }
+            .dynamic-sub-quote {
+                font-size: 0.85rem;
+                margin-bottom: 12px;
+            }
+            .dynamic-body-text {
+                font-size: 0.85rem;
+                line-height: 1.7;
+                padding-bottom: 40px;
+            }
+
+            .page-layout-container {
+                flex-direction: column;
+                height: calc(100vh - 160px);
+                gap: 16px;
+                overflow-y: auto;
+            }
+            .noti-sidebar-list {
+                width: 100%;
+                height: 160px;
+                flex-shrink: 0;
+                border-bottom: 1px solid var(--glass-border);
+                padding-bottom: 10px;
+            }
+            .noti-item-card {
+                padding: 12px;
+            }
+            .generic-detail-panel {
+                width: 100%;
+                height: auto;
+                flex-grow: 1;
+                padding: 20px;
+            }
+            .detail-title {
+                font-size: 1.1rem;
+            }
+
+            .media-capsule-container {
+                overflow-x: auto;
+                white-space: nowrap;
+                padding-bottom: 6px;
+                margin-bottom: 12px;
+            }
+            .media-capsule-container::-webkit-scrollbar {
+                display: none;
+            }
+            .media-capsule-btn {
+                padding: 6px 14px;
+                font-size: 0.75rem;
+            }
+            .media-grid-container {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 12px;
+                height: calc(100vh - 190px);
+            }
+            .matrix-card-title {
+                font-size: 0.75rem;
+                padding: 6px 8px;
+            }
+            .matrix-play-icon {
+                width: 30px;
+                height: 30px;
+                font-size: 0.7rem;
+            }
+
+            .cinema-theater-window {
+                width: 95%;
+                border-radius: 8px;
+            }
+            .cinema-close-trigger {
+                top: 8px;
+                right: 8px;
+                width: 32px;
+                height: 32px;
+                font-size: 0.8rem;
+            }
+            .cinema-fallback-dock {
+                width: 90%;
+                justify-content: center;
+                padding: 6px 14px;
+                bottom: 10px;
+            }
+            .fallback-text {
+                font-size: 0.7rem;
+            }
+            .fallback-action-btn {
+                font-size: 0.7rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -521,13 +691,11 @@
         const PAGE_SEQUENCE = ['home', 'info', 'db', 'news', 'media'];
         let currentPageId = 'home';
 
-        // ================= 智能仿生进度条核心驱动 =================
         let simulatedProgress = 0;
         const progressNumNode = document.getElementById('load-num-node');
         const progressFillNode = document.getElementById('load-bar-node');
         const loaderContainer = document.getElementById('global-app-loading-container');
 
-        // 利用定时器进行前段快速预加载模拟，即便网络快也有细腻的视觉停留
         const loadingInterval = setInterval(() => {
             if (simulatedProgress < 85) {
                 simulatedProgress += Math.floor(Math.random() * 7) + 2;
@@ -541,10 +709,8 @@
             if(progressFillNode) progressFillNode.style.width = `${val}%`;
         }
 
-        // 终极生命周期：当 DOM、外部脚本、Unsplash/Picui 高清图片资产全部加载就 anker
         window.addEventListener('load', () => {
             clearInterval(loadingInterval);
-            // 从当前进度流畅冲刺到 100%
             let currentTrack = simulatedProgress;
             const finishRunner = setInterval(() => {
                 currentTrack += 5;
@@ -553,12 +719,10 @@
                     clearInterval(finishRunner);
                     applyLoadingUpdate(100);
                     
-                    // 停留 200 毫秒展示完美满条，随后执行淡出淡出动画
                     setTimeout(() => {
                         if(loaderContainer) {
                             loaderContainer.classList.add('loader-vanish');
                         }
-                        // 触发一次当前路由卡片的连锁入场动效
                         if (currentPageId === 'media') triggerMediaStaggerAnimation();
                     }, 200);
                 } else {
@@ -567,7 +731,6 @@
             }, 15);
         });
 
-        // ================= 白条滑动跟随定位引擎 =================
         function updateNavSliderLine(targetId) {
             const btn = document.getElementById(`nav-${targetId}`);
             const line = document.getElementById('global-nav-line');
@@ -580,7 +743,6 @@
             line.style.width = `${btnWidth}px`;
         }
 
-        // ================= 核心路由 system =================
         function navigateToPage(targetPageId, pushState = true) {
             if (targetPageId === currentPageId) return;
 
@@ -642,7 +804,6 @@
             });
         });
 
-        // ================= 播放引擎 =================
         function openCinemaTheater() {
             const theaterLayer = document.getElementById('global-cinema-layer');
             const injectionPoint = document.getElementById('cinema-injection-point');
@@ -679,7 +840,6 @@
             }, 400);
         }
 
-        // ================= 视图模块数据构造渲染逻辑 =================
         function initSliderDots(pageKey) {
             const dotsContainer = document.getElementById(`dots-${pageKey}`);
             if (!dotsContainer) return;
@@ -771,7 +931,6 @@
             document.getElementById('nd-content').innerHTML = data.content || '';
         }
 
-        // ================= 多媒体布局渲染 =================
         function buildMediaLayout() {
             const capsuleContainer = document.getElementById('media-capsules-wrap');
             const gridContainer = document.getElementById('media-matrix-grid');
@@ -826,7 +985,6 @@
         }
 
         function triggerMediaStaggerAnimation() {
-            // 如果全屏加载遮罩还没淡出完成，暂不播放多米诺动画，确保用户进入时能亲眼看到出场
             if (loaderContainer && !loaderContainer.classList.contains('loader-vanish')) return;
 
             const cards = document.querySelectorAll('.media-matrix-card');
@@ -838,7 +996,6 @@
             });
         }
 
-        // ================= 星空画布物理动画引擎 =================
         const canvas = document.getElementById('star-canvas');
         const ctx = canvas.getContext('2d');
         let stars = [], meteors = [], trainX = -1000;
