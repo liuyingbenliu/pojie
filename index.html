@@ -265,6 +265,7 @@
             height: calc(100vh - 220px); 
             padding-bottom: 40px; 
             width: 100%; 
+            -webkit-overflow-scrolling: touch;
         }
         
         .media-matrix-card {
@@ -488,9 +489,6 @@
                 padding-bottom: 6px;
                 margin-bottom: 12px;
             }
-            .media-capsule-container::-webkit-scrollbar {
-                display: none;
-            }
             .media-capsule-btn {
                 padding: 6px 14px;
                 font-size: 0.75rem;
@@ -498,7 +496,8 @@
             .media-grid-container {
                 grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
                 gap: 12px;
-                height: calc(100vh - 190px);
+                height: calc(100vh - 170px); /* 重新微调避免视口溢出 */
+                overflow-y: auto;
             }
             .matrix-card-title {
                 font-size: 0.75rem;
@@ -528,7 +527,7 @@
                 bottom: 10px;
             }
             .fallback-text {
-                font-size: 0.7rem;
+                font-size: 0.7erom;
             }
             .fallback-action-btn {
                 font-size: 0.7rem;
@@ -654,7 +653,8 @@
         </div>
     </div>
 
-    <div id="view-media-page" class="fullview-overlay" style="overflow-y: hidden;">
+    <!-- 修复点 1：移除了外层容器的 style="overflow-y: hidden;"，允许内容及子网格进行纵向溢出滚动处理 -->
+    <div id="view-media-page" class="fullview-overlay">
         <div class="page-header-area">
             <div>
                 <h2 class="page-main-title">媒体视听数据库</h2>
@@ -1084,14 +1084,13 @@
         }
 
         /* ==========================================================================
-           全屏滑动切页控制核心（Swipe Control Core）
+           全屏滑动切页控制核心（Swipe Control Core）- 增强安全过滤
            ========================================================================== */
         let touchStartX = 0;
         let touchStartY = 0;
 
         function initTouchSwipeEngine() {
             window.addEventListener('touchstart', (e) => {
-                // 如果影院播放器打开，不触发滑屏
                 const theater = document.getElementById('global-cinema-layer');
                 if (theater && theater.classList.contains('theater-manifest')) return;
 
@@ -1109,27 +1108,27 @@
                 const diffX = touchEndX - touchStartX;
                 const diffY = touchEndY - touchStartY;
 
-                // 确保是横向滑动，且滑动距离大于 50px
-                if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
-                    
-                    // 【防冲突屏蔽区】检查用户是否在内部轮播图、列表或滚动网格上滑动
+                // 修复点 2：当用户明显在做纵向滑动（如滚动媒体网格列表）时，强行中断手势切页判定
+                if (Math.abs(diffY) > Math.abs(diffX)) {
+                    return;
+                }
+
+                if (Math.abs(diffX) > 50) {
                     const target = e.target;
                     if (target.closest('.slider-showcase-container') || 
                         target.closest('.noti-sidebar-list') || 
                         target.closest('.media-grid-container') ||
                         target.closest('.media-capsule-container')) {
-                        return; // 让位给组件内部的原生滚动/划动事件
+                        return; 
                     }
 
                     const currentIdx = PAGE_SEQUENCE.indexOf(currentPageId);
 
                     if (diffX < 0) {
-                        // 向左划动 -> 切换到右侧的下一页
                         if (currentIdx < PAGE_SEQUENCE.length - 1) {
                             navigateToPage(PAGE_SEQUENCE[currentIdx + 1]);
                         }
                     } else {
-                        // 向右划动 -> 切换到左侧的上一页
                         if (currentIdx > 0) {
                             navigateToPage(PAGE_SEQUENCE[currentIdx - 1]);
                         }
@@ -1154,7 +1153,7 @@
             ['info', 'db'].forEach(key => { initSliderDots(key); renderSlider(key); });
             initCanvas(); 
             animate();
-            initTouchSwipeEngine(); // 启动触控滑动引擎
+            initTouchSwipeEngine(); 
             
             const urlParams = new URLSearchParams(window.location.search);
             const initialPage = urlParams.get('page') || 'home';
