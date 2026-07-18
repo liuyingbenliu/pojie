@@ -527,7 +527,7 @@
                 bottom: 10px;
             }
             .fallback-text {
-                font-size: 0.7erom;
+                font-size: 0.7rem;
             }
             .fallback-action-btn {
                 font-size: 0.7rem;
@@ -653,7 +653,6 @@
         </div>
     </div>
 
-    <!-- 修复点 1：移除了外层容器的 style="overflow-y: hidden;"，允许内容及子网格进行纵向溢出滚动处理 -->
     <div id="view-media-page" class="fullview-overlay">
         <div class="page-header-area">
             <div>
@@ -788,6 +787,7 @@
             const navBtnEl = document.getElementById(`nav-${targetPageId}`);
             if (navBtnEl) navBtnEl.classList.add('active');
 
+            // 使用 DOM 高亮状态切换后，立即同步文字激活色与轨道滑块线位置
             updateNavSliderLine(targetPageId);
 
             if (sliderIndices[targetPageId] !== undefined) renderSlider(targetPageId);
@@ -1085,7 +1085,7 @@
 
         /* ==========================================================================
            全屏滑动切页控制核心（Swipe Control Core）- 增强安全过滤
-           ========================================================================== */
+           ========================================================================= */
         let touchStartX = 0;
         let touchStartY = 0;
 
@@ -1108,16 +1108,17 @@
                 const diffX = touchEndX - touchStartX;
                 const diffY = touchEndY - touchStartY;
 
-                // 修复点 2：当用户明显在做纵向滑动（如滚动媒体网格列表）时，强行中断手势切页判定
+                // 修复点 2：如果纵向滑动幅度大于横向，说明用户正在上下滚动长列表（例如在媒体页面滚动网格），中断切换判定
                 if (Math.abs(diffY) > Math.abs(diffX)) {
                     return;
                 }
 
                 if (Math.abs(diffX) > 50) {
                     const target = e.target;
+                    
+                    // 移除了对媒体列表容器 '.media-grid-container' 的绝对死板拦截，允许捕获横向手势
                     if (target.closest('.slider-showcase-container') || 
                         target.closest('.noti-sidebar-list') || 
-                        target.closest('.media-grid-container') ||
                         target.closest('.media-capsule-container')) {
                         return; 
                     }
