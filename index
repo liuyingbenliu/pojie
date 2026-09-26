@@ -39,7 +39,7 @@
             transition: opacity 0.6s var(--ark-bezier), transform 0.6s var(--ark-bezier);
             will-change: transform, opacity;
         }
-        
+
         #global-app-loading-container.loader-vanish {
             opacity: 0; pointer-events: none; transform: scale(1.05);
         }
@@ -92,13 +92,13 @@
         .header-logo { font-size: clamp(0.85rem, 1.1vw, 1rem); letter-spacing: 3px; font-weight: 600; color: #fff; white-space: nowrap; }
 
         .nav-menu { display: flex; gap: clamp(12px, 2vw, 28px); height: 48px; align-items: center; position: relative; }
-        
+
         .nav-btn {
             font-size: clamp(0.75rem, 0.95vw, 0.85rem); color: rgba(255,255,255,0.4); cursor: pointer;
             transition: color 0.25s linear; position: relative; letter-spacing: 1px; white-space: nowrap;
             padding: 12px 0; z-index: 2;
         }
-        
+
         .nav-btn:hover, .nav-btn.active { color: var(--accent) !important; }
 
         .nav-slider-line {
@@ -192,7 +192,7 @@
         /* ================= 世界观 / 设定 卡片轮播 ================= */
         .slider-showcase-container { display: flex; align-items: center; justify-content: center; width: 100%; gap: 30px; position: relative; margin-top: 10px; flex-shrink: 0; }
         .cards-viewport { display: flex; align-items: center; justify-content: center; width: 85%; height: clamp(240px, 32vh, 380px); position: relative; overflow: hidden; }
-        
+
         .showcase-card {
             position: absolute; width: 55%; height: 100%; 
             background-size: cover; background-position: center; 
@@ -228,7 +228,7 @@
         .page-layout-container { display: flex; gap: 30px; flex-grow: 1; height: calc(100vh - 200px); min-height: 400px; overflow: hidden; }
         .noti-sidebar-list { width: 32%; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; padding-right: 6px; height: 100%; padding-bottom: 40px; }
         .noti-item-card { background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 15px; border-radius: 6px; cursor: pointer; transition: 0.25s; flex-shrink: 0; }
-        
+
         .noti-item-card:hover { background: rgba(255,255,255,0.06); border-color: rgba(255, 255, 255, 0.3); }
         .noti-item-card.item-active { 
             background: rgba(255, 255, 255, 0.06); 
@@ -267,7 +267,7 @@
             width: 100%; 
             -webkit-overflow-scrolling: touch;
         }
-        
+
         .media-matrix-card {
             background: rgba(255, 255, 255, 0.02); 
             border: 1px solid var(--white-border); 
@@ -280,12 +280,12 @@
             display: flex; flex-direction: column;
             transition: opacity 0.28s var(--domino-bezier), transform 0.28s var(--domino-bezier), box-shadow 0.4s var(--ark-bezier), border-color 0.4s var(--ark-bezier);
         }
-        
+
         .media-matrix-card.reveal-manifest { 
             opacity: 1 !important; 
             transform: translateY(0) !important; 
         }
-        
+
         .media-matrix-card:hover { 
             border-color: #ffffff; 
             box-shadow: 0 8px 24px rgba(255, 255, 255, 0.15); 
@@ -302,13 +302,13 @@
 
         .matrix-play-indicator { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.15); transition: background 0.3s; z-index: 2; }
         .media-matrix-card:hover .matrix-play-indicator { background: rgba(0,0,0,0.35); }
-        
+
         .matrix-play-icon {
             width: 38px; height: 38px; background: rgba(3, 5, 13, 0.8); border: 1px solid rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff;
             font-size: 0.85rem; padding-left: 3px; backdrop-filter: blur(8px); transition: all 0.3s var(--ark-bezier);
         }
         .media-matrix-card:hover .matrix-play-icon { transform: scale(1.1); border-color: #ffffff; color: #ffffff; box-shadow: 0 0 12px rgba(255, 255, 255, 0.35); }
-        
+
         .matrix-card-title { 
             font-size: 0.82rem; font-weight: 400; color: rgba(255,255,255,0.85); margin: 0;
             padding: 10px 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: 0.5px;
@@ -496,7 +496,7 @@
             .media-grid-container {
                 grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
                 gap: 12px;
-                height: calc(100vh - 170px); /* 重新微调避免视口溢出 */
+                height: calc(100vh - 170px);
                 overflow-y: auto;
             }
             .matrix-card-title {
@@ -552,13 +552,8 @@
 
     <header class="top-header">
         <div class="header-left">
-            <div class="header-logo">孤独城 × 未来</div>
+            <div class="header-logo" id="site-logo">未来 × 希望</div>
             <nav class="nav-menu" id="nav-menu-wrapper">
-                <div class="nav-btn active" id="nav-home" onclick="navigateToPage('home')">主页</div>
-                <div class="nav-btn" id="nav-info" onclick="navigateToPage('info')">世界观</div>
-                <div class="nav-btn" id="nav-db" onclick="navigateToPage('db')">设定</div>
-                <div class="nav-btn" id="nav-news" onclick="navigateToPage('news')">告示</div>
-                <div class="nav-btn" id="nav-media" onclick="navigateToPage('media')">媒体</div>
                 <div class="nav-slider-line" id="global-nav-line"></div>
             </nav>
         </div>
@@ -569,10 +564,10 @@
         <div class="character-split-layer"></div>
         <div class="view-homepage-content">
             <div class="center-hero">
-                <h1 class="title-large">孤独城</h1>
-                <div class="title-sub">L O N E L Y  · C I T Y</div>
-                <p class="quote-text">「……其实，你并非孤独一人。」—— 追寻希望吧，冲向未来的列车正平稳通过中央干线。</p>
-                <div class="hero-arrow-wrap" onclick="navigateToPage('info')" title="进入世界观">
+                <h1 class="title-large" id="hero-title">未来</h1>
+                <div class="title-sub" id="hero-subtitle">F U T U R E  ·  H O P E</div>
+                <p class="quote-text" id="hero-quote">「……其实，希望一直都在。」—— 追寻希望吧，冲向未来的列车正平稳通过中央干线。</p>
+                <div class="hero-arrow-wrap" id="hero-arrow-btn" title="进入视界">
                     <div class="hero-arrow-circle">
                         <svg viewBox="0 0 24 24"><polyline points="8 5 16 12 8 19"></polyline></svg>
                     </div>
@@ -581,89 +576,8 @@
         </div>
     </div>
 
-    <div id="view-info-page" class="fullview-overlay">
-        <div class="page-header-area">
-            <div>
-                <h2 class="page-main-title">世界观设定核心</h2>
-                <div class="page-sub-title">// WORLDVIEW MATRIX CORE</div>
-            </div>
-            <div class="page-back-btn" onclick="navigateToPage('home')"><span>返回主页</span></div>
-        </div>
-        <div class="slider-showcase-container">
-            <div class="slide-arrow" onclick="moveSlider('info', -1)">〈</div>
-            <div class="cards-viewport">
-                <div class="showcase-card" style="background-image: url('https://free.picui.cn/free/2026/05/17/6a09b53f77b10.png');"></div>
-                <div class="showcase-card" style="background-image: url('https://free.picui.cn/free/2026/05/17/6a09b53f7e781.png');"></div>
-                <div class="showcase-card" style="background-image: url('https://free.picui.cn/free/2026/05/17/6a09b53ed56d5.png');"></div>
-            </div>
-            <div class="slide-arrow" onclick="moveSlider('info', 1)">〉</div>
-        </div>
-        <div class="indicator-dots" id="dots-info"></div>
-        <div class="content-display-panel">
-            <div class="dynamic-title-group">
-                <h3 class="dynamic-main-title" id="info-render-title"></h3>
-                <span class="dynamic-sub-quote" id="info-render-quote"></span>
-            </div>
-            <div class="dynamic-body-text" id="info-render-body"></div>
-        </div>
-    </div>
-
-    <div id="view-db-page" class="fullview-overlay">
-        <div class="page-header-area">
-            <div>
-                <h2 class="page-main-title">设定</h2>
-                <div class="page-sub-title">// SETTINGS</div>
-            </div>
-            <div class="page-back-btn" onclick="navigateToPage('home')"><span>返回主页</span></div>
-        </div>
-        <div class="slider-showcase-container">
-            <div class="slide-arrow" onclick="moveSlider('db', -1)">〈</div>
-            <div class="cards-viewport">
-                <div class="showcase-card" style="background-image: url('https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=1200&q=80');"></div>
-                <div class="showcase-card" style="background-image: url('https://images.unsplash.com/photo-1639322537228-f710d846310a?auto=format&fit=crop&w=1200&q=80');"></div>
-                <div class="showcase-card" style="background-image: url('https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=crop&w=1200&q=80');"></div>
-            </div>
-            <div class="slide-arrow" onclick="moveSlider('db', 1)">〉</div>
-        </div>
-        <div class="indicator-dots" id="dots-db"></div>
-        <div class="content-display-panel">
-            <div class="dynamic-title-group">
-                <h3 class="dynamic-main-title" id="db-render-title"></h3>
-                <span class="dynamic-sub-quote" id="db-render-quote"></span>
-            </div>
-            <div class="dynamic-body-text" id="db-render-body"></div>
-        </div>
-    </div>
-
-    <div id="view-news-page" class="fullview-overlay" style="overflow-y: hidden;">
-        <div class="page-header-area">
-            <div>
-                <h2 class="page-main-title">系统广播中心</h2>
-                <div class="page-sub-title">// SYSTEM BROADCAST CORE</div>
-            </div>
-            <div class="page-back-btn" onclick="navigateToPage('home')"><span>返回主页</span></div>
-        </div>
-        <div class="page-layout-container">
-            <div class="noti-sidebar-list" id="noti-list-container"></div>
-            <div class="generic-detail-panel">
-                <h3 class="detail-title" id="nd-title"></h3>
-                <div class="detail-meta" id="nd-meta"></div>
-                <div class="detail-content" id="nd-content"></div>
-            </div>
-        </div>
-    </div>
-
-    <div id="view-media-page" class="fullview-overlay">
-        <div class="page-header-area">
-            <div>
-                <h2 class="page-main-title">媒体视听数据库</h2>
-                <div class="page-sub-title">// MEDIA BROADCAST CENTER</div>
-            </div>
-            <div class="page-back-btn" onclick="navigateToPage('home')"><span>返回主页</span></div>
-        </div>
-        <ul class="media-capsule-container" id="media-capsules-wrap"></ul>
-        <div class="media-grid-container" id="media-matrix-grid"></div>
-    </div>
+    <!-- 动态渲染各板块页面的容器 -->
+    <div id="dynamic-pages-container"></div>
 
     <div class="cinema-theater-backdrop" id="global-cinema-layer" onclick="closeCinemaTheater()">
         <div class="cinema-theater-window" onclick="event.stopPropagation()">
@@ -679,16 +593,114 @@
     <script src="data.js"></script>
 
     <script>
-        const safeData = window.WEBSITE_DATA || { info: [], db: [], news: [], media: { tabs: [], items: [] } };
-        const sliderData = { info: safeData.info || [], db: safeData.db || [] };
-        const newsData = safeData.news || [];
-        const mediaConfig = safeData.media || { tabs: [], items: [] };
+        const safeData = window.WEBSITE_DATA || { siteInfo: {}, pages: [] };
+        const pagesConfig = safeData.pages || [];
+        const PAGE_SEQUENCE = pagesConfig.map(p => p.id);
 
-        let currentActiveNotiIdx = 0;
-        let sliderIndices = { info: 0, db: 0 };
-
-        const PAGE_SEQUENCE = ['home', 'info', 'db', 'news', 'media'];
         let currentPageId = 'home';
+        let currentActiveNotiIdx = 0;
+        let sliderIndices = {};
+
+        // 初始化基础页面数据与 UI
+        function initDynamicStructure() {
+            // 填入全局基础文字
+            if (safeData.siteInfo) {
+                if (safeData.siteInfo.brandName) document.getElementById('site-logo').innerText = safeData.siteInfo.brandName;
+                if (safeData.siteInfo.heroTitle) document.getElementById('hero-title').innerText = safeData.siteInfo.heroTitle;
+                if (safeData.siteInfo.heroSubTitle) document.getElementById('hero-subtitle').innerText = safeData.siteInfo.heroSubTitle;
+                if (safeData.siteInfo.heroQuote) document.getElementById('hero-quote').innerText = safeData.siteInfo.heroQuote;
+            }
+
+            // 动态构建导航菜单
+            const navWrapper = document.getElementById('nav-menu-wrapper');
+            const sliderLine = document.getElementById('global-nav-line');
+            
+            pagesConfig.forEach((page, index) => {
+                const btn = document.createElement('div');
+                btn.className = `nav-btn ${index === 0 ? 'active' : ''}`;
+                btn.id = `nav-${page.id}`;
+                btn.innerText = page.navName;
+                btn.onclick = () => navigateToPage(page.id);
+                navWrapper.insertBefore(btn, sliderLine);
+            });
+
+            // 动态构建页面视窗 DOM
+            const container = document.getElementById('dynamic-pages-container');
+            container.innerHTML = '';
+
+            pagesConfig.forEach(page => {
+                if (page.type === 'home') return; // 主页不需要 fullview-overlay
+
+                const overlay = document.createElement('div');
+                overlay.id = `view-${page.id}-page`;
+                overlay.className = 'fullview-overlay';
+                if (page.type === 'news') overlay.style.overflowY = 'hidden';
+
+                if (page.type === 'slider') {
+                    sliderIndices[page.id] = 0;
+                    overlay.innerHTML = `
+                        <div class="page-header-area">
+                            <div>
+                                <h2 class="page-main-title">${page.title || ''}</h2>
+                                <div class="page-sub-title">${page.subTitle || ''}</div>
+                            </div>
+                            <div class="page-back-btn" onclick="navigateToPage('home')"><span>返回主页</span></div>
+                        </div>
+                        <div class="slider-showcase-container">
+                            <div class="slide-arrow" onclick="moveSlider('${page.id}', -1)">〈</div>
+                            <div class="cards-viewport" id="cards-viewport-${page.id}"></div>
+                            <div class="slide-arrow" onclick="moveSlider('${page.id}', 1)">〉</div>
+                        </div>
+                        <div class="indicator-dots" id="dots-${page.id}"></div>
+                        <div class="content-display-panel">
+                            <div class="dynamic-title-group">
+                                <h3 class="dynamic-main-title" id="${page.id}-render-title"></h3>
+                                <span class="dynamic-sub-quote" id="${page.id}-render-quote"></span>
+                            </div>
+                            <div class="dynamic-body-text" id="${page.id}-render-body"></div>
+                        </div>
+                    `;
+                } else if (page.type === 'news') {
+                    overlay.innerHTML = `
+                        <div class="page-header-area">
+                            <div>
+                                <h2 class="page-main-title">${page.title || ''}</h2>
+                                <div class="page-sub-title">${page.subTitle || ''}</div>
+                            </div>
+                            <div class="page-back-btn" onclick="navigateToPage('home')"><span>返回主页</span></div>
+                        </div>
+                        <div class="page-layout-container">
+                            <div class="noti-sidebar-list" id="noti-list-container"></div>
+                            <div class="generic-detail-panel">
+                                <h3 class="detail-title" id="nd-title"></h3>
+                                <div class="detail-meta" id="nd-meta"></div>
+                                <div class="detail-content" id="nd-content"></div>
+                            </div>
+                        </div>
+                    `;
+                } else if (page.type === 'media') {
+                    overlay.innerHTML = `
+                        <div class="page-header-area">
+                            <div>
+                                <h2 class="page-main-title">${page.title || ''}</h2>
+                                <div class="page-sub-title">${page.subTitle || ''}</div>
+                            </div>
+                            <div class="page-back-btn" onclick="navigateToPage('home')"><span>返回主页</span></div>
+                        </div>
+                        <ul class="media-capsule-container" id="media-capsules-wrap"></ul>
+                        <div class="media-grid-container" id="media-matrix-grid"></div>
+                    `;
+                }
+
+                container.appendChild(overlay);
+            });
+
+            // 绑定主页按钮指向第二个页面
+            const secondPage = pagesConfig[1];
+            if (secondPage) {
+                document.getElementById('hero-arrow-btn').onclick = () => navigateToPage(secondPage.id);
+            }
+        }
 
         let simulatedProgress = 0;
         const progressNumNode = document.getElementById('load-num-node');
@@ -717,7 +729,7 @@
                     currentTrack = 100;
                     clearInterval(finishRunner);
                     applyLoadingUpdate(100);
-                    
+
                     setTimeout(() => {
                         if(loaderContainer) {
                             loaderContainer.classList.add('loader-vanish');
@@ -743,7 +755,7 @@
         }
 
         function navigateToPage(targetPageId, pushState = true) {
-            if (targetPageId === currentPageId) return;
+            if (targetPageId === currentPageId || !PAGE_SEQUENCE.includes(targetPageId)) return;
 
             const stageEl = document.getElementById('main-stage');
             const oldIndex = PAGE_SEQUENCE.indexOf(currentPageId);
@@ -787,28 +799,29 @@
             const navBtnEl = document.getElementById(`nav-${targetPageId}`);
             if (navBtnEl) navBtnEl.classList.add('active');
 
-            // 使用 DOM 高亮状态切换后，立即同步文字激活色与轨道滑块线位置
             updateNavSliderLine(targetPageId);
 
             if (sliderIndices[targetPageId] !== undefined) renderSlider(targetPageId);
             if (targetPageId === 'media') triggerMediaStaggerAnimation();
         }
 
-        document.querySelectorAll('.fullview-overlay').forEach(el => {
-            el.addEventListener('transitionend', (e) => {
-                if (e.propertyName === 'transform' || e.propertyName === 'opacity') {
-                    if (!el.classList.contains('active-page')) {
-                        el.classList.remove('render-block', 'prepare-from-left', 'prepare-from-right', 'exit-to-left', 'exit-to-right');
+        function bindOverlayTransitions() {
+            document.querySelectorAll('.fullview-overlay').forEach(el => {
+                el.addEventListener('transitionend', (e) => {
+                    if (e.propertyName === 'transform' || e.propertyName === 'opacity') {
+                        if (!el.classList.contains('active-page')) {
+                            el.classList.remove('render-block', 'prepare-from-left', 'prepare-from-right', 'exit-to-left', 'exit-to-right');
+                        }
                     }
-                }
+                });
             });
-        });
+        }
 
         function openCinemaTheater() {
             const theaterLayer = document.getElementById('global-cinema-layer');
             const injectionPoint = document.getElementById('cinema-injection-point');
             const fallbackAnchor = document.getElementById('cinema-fallback-anchor');
-            
+
             const finalBvid = "BV1RwFZzTEQ5";
             fallbackAnchor.href = `https://www.bilibili.com/video/${finalBvid}`;
 
@@ -832,7 +845,7 @@
         function closeCinemaTheater() {
             const theaterLayer = document.getElementById('global-cinema-layer');
             const injectionPoint = document.getElementById('cinema-injection-point');
-            
+
             theaterLayer.classList.remove('theater-manifest');
             setTimeout(() => {
                 theaterLayer.style.display = 'none';
@@ -840,23 +853,36 @@
             }, 400);
         }
 
-        function initSliderDots(pageKey) {
+        function buildSliderPage(pageKey) {
+            const pageData = pagesConfig.find(p => p.id === pageKey);
+            if (!pageData || !pageData.items) return;
+
+            const viewport = document.getElementById(`cards-viewport-${pageKey}`);
             const dotsContainer = document.getElementById(`dots-${pageKey}`);
-            if (!dotsContainer) return;
+            if (!viewport || !dotsContainer) return;
+
+            viewport.innerHTML = '';
             dotsContainer.innerHTML = '';
-            if (sliderData[pageKey]) {
-                sliderData[pageKey].forEach((_, idx) => {
-                    const dot = document.createElement('div');
-                    dot.className = `indicator-dot ${idx === sliderIndices[pageKey] ? 'active' : ''}`;
-                    dot.onclick = () => { sliderIndices[pageKey] = idx; renderSlider(pageKey); };
-                    dotsContainer.appendChild(dot);
-                });
-            }
+
+            pageData.items.forEach((item, idx) => {
+                const card = document.createElement('div');
+                card.className = 'showcase-card';
+                if (item.bgImg) card.style.backgroundImage = `url('${item.bgImg}')`;
+                viewport.appendChild(card);
+
+                const dot = document.createElement('div');
+                dot.className = `indicator-dot ${idx === sliderIndices[pageKey] ? 'active' : ''}`;
+                dot.onclick = () => { sliderIndices[pageKey] = idx; renderSlider(pageKey); };
+                dotsContainer.appendChild(dot);
+            });
+
+            renderSlider(pageKey);
         }
 
         function moveSlider(pageKey, direction) {
-            const items = sliderData[pageKey];
-            if (!items || items.length === 0) return;
+            const pageData = pagesConfig.find(p => p.id === pageKey);
+            if (!pageData || !pageData.items || pageData.items.length === 0) return;
+            const items = pageData.items;
             let currentIdx = sliderIndices[pageKey] + direction;
             if (currentIdx < 0) currentIdx = items.length - 1;
             if (currentIdx >= items.length) currentIdx = 0;
@@ -865,8 +891,9 @@
         }
 
         function renderSlider(pageKey) {
-            const items = sliderData[pageKey];
-            if (!items || items.length === 0) return;
+            const pageData = pagesConfig.find(p => p.id === pageKey);
+            if (!pageData || !pageData.items || pageData.items.length === 0) return;
+            const items = pageData.items;
             const currentIdx = sliderIndices[pageKey];
             const pageOverlay = document.getElementById(`view-${pageKey}-page`);
             if (!pageOverlay) return;
@@ -891,6 +918,10 @@
         }
 
         function buildNotificationList() {
+            const pageData = pagesConfig.find(p => p.type === 'news');
+            if (!pageData || !pageData.items) return;
+            const newsData = pageData.items;
+
             const listContainer = document.getElementById('noti-list-container');
             if (!listContainer || newsData.length === 0) return;
             listContainer.innerHTML = ''; 
@@ -898,7 +929,7 @@
             newsData.forEach((item, index) => {
                 const card = document.createElement('div');
                 card.className = `noti-item-card ${index === currentActiveNotiIdx ? 'item-active' : ''}`;
-                card.onclick = () => switchNotiDetail(index, card);
+                card.onclick = () => switchNotiDetail(index, card, newsData);
 
                 const dateEl = document.createElement('div');
                 dateEl.className = 'noti-item-date';
@@ -912,18 +943,18 @@
                 card.appendChild(titleEl);
                 listContainer.appendChild(card);
             });
-            refreshNotiDetailText();
+            refreshNotiDetailText(newsData);
         }
 
-        function switchNotiDetail(index, element) {
+        function switchNotiDetail(index, element, newsData) {
             document.querySelectorAll('.noti-item-card').forEach(card => card.classList.remove('item-active'));
             if(element) element.classList.add('item-active');
             currentActiveNotiIdx = index;
-            refreshNotiDetailText();
+            refreshNotiDetailText(newsData);
         }
 
-        function refreshNotiDetailText() {
-            if (newsData.length === 0) return;
+        function refreshNotiDetailText(newsData) {
+            if (!newsData || newsData.length === 0) return;
             const data = newsData[currentActiveNotiIdx];
             if (!data) return;
             document.getElementById('nd-title').innerText = data.title || '';
@@ -932,13 +963,16 @@
         }
 
         function buildMediaLayout() {
+            const pageData = pagesConfig.find(p => p.type === 'media');
+            if (!pageData) return;
+
             const capsuleContainer = document.getElementById('media-capsules-wrap');
             const gridContainer = document.getElementById('media-matrix-grid');
             if (!capsuleContainer || !gridContainer) return;
 
             capsuleContainer.innerHTML = '';
-            if (mediaConfig.tabs) {
-                mediaConfig.tabs.forEach((tabName) => {
+            if (pageData.tabs) {
+                pageData.tabs.forEach((tabName) => {
                     const li = document.createElement('li');
                     li.className = 'media-capsule-btn capsule-active';
                     li.innerText = tabName;
@@ -947,8 +981,8 @@
             }
 
             gridContainer.innerHTML = '';
-            if (mediaConfig.items) {
-                mediaConfig.items.forEach((item) => {
+            if (pageData.items) {
+                pageData.items.forEach((item) => {
                     const card = document.createElement('div');
                     card.className = 'media-matrix-card';
                     card.onclick = () => openCinemaTheater(); 
@@ -980,7 +1014,7 @@
                     gridContainer.appendChild(card);
                 });
             }
-            
+
             triggerMediaStaggerAnimation();
         }
 
@@ -1043,11 +1077,11 @@
             ctx.lineWidth = 1.5; 
             ctx.shadowBlur = 8; 
             ctx.shadowColor = "rgba(163, 215, 255, 0.3)"; 
-            
+
             const trainY = canvas.height * 0.82; 
             trainX += 1.2; 
             if (trainX > canvas.width + 600) trainX = -800;
-            
+
             for(let i=0; i<6; i++) { 
                 let bx = trainX - (i * 125); 
                 ctx.strokeRect(bx, trainY, 115, 20);
@@ -1108,15 +1142,13 @@
                 const diffX = touchEndX - touchStartX;
                 const diffY = touchEndY - touchStartY;
 
-                // 修复点 2：如果纵向滑动幅度大于横向，说明用户正在上下滚动长列表（例如在媒体页面滚动网格），中断切换判定
                 if (Math.abs(diffY) > Math.abs(diffX)) {
                     return;
                 }
 
                 if (Math.abs(diffX) > 50) {
                     const target = e.target;
-                    
-                    // 移除了对媒体列表容器 '.media-grid-container' 的绝对死板拦截，允许捕获横向手势
+
                     if (target.closest('.slider-showcase-container') || 
                         target.closest('.noti-sidebar-list') || 
                         target.closest('.media-capsule-container')) {
@@ -1149,16 +1181,22 @@
         });
 
         window.addEventListener('DOMContentLoaded', () => {
-            buildNotificationList();
-            buildMediaLayout(); 
-            ['info', 'db'].forEach(key => { initSliderDots(key); renderSlider(key); });
+            initDynamicStructure();
+            bindOverlayTransitions();
+
+            pagesConfig.forEach(page => {
+                if (page.type === 'slider') buildSliderPage(page.id);
+                else if (page.type === 'news') buildNotificationList();
+                else if (page.type === 'media') buildMediaLayout();
+            });
+
             initCanvas(); 
             animate();
             initTouchSwipeEngine(); 
-            
+
             const urlParams = new URLSearchParams(window.location.search);
             const initialPage = urlParams.get('page') || 'home';
-            
+
             if (PAGE_SEQUENCE.includes(initialPage) && initialPage !== 'home') {
                 currentPageId = initialPage;
                 let targetOverlayEl = document.getElementById(`view-${initialPage}-page`);
@@ -1169,10 +1207,10 @@
                     document.querySelectorAll('.nav-menu .nav-btn').forEach(b => b.classList.remove('active'));
                     let navBtnEl = document.getElementById(`nav-${initialPage}`);
                     if (navBtnEl) navBtnEl.classList.add('active');
-                    if (['info', 'db'].includes(initialPage)) renderSlider(initialPage);
+                    if (sliderIndices[initialPage] !== undefined) renderSlider(initialPage);
                 }
             }
-            
+
             setTimeout(() => {
                 updateNavSliderLine(currentPageId);
             }, 100);
