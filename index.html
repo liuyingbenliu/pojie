@@ -6,7 +6,7 @@
     <title>新•奇迹城</title>
     <style>
         :root {
-            --accent: #a3d7ff; 
+            --accent: #a3d7ff; /* 导航栏与整体激活色：淡冰蓝 */
             --accent-glow: rgba(163, 215, 255, 0.25); 
             --bg-dark: #03050d;
             --glass-bg: rgba(255, 255, 255, 0.03);
@@ -99,6 +99,10 @@
 
         .view-homepage-content { width: 100%; height: 100%; position: absolute; inset: 0; display: flex; justify-content: center; align-items: center; }
         .center-hero { text-align: center; z-index: 5; pointer-events: none; display: flex; flex-direction: column; align-items: center; }
+        .title-large { font-size: clamp(2.5rem, 5vw, 4.5rem); letter-spacing: 12px; font-weight: 300; margin: 0; text-shadow: 0 0 40px rgba(0,0,0,0.8); }
+        .title-sub { font-size: clamp(0.9rem, 1.5vw, 1.2rem); letter-spacing: 6px; color: rgba(255,255,255,0.8); margin: 15px 0 0 0; }
+        .title-date { font-size: clamp(0.85rem, 1.3vw, 1.1rem); letter-spacing: 5px; color: var(--accent); margin: 12px 0 0 0; text-shadow: 0 0 10px var(--accent-glow); font-weight: 400; }
+        .quote-text { margin-top: 4vh; font-size: clamp(0.75rem, 0.9vw, 0.85rem); color: rgba(255,255,255,0.4); letter-spacing: 3px; line-height: 1.8; max-width: 600px; }
 
         /* ================= 高级视窗切换控制引擎 ================= */
         .fullview-overlay {
@@ -456,12 +460,16 @@
         </div>
     </div>
 
-    <!-- 主界面：星空背景保留，大标题及文字已清空 -->
     <div id="main-stage">
         <canvas id="star-canvas"></canvas>
         <div class="character-split-layer"></div>
         <div class="view-homepage-content">
-            <div class="center-hero"></div>
+            <div class="center-hero">
+                <h1 class="title-large" id="hero-title">新•奇迹城</h1>
+                <div class="title-sub" id="hero-subtitle">知道你很急，但请先等等</div>
+                <div class="title-date" id="hero-date"></div>
+                <p class="quote-text" id="hero-quote">「……其实,希望一直都在。」—— 追寻希望吧,冲向未来的列车正平稳通过中央干线。</p>
+            </div>
         </div>
     </div>
 
@@ -490,13 +498,18 @@
         let currentActiveNotiIdx = 0;
         let sliderIndices = {};
 
-        // 初始化基础页面数据与 UI（加入安全容错判断，防止 data.js 访问已删除的元素报错）
+        // 初始化基础页面数据与 UI
         function initDynamicStructure() {
+            // 填入全局基础文字
             if (safeData.siteInfo) {
-                const brandLogo = document.getElementById('site-logo');
-                if (brandLogo && safeData.siteInfo.brandName) brandLogo.innerText = safeData.siteInfo.brandName;
+                if (safeData.siteInfo.brandName && document.getElementById('site-logo')) document.getElementById('site-logo').innerText = safeData.siteInfo.brandName;
+                if (safeData.siteInfo.heroTitle) document.getElementById('hero-title').innerText = safeData.siteInfo.heroTitle;
+                if (safeData.siteInfo.heroSubTitle) document.getElementById('hero-subtitle').innerText = safeData.siteInfo.heroSubTitle;
+                if (safeData.siteInfo.heroDate) document.getElementById('hero-date').innerText = safeData.siteInfo.heroDate;
+                if (safeData.siteInfo.heroQuote) document.getElementById('hero-quote').innerText = safeData.siteInfo.heroQuote;
             }
 
+            // 动态构建页面视窗 DOM
             const container = document.getElementById('dynamic-pages-container');
             container.innerHTML = '';
 
@@ -760,12 +773,9 @@
 
             const data = items[currentIdx];
             if (data) {
-                const rTitle = document.getElementById(`${pageKey}-render-title`);
-                const rQuote = document.getElementById(`${pageKey}-render-quote`);
-                const rBody = document.getElementById(`${pageKey}-render-body`);
-                if (rTitle) rTitle.innerText = data.title || '';
-                if (rQuote) rQuote.innerText = data.quote || '';
-                if (rBody) rBody.innerHTML = data.body || '';
+                document.getElementById(`${pageKey}-render-title`).innerText = data.title || '';
+                document.getElementById(`${pageKey}-render-quote`).innerText = data.quote || '';
+                document.getElementById(`${pageKey}-render-body`).innerHTML = data.body || '';
             }
         }
 
@@ -809,12 +819,9 @@
             if (!newsData || newsData.length === 0) return;
             const data = newsData[currentActiveNotiIdx];
             if (!data) return;
-            const ndTitle = document.getElementById('nd-title');
-            const ndMeta = document.getElementById('nd-meta');
-            const ndContent = document.getElementById('nd-content');
-            if (ndTitle) ndTitle.innerText = data.title || '';
-            if (ndMeta) ndMeta.innerText = data.meta || '';
-            if (ndContent) ndContent.innerHTML = data.content || '';
+            document.getElementById('nd-title').innerText = data.title || '';
+            document.getElementById('nd-meta').innerText = data.meta || '';
+            document.getElementById('nd-content').innerHTML = data.content || '';
         }
 
         function buildMediaLayout() {
