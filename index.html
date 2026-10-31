@@ -456,7 +456,7 @@
         </div>
     </div>
 
-    <!-- 主界面：已经彻底清空所有文字 -->
+    <!-- 主界面：星空背景保留，大标题及文字已清空 -->
     <div id="main-stage">
         <canvas id="star-canvas"></canvas>
         <div class="character-split-layer"></div>
@@ -490,7 +490,7 @@
         let currentActiveNotiIdx = 0;
         let sliderIndices = {};
 
-        // 初始化基础页面数据与 UI（已移除对主界面文字的 JS 动态注入，防止 data.js 覆盖）
+        // 初始化基础页面数据与 UI
         function initDynamicStructure() {
             const container = document.getElementById('dynamic-pages-container');
             container.innerHTML = '';
