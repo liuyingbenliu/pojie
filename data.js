@@ -3,9 +3,9 @@ window.WEBSITE_DATA = {
     // 基础全局信息配置
     siteInfo: {
         brandName: "未来 × 希望",
-        heroTitle: "未来",
-        heroSubTitle: "F U T U R E  ·  H O P E",
-        heroQuote: "「……其实，希望一直都在。」—— 追寻希望吧，冲向未来的列车正平稳通过中央干线。"
+        heroTitle: "新•奇迹城",
+        heroSubTitle: "梦想家,2027月夜见",
+        heroQuote: "「原来，你真的是梦想家」—— 追寻你的梦想吧，冲向未来的列车正平稳冲过中央干线。"
     },
 
     // 动态页面与导航配置（可在此自由增加、修改、删除页面与排版）
