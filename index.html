@@ -490,8 +490,13 @@
         let currentActiveNotiIdx = 0;
         let sliderIndices = {};
 
-        // 初始化基础页面数据与 UI
+        // 初始化基础页面数据与 UI（加入安全容错判断，防止 data.js 访问已删除的元素报错）
         function initDynamicStructure() {
+            if (safeData.siteInfo) {
+                const brandLogo = document.getElementById('site-logo');
+                if (brandLogo && safeData.siteInfo.brandName) brandLogo.innerText = safeData.siteInfo.brandName;
+            }
+
             const container = document.getElementById('dynamic-pages-container');
             container.innerHTML = '';
 
@@ -755,9 +760,12 @@
 
             const data = items[currentIdx];
             if (data) {
-                document.getElementById(`${pageKey}-render-title`).innerText = data.title || '';
-                document.getElementById(`${pageKey}-render-quote`).innerText = data.quote || '';
-                document.getElementById(`${pageKey}-render-body`).innerHTML = data.body || '';
+                const rTitle = document.getElementById(`${pageKey}-render-title`);
+                const rQuote = document.getElementById(`${pageKey}-render-quote`);
+                const rBody = document.getElementById(`${pageKey}-render-body`);
+                if (rTitle) rTitle.innerText = data.title || '';
+                if (rQuote) rQuote.innerText = data.quote || '';
+                if (rBody) rBody.innerHTML = data.body || '';
             }
         }
 
@@ -801,9 +809,12 @@
             if (!newsData || newsData.length === 0) return;
             const data = newsData[currentActiveNotiIdx];
             if (!data) return;
-            document.getElementById('nd-title').innerText = data.title || '';
-            document.getElementById('nd-meta').innerText = data.meta || '';
-            document.getElementById('nd-content').innerHTML = data.content || '';
+            const ndTitle = document.getElementById('nd-title');
+            const ndMeta = document.getElementById('nd-meta');
+            const ndContent = document.getElementById('nd-content');
+            if (ndTitle) ndTitle.innerText = data.title || '';
+            if (ndMeta) ndMeta.innerText = data.meta || '';
+            if (ndContent) ndContent.innerHTML = data.content || '';
         }
 
         function buildMediaLayout() {
