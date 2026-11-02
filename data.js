@@ -4,8 +4,8 @@ window.WEBSITE_DATA = {
     siteInfo: {
         brandName: "未来 × 希望",
         heroTitle: "新•奇迹城",
-        heroSubTitle: "梦想家,2027月夜见",
-        heroQuote: "「原来，你真的是梦想家」—— 追寻你的梦想吧，冲向未来的列车正平稳冲过中央干线。"
+        heroSubTitle: "梦想家,月夜见",
+        heroQuote: "「其实，我们都在追寻自己梦想」—— 追寻你的梦想吧，冲向未来的列车正平稳冲过中央干线。"
     },
 
     // 动态页面与导航配置（可在此自由增加、修改、删除页面与排版）
