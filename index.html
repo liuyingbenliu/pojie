@@ -4,9 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MX server | 奇迹与未来</title>
+    <!-- 引入比较圆润的现代英文字体，增强整体青春圆润感 -->
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
     <style>
+        /* ================= 1. 全局设计变量与主题配置 ================= */
         :root {
-            /* 阳光青春风：明亮天蓝色、晨光金、纯净白与通透浅底 */
             --accent: #0077ff; 
             --accent-glow: rgba(0, 119, 255, 0.3); 
             --bg-light: #f0f5ff;
@@ -18,6 +20,7 @@
             --domino-bezier: cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
+        /* ================= 2. 基础重置与页面初始化（应用圆润字体） ================= */
         * { 
             box-sizing: border-box; 
             -webkit-tap-highlight-color: transparent !important;
@@ -28,11 +31,12 @@
             margin: 0; padding: 0; width: 100%; height: 100%;
             background: var(--bg-gradient) !important;
             overflow: hidden; 
-            color: #1e293b; font-family: "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+            color: #1e293b; 
+            font-family: "Quicksand", "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
             user-select: none;
         }
 
-        /* ================= 阳光青春风全屏加载遮罩 ================= */
+        /* ================= 3. 页面全局加载动画遮罩 ================= */
         #global-app-loading-container {
             position: fixed; inset: 0; width: 100%; height: 100%;
             background: linear-gradient(135deg, #dbeafe 0%, #f0fdf4 100%);
@@ -81,44 +85,40 @@
             text-transform: uppercase; margin-top: -4px;
         }
 
-        /* --- 顶部全局导航栏：完全去除遮罩、透明化、放大、靠右 --- */
+        /* ================= 4. 顶部悬浮导航栏（完全透明无遮罩、无底部栏条） ================= */
         .top-header {
             position: fixed; top: 0; left: 0; width: 100%; height: 74px !important;
             display: flex; justify-content: space-between; align-items: center;
             padding: 0 5%; 
-            background: transparent !important; /* 完全透明，无遮罩 */
-            backdrop-path: none !important;
+            background: transparent !important;
             backdrop-filter: none !important; 
             -webkit-backdrop-filter: none !important;
-            border-bottom: none !important; /* 移除底部线条 */
-            box-shadow: none !important; /* 移除阴影 */
+            border-bottom: none !important;
+            box-shadow: none !important;
             z-index: 3000;
         }
         .header-left { display: flex; align-items: center; justify-content: space-between; width: 100%; }
         
-        /* Logo 字体放大、加粗、富有朝气 */
         .header-logo { 
             font-size: 1.3rem !important; 
             letter-spacing: 3px; 
-            font-weight: 800 !important; 
+            font-weight: 700 !important; 
             color: #0284c7; 
             white-space: nowrap;
             text-shadow: 0 2px 10px rgba(2, 132, 199, 0.15);
         }
 
-        /* 导航菜单靠右，字体放大加粗 */
         .nav-menu { display: flex; gap: 36px; height: 74px; align-items: center; position: relative; margin-left: auto; }
 
         .nav-btn {
-            font-size: 1.05rem !important; /* 放大 */
-            font-weight: 600 !important; /* 加粗 */
+            font-size: 1.05rem !important; 
+            font-weight: 600 !important; 
             color: #334155; cursor: pointer;
             transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); 
             position: relative; letter-spacing: 1px; white-space: nowrap;
             padding: 14px 4px; z-index: 2;
         }
 
-        /* 强化点击特效：点击时瞬间缩放并伴随清爽发光 */
         .nav-btn:active {
             transform: scale(0.92);
             color: #0284c7;
@@ -129,16 +129,7 @@
             text-shadow: 0 0 10px rgba(2, 132, 199, 0.3);
         }
 
-        .nav-slider-line {
-            position: absolute; bottom: 0; left: 0; height: 3px;
-            background-color: #0284c7; 
-            box-shadow: 0 0 12px rgba(2, 132, 199, 0.5);
-            transition: left 0.38s var(--ark-bezier), width 0.38s var(--ark-bezier);
-            pointer-events: none; z-index: 1;
-            border-radius: 2px;
-        }
-
-        /* --- 主舞台（大厅视界） --- */
+        /* ================= 5. 主舞台大厅视界 ================= */
         #main-stage { 
             position: relative; width: 100%; height: 100%; z-index: 10; 
             background: transparent; 
@@ -206,7 +197,7 @@
         .hero-arrow-circle svg { width: 22px; height: 22px; fill: none; stroke: #ffffff; stroke-width: 2.8; }
         .hero-arrow-wrap:hover .hero-arrow-circle { transform: scale(1.1); background: #0369a1; }
 
-        /* ================= 高级视窗切换控制引擎 ================= */
+        /* ================= 6. 多功能视窗切换控制引擎 ================= */
         .fullview-overlay {
             position: fixed; inset: 0; width: 100%; height: 100%; z-index: 1500; 
             padding: 90px 6% 40px 6%;
@@ -252,7 +243,7 @@
         .page-back-btn:active { transform: scale(0.93); background: rgba(2, 132, 199, 0.1); }
         .page-back-btn:hover { color: #0284c7; border-color: #0284c7; box-shadow: 0 0 15px rgba(2, 132, 199, 0.2); }
 
-        /* ================= 世界观 / 设定 卡片轮播 ================= */
+        /* ================= 7. 世界观设定卡片轮播组件 ================= */
         .slider-showcase-container { display: flex; align-items: center; justify-content: center; width: 100%; gap: 30px; position: relative; margin-top: 10px; flex-shrink: 0; }
         .cards-viewport { display: flex; align-items: center; justify-content: center; width: 85%; height: clamp(240px, 32vh, 380px); position: relative; overflow: hidden; }
 
@@ -292,7 +283,7 @@
         .dynamic-sub-quote { font-size: 1rem; color: #0284c7; font-weight: 700; letter-spacing: 1px; margin-bottom: 16px; display: block; }
         .dynamic-body-text { font-size: 0.98rem; color: #334155; line-height: 1.9; text-align: justify; padding-bottom: 60px; }
 
-        /* ================= 告示页面分栏布局 ================= */
+        /* ================= 8. 告示与新闻分栏布局组件 ================= */
         .page-layout-container { display: flex; gap: 30px; flex-grow: 1; height: calc(100vh - 210px); min-height: 400px; overflow: hidden; }
         .noti-sidebar-list { width: 32%; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; padding-right: 6px; height: 100%; padding-bottom: 40px; }
         
@@ -318,7 +309,7 @@
         .detail-content { line-height: 1.85; color: #334155; font-size: 0.95rem; text-align: justify; }
         .detail-content p { margin: 0 0 16px 0; }
 
-        /* ================= 媒体页面 ================= */
+        /* ================= 9. 媒体图集与视频矩阵网格组件 ================= */
         .media-capsule-container { display: flex; gap: 14px; margin: 5px 0 20px 0; flex-shrink: 0; list-style: none; padding: 0; }
         
         .media-capsule-btn {
@@ -395,7 +386,7 @@
         }
         .media-matrix-card:hover .matrix-card-title { color: #0284c7; }
 
-        /* ================= 全局大荧幕影院面板 ================= */
+        /* ================= 10. 全局大荧幕影院弹窗组件 ================= */
         .cinema-theater-backdrop {
             position: fixed; inset: 0; width: 100%; height: 100%; 
             background: rgba(15, 23, 42, 0); backdrop-filter: blur(0px); -webkit-backdrop-filter: blur(0px);
@@ -446,6 +437,7 @@
 </head>
 <body>
 
+    <!-- 全局加载遮罩实例 -->
     <div id="global-app-loading-container">
         <div class="loading-quantum-box">
             <div class="loading-status-row">
@@ -459,15 +451,17 @@
         </div>
     </div>
 
+    <!-- 顶部全局导航栏（已移除底部栏条元素） -->
     <header class="top-header">
         <div class="header-left">
             <div class="header-logo" id="site-logo">MX server | 青春</div>
             <nav class="nav-menu" id="nav-menu-wrapper">
-                <div class="nav-slider-line" id="global-nav-line"></div>
+                <!-- 已移除下划线栏条 DOM -->
             </nav>
         </div>
     </header>
 
+    <!-- 主舞台视界实例 -->
     <div id="main-stage">
         <canvas id="star-canvas"></canvas>
         <div class="character-split-layer"></div>
@@ -475,7 +469,7 @@
             <div class="center-hero">
                 <h1 class="title-large" id="hero-title">阳光与未来</h1>
                 <div class="title-sub" id="hero-subtitle">YOUTH  ·  SUNSHINE  ·  HOPE</div>
-                <p class="quote-text" id="hero-quote">「……其实,希望一直都在。」—— 追寻希望吧,冲向未来的列车正平稳通过晴空万里的中央干线。</p>
+                <p class="quote-text" id="hero-quote">「……其实，希望一直都在。」—— 追寻希望吧，冲向未来的列车正平稳通过晴空万里的中央干线。</p>
                 <div class="hero-arrow-wrap" id="hero-arrow-btn" title="进入视界">
                     <div class="hero-arrow-circle">
                         <svg viewBox="0 0 24 24"><polyline points="8 5 16 12 8 19"></polyline></svg>
@@ -488,6 +482,7 @@
     <!-- 动态渲染各板块页面的容器 -->
     <div id="dynamic-pages-container"></div>
 
+    <!-- 全局大荧幕影院弹窗实例 -->
     <div class="cinema-theater-backdrop" id="global-cinema-layer" onclick="closeCinemaTheater()">
         <div class="cinema-theater-window" onclick="event.stopPropagation()">
             <div class="cinema-close-trigger" onclick="closeCinemaTheater()">✕</div>
@@ -502,6 +497,7 @@
     <!-- 严格保留外部JS依赖项 -->
     <script src="data.js"></script>
 
+    <!-- 核心业务逻辑与交互脚本 -->
     <script>
         const safeData = window.WEBSITE_DATA || { siteInfo: {}, pages: [] };
         const pagesConfig = safeData.pages || [];
@@ -511,6 +507,7 @@
         let currentActiveNotiIdx = 0;
         let sliderIndices = {};
 
+        // 初始化动态结构与数据绑定
         function initDynamicStructure() {
             if (safeData.siteInfo) {
                 if (safeData.siteInfo.brandName) document.getElementById('site-logo').innerText = safeData.siteInfo.brandName;
@@ -520,7 +517,6 @@
             }
 
             const navWrapper = document.getElementById('nav-menu-wrapper');
-            const sliderLine = document.getElementById('global-nav-line');
             
             pagesConfig.forEach((page, index) => {
                 const btn = document.createElement('div');
@@ -528,7 +524,7 @@
                 btn.id = `nav-${page.id}`;
                 btn.innerText = page.navName;
                 btn.onclick = () => navigateToPage(page.id);
-                navWrapper.insertBefore(btn, sliderLine);
+                navWrapper.appendChild(btn); // 直接添加到菜单容器中，不再包含下划线栏条
             });
 
             const container = document.getElementById('dynamic-pages-container');
@@ -607,6 +603,7 @@
             }
         }
 
+        // 加载进度模拟逻辑
         let simulatedProgress = 0;
         const progressNumNode = document.getElementById('load-num-node');
         const progressFillNode = document.getElementById('load-bar-node');
@@ -647,18 +644,7 @@
             }, 15);
         });
 
-        function updateNavSliderLine(targetId) {
-            const btn = document.getElementById(`nav-${targetId}`);
-            const line = document.getElementById('global-nav-line');
-            if (!btn || !line) return;
-
-            const leftPos = btn.offsetLeft;
-            const btnWidth = btn.offsetWidth;
-
-            line.style.left = `${leftPos}px`;
-            line.style.width = `${btnWidth}px`;
-        }
-
+        // 页面路由跳转控制
         function navigateToPage(targetPageId, pushState = true) {
             if (targetPageId === currentPageId || !PAGE_SEQUENCE.includes(targetPageId)) return;
 
@@ -704,8 +690,6 @@
             const navBtnEl = document.getElementById(`nav-${targetPageId}`);
             if (navBtnEl) navBtnEl.classList.add('active');
 
-            updateNavSliderLine(targetPageId);
-
             if (sliderIndices[targetPageId] !== undefined) renderSlider(targetPageId);
             if (targetPageId === 'media') triggerMediaStaggerAnimation();
         }
@@ -722,6 +706,7 @@
             });
         }
 
+        // 打开影院弹窗播放视频
         function openCinemaTheater() {
             const theaterLayer = document.getElementById('global-cinema-layer');
             const injectionPoint = document.getElementById('cinema-injection-point');
@@ -747,6 +732,7 @@
                 </iframe>`;
         }
 
+        // 关闭影院弹窗
         function closeCinemaTheater() {
             const theaterLayer = document.getElementById('global-cinema-layer');
             const injectionPoint = document.getElementById('cinema-injection-point');
@@ -758,6 +744,7 @@
             }, 400);
         }
 
+        // 构建轮播卡片页面
         function buildSliderPage(pageKey) {
             const pageData = pagesConfig.find(p => p.id === pageKey);
             if (!pageData || !pageData.items) return;
@@ -822,6 +809,7 @@
             }
         }
 
+        // 构建告示/新闻列表
         function buildNotificationList() {
             const pageData = pagesConfig.find(p => p.type === 'news');
             if (!pageData || !pageData.items) return;
@@ -867,6 +855,7 @@
             document.getElementById('nd-content').innerHTML = data.content || '';
         }
 
+        // 构建媒体图集网格布局
         function buildMediaLayout() {
             const pageData = pagesConfig.find(p => p.type === 'media');
             if (!pageData) return;
@@ -935,6 +924,7 @@
             });
         }
 
+        /* ================= 11. Canvas 背景星空与流光列车动画引擎 ================= */
         const canvas = document.getElementById('star-canvas');
         const ctx = canvas.getContext('2d');
         let stars = [], meteors = [], trainX = -1000;
@@ -1010,6 +1000,7 @@
             requestAnimationFrame(animate);
         }
 
+        /* ================= 12. 移动端触摸滑动切页引擎 ================= */
         let touchStartX = 0;
         let touchStartY = 0;
 
@@ -1059,9 +1050,9 @@
 
         window.addEventListener('resize', () => {
             initCanvas();
-            updateNavSliderLine(currentPageId);
         });
 
+        /* ================= 13. 页面生命周期挂载 ================= */
         window.addEventListener('DOMContentLoaded', () => {
             initDynamicStructure();
             bindOverlayTransitions();
@@ -1092,10 +1083,6 @@
                     if (sliderIndices[initialPage] !== undefined) renderSlider(initialPage);
                 }
             }
-
-            setTimeout(() => {
-                updateNavSliderLine(currentPageId);
-            }, 100);
         });
     </script>
 </body>
