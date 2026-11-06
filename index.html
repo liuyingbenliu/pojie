@@ -81,15 +81,17 @@
             text-transform: uppercase; margin-top: -4px;
         }
 
-        /* --- 顶部全局导航栏：超通透半透明 + 放大 + 靠右 --- */
+        /* --- 顶部全局导航栏：完全去除遮罩、透明化、放大、靠右 --- */
         .top-header {
             position: fixed; top: 0; left: 0; width: 100%; height: 74px !important;
             display: flex; justify-content: space-between; align-items: center;
             padding: 0 5%; 
-            background: rgba(255, 255, 255, 0.55) !important; /* 极度通透青春白 */
-            backdrop-filter: blur(25px) !important; -webkit-backdrop-filter: blur(25px) !important;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.8);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+            background: transparent !important; /* 完全透明，无遮罩 */
+            backdrop-path: none !important;
+            backdrop-filter: none !important; 
+            -webkit-backdrop-filter: none !important;
+            border-bottom: none !important; /* 移除底部线条 */
+            box-shadow: none !important; /* 移除阴影 */
             z-index: 3000;
         }
         .header-left { display: flex; align-items: center; justify-content: space-between; width: 100%; }
@@ -110,7 +112,7 @@
         .nav-btn {
             font-size: 1.05rem !important; /* 放大 */
             font-weight: 600 !important; /* 加粗 */
-            color: #475569; cursor: pointer;
+            color: #334155; cursor: pointer;
             transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); 
             position: relative; letter-spacing: 1px; white-space: nowrap;
             padding: 14px 4px; z-index: 2;
@@ -197,7 +199,6 @@
             background: #0284c7; border-radius: 50%; box-shadow: 0 8px 25px rgba(2, 132, 199, 0.35);
             transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        /* 强化点击特效：箭头按钮点击时产生动感缩放与光晕 */
         .hero-arrow-wrap:active .hero-arrow-circle {
             transform: scale(0.85);
             box-shadow: 0 4px 15px rgba(2, 132, 199, 0.5);
@@ -474,7 +475,7 @@
             <div class="center-hero">
                 <h1 class="title-large" id="hero-title">阳光与未来</h1>
                 <div class="title-sub" id="hero-subtitle">YOUTH  ·  SUNSHINE  ·  HOPE</div>
-                <p class="quote-text" id="hero-quote">「……其实，希望一直都在。」—— 追寻希望吧，冲向未来的列车正平稳通过晴空万里的中央干线。</p>
+                <p class="quote-text" id="hero-quote">「……其实,希望一直都在。」—— 追寻希望吧,冲向未来的列车正平稳通过晴空万里的中央干线。</p>
                 <div class="hero-arrow-wrap" id="hero-arrow-btn" title="进入视界">
                     <div class="hero-arrow-circle">
                         <svg viewBox="0 0 24 24"><polyline points="8 5 16 12 8 19"></polyline></svg>
