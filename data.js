@@ -2,7 +2,7 @@
 window.WEBSITE_DATA = {
     // 基础全局信息配置
     siteInfo: {
-        brandName: "未来 × 希望",
+        brandName: "Welcome to Miracle City",
         heroTitle: "新•奇迹城",
         heroSubTitle: "梦想家,月夜见",
         heroQuote: "「其实，我们都在追寻自己梦想」—— 追寻你的梦想吧，冲向未来的列车正平稳冲过中央干线。"
