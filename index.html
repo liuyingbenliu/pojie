@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>新•奇迹城</title>
+    <title>蔚蓝档案 | 奇迹与未来</title>
     <style>
         :root {
             --accent: #a3d7ff; /* 导航栏与整体激活色：淡冰蓝 */
@@ -79,6 +79,37 @@
             text-transform: uppercase; margin-top: -4px;
         }
 
+        /* --- 顶部全局导航栏 --- */
+        .top-header {
+            position: fixed; top: 0; left: 0; width: 100%; height: 48px;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 4%; background: rgba(3, 5, 13, 0.85);
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--glass-border);
+            z-index: 3000;
+        }
+        .header-left { display: flex; align-items: center; gap: clamp(15px, 2.5vw, 30px); }
+        .header-logo { font-size: clamp(0.85rem, 1.1vw, 1rem); letter-spacing: 3px; font-weight: 600; color: #fff; white-space: nowrap; }
+
+        .nav-menu { display: flex; gap: clamp(12px, 2vw, 28px); height: 48px; align-items: center; position: relative; }
+
+        .nav-btn {
+            font-size: clamp(0.75rem, 0.95vw, 0.85rem); color: rgba(255,255,255,0.4); cursor: pointer;
+            transition: color 0.25s linear; position: relative; letter-spacing: 1px; white-space: nowrap;
+            padding: 12px 0; z-index: 2;
+        }
+
+        .nav-btn:hover, .nav-btn.active { color: var(--accent) !important; }
+
+        .nav-slider-line {
+            position: absolute; bottom: 0; left: 0; height: 3px;
+            background-color: #ffffff; 
+            box-shadow: 0 0 12px rgba(255, 255, 255, 0.6);
+            transition: left 0.38s var(--ark-bezier), width 0.38s var(--ark-bezier);
+            pointer-events: none; z-index: 1;
+            border-radius: 2px;
+        }
+
         /* --- 主舞台（大厅视界） --- */
         #main-stage { 
             position: relative; width: 100%; height: 100%; z-index: 10; 
@@ -100,14 +131,26 @@
         .view-homepage-content { width: 100%; height: 100%; position: absolute; inset: 0; display: flex; justify-content: center; align-items: center; }
         .center-hero { text-align: center; z-index: 5; pointer-events: none; display: flex; flex-direction: column; align-items: center; }
         .title-large { font-size: clamp(2.5rem, 5vw, 4.5rem); letter-spacing: 12px; font-weight: 300; margin: 0; text-shadow: 0 0 40px rgba(0,0,0,0.8); }
-        .title-sub { font-size: clamp(0.9rem, 1.5vw, 1.2rem); letter-spacing: 6px; color: rgba(255,255,255,0.8); margin: 15px 0 0 0; }
-        .title-date { font-size: clamp(0.85rem, 1.3vw, 1.1rem); letter-spacing: 5px; color: var(--accent); margin: 12px 0 0 0; text-shadow: 0 0 10px var(--accent-glow); font-weight: 400; }
-        .quote-text { margin-top: 4vh; font-size: clamp(0.75rem, 0.9vw, 0.85rem); color: rgba(255,255,255,0.4); letter-spacing: 3px; line-height: 1.8; max-width: 600px; }
+        .title-sub { font-size: clamp(0.9rem, 1.5vw, 1.2rem); letter-spacing: 8px; color: rgba(255,255,255,0.6); margin: 15px 0 0 0; }
+        .quote-text { margin-top: 5vh; font-size: clamp(0.75rem, 0.9vw, 0.85rem); color: rgba(255,255,255,0.4); letter-spacing: 3px; line-height: 1.8; max-width: 600px; }
+
+        .hero-arrow-wrap {
+            margin-top: 28px; pointer-events: auto; cursor: pointer;
+            animation: arrowFloatHorizontal 2.5s ease-in-out infinite alternate;
+        }
+        @keyframes arrowFloatHorizontal { 0% { transform: translateX(-8px); } 100% { transform: translateX(8px); } }
+        .hero-arrow-circle {
+            display: flex; align-items: center; justify-content: center; width: 48px; height: 48px;
+            background: #ffffff; border-radius: 50%; box-shadow: 0 0 28px rgba(255, 255, 255, 0.35);
+            transition: transform 0.3s var(--ark-bezier);
+        }
+        .hero-arrow-circle svg { width: 20px; height: 20px; fill: none; stroke: #0f172a; stroke-width: 2.5; }
+        .hero-arrow-wrap:hover .hero-arrow-circle { transform: scale(1.1); }
 
         /* ================= 高级视窗切换控制引擎 ================= */
         .fullview-overlay {
             position: fixed; inset: 0; width: 100%; height: 100%; z-index: 1500; 
-            padding: 40px 6% 40px 6%;
+            padding: 75px 6% 40px 6%;
             background: rgba(4, 6, 14, 0.96); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
             display: flex; flex-direction: column; overflow-y: auto; 
             pointer-events: none !important;
@@ -182,7 +225,7 @@
         .dynamic-body-text { font-size: 0.95rem; color: rgba(255,255,255,0.7); line-height: 1.9; text-align: justify; padding-bottom: 60px; }
 
         /* ================= 告示页面分栏布局 ================= */
-        .page-layout-container { display: flex; gap: 30px; flex-grow: 1; height: calc(100vh - 160px); min-height: 400px; overflow: hidden; }
+        .page-layout-container { display: flex; gap: 30px; flex-grow: 1; height: calc(100vh - 200px); min-height: 400px; overflow: hidden; }
         .noti-sidebar-list { width: 32%; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; padding-right: 6px; height: 100%; padding-bottom: 40px; }
         .noti-item-card { background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 15px; border-radius: 6px; cursor: pointer; transition: 0.25s; flex-shrink: 0; }
 
@@ -219,7 +262,7 @@
             grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
             gap: 20px; 
             overflow-y: auto; 
-            height: calc(100vh - 180px); 
+            height: calc(100vh - 220px); 
             padding-bottom: 40px; 
             width: 100%; 
             -webkit-overflow-scrolling: touch;
@@ -321,8 +364,55 @@
            完美移动端竖屏（Responsive Mobile）适配补丁引擎 
            ========================================================================== */
         @media screen and (max-width: 768px) and (orientation: portrait), screen and (max-width: 500px) {
+            .top-header {
+                padding: 0 16px;
+                height: 56px;
+            }
+            .header-left {
+                width: 100%;
+                gap: 12px;
+                justify-content: space-between;
+            }
+            .header-logo {
+                font-size: 0.9rem;
+                letter-spacing: 1px;
+            }
+            .nav-menu {
+                height: 56px;
+                overflow-x: auto;
+                overflow-y: hidden;
+                -webkit-overflow-scrolling: touch;
+                gap: 16px;
+                padding-right: 16px;
+            }
+            .nav-menu::-webkit-scrollbar {
+                display: none;
+            }
+            .nav-btn {
+                padding: 18px 0;
+                font-size: 0.8rem;
+            }
+            .nav-slider-line {
+                bottom: 4px;
+            }
+
+            .title-large {
+                font-size: 2.6rem;
+                letter-spacing: 6px;
+            }
+            .title-sub {
+                font-size: 0.8rem;
+                letter-spacing: 4px;
+            }
+            .quote-text {
+                padding: 0 24px;
+                font-size: 0.75rem;
+                margin-top: 4vh;
+                line-height: 1.6;
+            }
+
             .fullview-overlay {
-                padding: 40px 16px 24px 16px;
+                padding: 76px 16px 24px 16px;
             }
             .page-header-area {
                 padding-bottom: 8px;
@@ -369,7 +459,7 @@
 
             .page-layout-container {
                 flex-direction: column;
-                height: calc(100vh - 120px);
+                height: calc(100vh - 160px);
                 gap: 16px;
                 overflow-y: auto;
             }
@@ -406,7 +496,7 @@
             .media-grid-container {
                 grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
                 gap: 12px;
-                height: calc(100vh - 130px);
+                height: calc(100vh - 170px);
                 overflow-y: auto;
             }
             .matrix-card-title {
@@ -460,15 +550,28 @@
         </div>
     </div>
 
+    <header class="top-header">
+        <div class="header-left">
+            <div class="header-logo" id="site-logo">蔚蓝档案 BlueArchive</div>
+            <nav class="nav-menu" id="nav-menu-wrapper">
+                <div class="nav-slider-line" id="global-nav-line"></div>
+            </nav>
+        </div>
+    </header>
+
     <div id="main-stage">
         <canvas id="star-canvas"></canvas>
         <div class="character-split-layer"></div>
         <div class="view-homepage-content">
             <div class="center-hero">
-                <h1 class="title-large" id="hero-title">新•奇迹城</h1>
-                <div class="title-sub" id="hero-subtitle">知道你很急，但请先等等</div>
-                <div class="title-date" id="hero-date">知道你很急，但请先等等</div>
-                <p class="quote-text" id="hero-quote">「……其实,希望一直都在。」—— 追寻希望吧,冲向未来的列车正平稳通过中央干线。</p>
+                <h1 class="title-large" id="hero-title">欢迎来到 基沃托斯</h1>
+                <div class="title-sub" id="hero-subtitle">WELCOME TO KIVOTOS!</div>
+                <p class="quote-text" id="hero-quote">「……其实，希望一直都在。」—— 追寻希望吧，冲向未来的列车正平稳通过中央干线。</p>
+                <div class="hero-arrow-wrap" id="hero-arrow-btn" title="进入视界">
+                    <div class="hero-arrow-circle">
+                        <svg viewBox="0 0 24 24"><polyline points="8 5 16 12 8 19"></polyline></svg>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -487,6 +590,7 @@
         </div>
     </div>
 
+    <!-- 严格保留外部JS依赖项 -->
     <script src="data.js"></script>
 
     <script>
@@ -498,23 +602,31 @@
         let currentActiveNotiIdx = 0;
         let sliderIndices = {};
 
-        // 初始化基础页面数据与 UI
         function initDynamicStructure() {
-            // 填入全局基础文字
             if (safeData.siteInfo) {
-                if (safeData.siteInfo.brandName && document.getElementById('site-logo')) document.getElementById('site-logo').innerText = safeData.siteInfo.brandName;
+                if (safeData.siteInfo.brandName) document.getElementById('site-logo').innerText = safeData.siteInfo.brandName;
                 if (safeData.siteInfo.heroTitle) document.getElementById('hero-title').innerText = safeData.siteInfo.heroTitle;
                 if (safeData.siteInfo.heroSubTitle) document.getElementById('hero-subtitle').innerText = safeData.siteInfo.heroSubTitle;
-                if (safeData.siteInfo.heroDate) document.getElementById('hero-date').innerText = safeData.siteInfo.heroDate;
                 if (safeData.siteInfo.heroQuote) document.getElementById('hero-quote').innerText = safeData.siteInfo.heroQuote;
             }
 
-            // 动态构建页面视窗 DOM
+            const navWrapper = document.getElementById('nav-menu-wrapper');
+            const sliderLine = document.getElementById('global-nav-line');
+            
+            pagesConfig.forEach((page, index) => {
+                const btn = document.createElement('div');
+                btn.className = `nav-btn ${index === 0 ? 'active' : ''}`;
+                btn.id = `nav-${page.id}`;
+                btn.innerText = page.navName;
+                btn.onclick = () => navigateToPage(page.id);
+                navWrapper.insertBefore(btn, sliderLine);
+            });
+
             const container = document.getElementById('dynamic-pages-container');
             container.innerHTML = '';
 
             pagesConfig.forEach(page => {
-                if (page.type === 'home') return; // 主页不需要 fullview-overlay
+                if (page.type === 'home') return;
 
                 const overlay = document.createElement('div');
                 overlay.id = `view-${page.id}-page`;
@@ -579,6 +691,11 @@
 
                 container.appendChild(overlay);
             });
+
+            const secondPage = pagesConfig[1];
+            if (secondPage) {
+                document.getElementById('hero-arrow-btn').onclick = () => navigateToPage(secondPage.id);
+            }
         }
 
         let simulatedProgress = 0;
@@ -621,6 +738,18 @@
             }, 15);
         });
 
+        function updateNavSliderLine(targetId) {
+            const btn = document.getElementById(`nav-${targetId}`);
+            const line = document.getElementById('global-nav-line');
+            if (!btn || !line) return;
+
+            const leftPos = btn.offsetLeft;
+            const btnWidth = btn.offsetWidth;
+
+            line.style.left = `${leftPos}px`;
+            line.style.width = `${btnWidth}px`;
+        }
+
         function navigateToPage(targetPageId, pushState = true) {
             if (targetPageId === currentPageId || !PAGE_SEQUENCE.includes(targetPageId)) return;
 
@@ -662,6 +791,11 @@
             }
 
             currentPageId = targetPageId;
+            document.querySelectorAll('.nav-menu .nav-btn').forEach(b => b.classList.remove('active'));
+            const navBtnEl = document.getElementById(`nav-${targetPageId}`);
+            if (navBtnEl) navBtnEl.classList.add('active');
+
+            updateNavSliderLine(targetPageId);
 
             if (sliderIndices[targetPageId] !== undefined) renderSlider(targetPageId);
             if (targetPageId === 'media') triggerMediaStaggerAnimation();
@@ -979,6 +1113,56 @@
             }
         }
 
+        let touchStartX = 0;
+        let touchStartY = 0;
+
+        function initTouchSwipeEngine() {
+            window.addEventListener('touchstart', (e) => {
+                const theater = document.getElementById('global-cinema-layer');
+                if (theater && theater.classList.contains('theater-manifest')) return;
+
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+            }, { passive: true });
+
+            window.addEventListener('touchend', (e) => {
+                const theater = document.getElementById('global-cinema-layer');
+                if (theater && theater.classList.contains('theater-manifest')) return;
+
+                const touchEndX = e.changedTouches[0].clientX;
+                const touchEndY = e.changedTouches[0].clientY;
+
+                const diffX = touchEndX - touchStartX;
+                const diffY = touchEndY - touchStartY;
+
+                if (Math.abs(diffY) > Math.abs(diffX)) {
+                    return;
+                }
+
+                if (Math.abs(diffX) > 50) {
+                    const target = e.target;
+
+                    if (target.closest('.slider-showcase-container') || 
+                        target.closest('.noti-sidebar-list') || 
+                        target.closest('.media-capsule-container')) {
+                        return; 
+                    }
+
+                    const currentIdx = PAGE_SEQUENCE.indexOf(currentPageId);
+
+                    if (diffX < 0) {
+                        if (currentIdx < PAGE_SEQUENCE.length - 1) {
+                            navigateToPage(PAGE_SEQUENCE[currentIdx + 1]);
+                        }
+                    } else {
+                        if (currentIdx > 0) {
+                            navigateToPage(PAGE_SEQUENCE[currentIdx - 1]);
+                        }
+                    }
+                }
+            }, { passive: true });
+        }
+
         window.addEventListener('popstate', (event) => {
             const page = (event.state && event.state.page) || 'home';
             navigateToPage(page, false);
@@ -986,6 +1170,7 @@
 
         window.addEventListener('resize', () => {
             initCanvas();
+            updateNavSliderLine(currentPageId);
         });
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -1000,6 +1185,7 @@
 
             initCanvas(); 
             animate();
+            initTouchSwipeEngine(); 
 
             const urlParams = new URLSearchParams(window.location.search);
             const initialPage = urlParams.get('page') || 'home';
@@ -1011,9 +1197,16 @@
                     document.getElementById('main-stage').classList.add('stage-hidden');
                     targetOverlayEl.classList.add('render-block');
                     targetOverlayEl.classList.add('active-page');
+                    document.querySelectorAll('.nav-menu .nav-btn').forEach(b => b.classList.remove('active'));
+                    let navBtnEl = document.getElementById(`nav-${initialPage}`);
+                    if (navBtnEl) navBtnEl.classList.add('active');
                     if (sliderIndices[initialPage] !== undefined) renderSlider(initialPage);
                 }
             }
+
+            setTimeout(() => {
+                updateNavSliderLine(currentPageId);
+            }, 100);
 
             checkGitHubRedirectAndRoute();
         });
