@@ -4,23 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MX server | 奇迹与未来</title>
-    <!-- 引入圆润的英文字体与思源圆体 -->
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* ================= 1. 全局设计变量与主题配置 ================= */
+        /* ================= 1. 全局设计变量（自然、清爽、青春色调） ================= */
         :root {
-            --accent: #0077ff; 
-            --accent-glow: rgba(0, 119, 255, 0.3); 
-            --bg-light: #f0f5ff;
-            --bg-gradient: linear-gradient(135deg, #e0f2fe 0%, #f0fdf4 50%, #eff6ff 100%);
-            --glass-bg: rgba(255, 255, 255, 0.65);
-            --glass-border: rgba(255, 255, 255, 0.9);
-            --card-border: rgba(0, 119, 255, 0.15); 
-            --ark-bezier: cubic-bezier(0.25, 1, 0.5, 1); 
-            --domino-bezier: cubic-bezier(0.34, 1.56, 0.64, 1);
+            --primary: #0284c7;
+            --primary-light: #e0f2fe;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --bg-gradient: linear-gradient(135deg, #f0f9ff 0%, #fefce8 50%, #f0fdf4 100%);
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --card-border: rgba(2, 132, 199, 0.12);
+            --transition-smooth: cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* ================= 2. 基础重置与页面初始化（强化中文圆体支持） ================= */
+        /* ================= 2. 基础重置与国内高速安全字体 ================= */
         * { 
             box-sizing: border-box; 
             -webkit-tap-highlight-color: transparent !important;
@@ -31,29 +28,30 @@
             margin: 0; padding: 0; width: 100%; height: 100%;
             background: var(--bg-gradient) !important;
             overflow: hidden; 
-            color: #1e293b; 
-            /* 核心修改：优先使用各大系统自带的高品质圆体及Google圆润字体 */
-            font-family: "Quicksand", "MiSans", "Varela Round", "YouRound", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-            font-weight: 500;
+            color: var(--text-main); 
+            /* 纯系统安全字体栈，保证国内访问零延迟、零阻塞 */
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            font-weight: 400;
             user-select: none;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* ================= 3. 页面全局加载动画遮罩 ================= */
+        /* ================= 3. 极简轻量加载遮罩 ================= */
         #global-app-loading-container {
             position: fixed; inset: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, #dbeafe 0%, #f0fdf4 100%);
+            background: #f8fafc;
             z-index: 9999; display: flex; flex-direction: column;
             justify-content: center; align-items: center;
-            transition: opacity 0.6s var(--ark-bezier), transform 0.6s var(--ark-bezier);
+            transition: opacity 0.4s ease, transform 0.4s ease;
             will-change: transform, opacity;
         }
 
         #global-app-loading-container.loader-vanish {
-            opacity: 0; pointer-events: none; transform: scale(1.05);
+            opacity: 0; pointer-events: none; transform: scale(1.02);
         }
 
         .loading-quantum-box {
-            width: 260px; display: flex; flex-direction: column; gap: 14px; text-align: left;
+            width: 220px; display: flex; flex-direction: column; gap: 12px; text-align: left;
         }
 
         .loading-status-row {
@@ -61,381 +59,371 @@
         }
 
         .loading-brand-tag {
-            font-size: 0.75rem; font-weight: 700; letter-spacing: 4px; color: #0284c7;
-            text-shadow: 0 0 10px rgba(2, 132, 199, 0.2); font-family: monospace;
+            font-size: 0.75rem; font-weight: 600; letter-spacing: 2px; color: var(--primary);
         }
 
         .loading-percentage-num {
-            font-size: 0.85rem; font-family: monospace; color: #475569;
-            letter-spacing: 1px;
+            font-size: 0.8rem; font-family: monospace; color: var(--text-muted);
         }
 
         .loading-track-bar {
-            width: 100%; height: 3px; background: rgba(0, 0, 0, 0.08);
+            width: 100%; height: 2px; background: #e2e8f0;
             border-radius: 2px; overflow: hidden; position: relative;
         }
 
         .loading-fill-runner {
             position: absolute; left: 0; top: 0; height: 100%; width: 0%;
-            background: linear-gradient(90deg, #38bdf8, #0284c7, #2563eb);
-            box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
-            transition: width 0.35s ease-out;
+            background: var(--primary);
+            transition: width 0.2s ease-out;
         }
 
         .loading-system-tip {
-            font-size: 0.65rem; color: #64748b; letter-spacing: 1px;
-            text-transform: uppercase; margin-top: -4px;
+            font-size: 0.65rem; color: #94a3b8; letter-spacing: 1px;
+            text-transform: uppercase; margin-top: -2px;
         }
 
-        /* ================= 4. 顶部悬浮导航栏（完全透明无遮罩、无底部栏条） ================= */
+        /* ================= 4. 顶部悬浮导航栏（去厚重感，清新自然） ================= */
         .top-header {
-            position: fixed; top: 0; left: 0; width: 100%; height: 74px !important;
+            position: fixed; top: 0; left: 0; width: 100%; height: 70px !important;
             display: flex; justify-content: space-between; align-items: center;
-            padding: 0 5%; 
+            padding: 0 6%; 
             background: transparent !important;
-            backdrop-filter: none !important; 
-            -webkit-backdrop-filter: none !important;
             border-bottom: none !important;
             box-shadow: none !important;
             z-index: 3000;
+            transform: translateZ(0);
         }
         .header-left { display: flex; align-items: center; justify-content: space-between; width: 100%; }
         
         .header-logo { 
-            font-size: 1.35rem !important; 
-            letter-spacing: 3px; 
+            font-size: 1.2rem !important; 
+            letter-spacing: 1px; 
             font-weight: 700 !important; 
-            color: #0284c7; 
+            color: var(--primary); 
             white-space: nowrap;
-            text-shadow: 0 2px 10px rgba(2, 132, 199, 0.15);
         }
 
-        .nav-menu { display: flex; gap: 36px; height: 74px; align-items: center; position: relative; margin-left: auto; }
+        .nav-menu { display: flex; gap: 32px; height: 70px; align-items: center; position: relative; margin-left: auto; }
 
         .nav-btn {
-            font-size: 1.1rem !important; 
-            font-weight: 700 !important; /* 增加字重，使圆润感更明显 */
-            color: #334155; cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); 
-            position: relative; letter-spacing: 1.5px; white-space: nowrap;
-            padding: 14px 4px; z-index: 2;
+            font-size: 0.95rem !important; 
+            font-weight: 500 !important; 
+            color: var(--text-muted); cursor: pointer;
+            transition: color 0.2s ease, transform 0.2s ease; 
+            position: relative; letter-spacing: 0.5px; white-space: nowrap;
+            padding: 10px 2px; z-index: 2;
+            transform: translateZ(0);
         }
 
         .nav-btn:active {
-            transform: scale(0.92);
-            color: #0284c7;
+            transform: scale(0.95) translateZ(0);
         }
 
         .nav-btn:hover, .nav-btn.active { 
-            color: #0284c7 !important; 
-            text-shadow: 0 0 10px rgba(2, 132, 199, 0.3);
+            color: var(--primary) !important; 
+            font-weight: 600 !important;
         }
 
         /* ================= 5. 主舞台大厅视界 ================= */
         #main-stage { 
             position: relative; width: 100%; height: 100%; z-index: 10; 
             background: transparent; 
-            opacity: 1; transform: scale(1);
-            transition: opacity 0.45s var(--ark-bezier), transform 0.45s var(--ark-bezier);
+            opacity: 1; transform: scale(1) translateZ(0);
+            transition: opacity 0.3s var(--transition-smooth), transform 0.3s var(--transition-smooth);
+            will-change: opacity, transform;
         }
         #main-stage.stage-hidden { 
-            opacity: 0; transform: scale(0.95);
+            opacity: 0; transform: scale(0.98) translateZ(0);
             pointer-events: none !important; 
         }
         #star-canvas { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
         .character-split-layer {
             position: absolute; inset: 0; z-index: 2;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(224, 242, 254, 0.3) 50%, transparent 50.01%);
-            backdrop-filter: blur(1px); pointer-events: none;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, transparent 60%);
+            pointer-events: none;
         }
 
         .view-homepage-content { width: 100%; height: 100%; position: absolute; inset: 0; display: flex; justify-content: center; align-items: center; }
-        .center-hero { text-align: center; z-index: 5; pointer-events: none; display: flex; flex-direction: column; align-items: center; }
+        .center-hero { text-align: center; z-index: 5; pointer-events: none; display: flex; flex-direction: column; align-items: center; padding: 0 20px; }
         
         .title-large { 
-            font-size: clamp(2.8rem, 5.5vw, 4.8rem); 
-            letter-spacing: 8px; 
-            font-weight: 800; /* 更厚实的圆润笔画 */
-            color: #0f172a; 
+            font-size: clamp(2.4rem, 5vw, 4rem); 
+            letter-spacing: 4px; 
+            font-weight: 800; 
+            color: var(--text-main); 
             margin: 0; 
-            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.06); 
         }
         .title-sub { 
-            font-size: clamp(0.95rem, 1.5vw, 1.25rem); 
-            letter-spacing: 6px; 
-            color: #0284c7; 
-            font-weight: 700;
-            margin: 15px 0 0 0; 
+            font-size: clamp(0.85rem, 1.2vw, 1.1rem); 
+            letter-spacing: 4px; 
+            color: var(--primary); 
+            font-weight: 600;
+            margin: 12px 0 0 0; 
         }
         .quote-text { 
-            margin-top: 5vh; 
-            font-size: clamp(0.85rem, 1vw, 1rem); 
-            color: #475569; 
-            letter-spacing: 2px; 
-            line-height: 1.8; 
-            max-width: 600px; 
-            background: rgba(255, 255, 255, 0.5);
-            padding: 12px 24px;
-            border-radius: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
-            font-weight: 600;
+            margin-top: 4vh; 
+            font-size: clamp(0.85rem, 1vw, 0.95rem); 
+            color: var(--text-muted); 
+            letter-spacing: 1px; 
+            line-height: 1.7; 
+            max-width: 560px; 
+            background: var(--card-bg);
+            padding: 14px 24px;
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+            font-weight: 400;
         }
 
         .hero-arrow-wrap {
-            margin-top: 32px; pointer-events: auto; cursor: pointer;
-            animation: arrowFloatHorizontal 2.5s ease-in-out infinite alternate;
+            margin-top: 36px; pointer-events: auto; cursor: pointer;
+            transition: transform 0.2s ease;
         }
-        @keyframes arrowFloatHorizontal { 0% { transform: translateX(-8px); } 100% { transform: translateX(8px); } }
-        
         .hero-arrow-circle {
-            display: flex; align-items: center; justify-content: center; width: 56px; height: 56px;
-            background: #0284c7; border-radius: 50%; box-shadow: 0 8px 25px rgba(2, 132, 199, 0.35);
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: flex; align-items: center; justify-content: center; width: 48px; height: 48px;
+            background: var(--primary); border-radius: 50%; box-shadow: 0 6px 20px rgba(2, 132, 199, 0.25);
+            transition: transform 0.2s ease, background 0.2s ease;
+            transform: translateZ(0);
         }
         .hero-arrow-wrap:active .hero-arrow-circle {
-            transform: scale(0.85);
-            box-shadow: 0 4px 15px rgba(2, 132, 199, 0.5);
+            transform: scale(0.9) translateZ(0);
         }
-        .hero-arrow-circle svg { width: 22px; height: 22px; fill: none; stroke: #ffffff; stroke-width: 2.8; }
-        .hero-arrow-wrap:hover .hero-arrow-circle { transform: scale(1.1); background: #0369a1; }
+        .hero-arrow-circle svg { width: 20px; height: 20px; fill: none; stroke: #ffffff; stroke-width: 2.5; }
+        .hero-arrow-wrap:hover .hero-arrow-circle { transform: scale(1.08) translateZ(0); background: #0369a1; }
 
-        /* ================= 6. 多功能视窗切换控制引擎 ================= */
+        /* ================= 6. 多功能视窗切换控制引擎（轻量丝滑） ================= */
         .fullview-overlay {
             position: fixed; inset: 0; width: 100%; height: 100%; z-index: 1500; 
-            padding: 90px 6% 40px 6%;
-            background: rgba(240, 245, 255, 0.95); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            padding: 85px 6% 36px 6%;
+            background: rgba(248, 250, 252, 0.98); 
             display: flex; flex-direction: column; overflow-y: auto; 
             pointer-events: none !important;
             display: none; 
             opacity: 0;
-            transition: opacity 0.45s var(--ark-bezier), transform 0.45s var(--ark-bezier);
-            will-change: transform, opacity;
+            transform: translateZ(0);
+            transition: opacity 0.25s var(--transition-smooth), transform 0.25s var(--transition-smooth);
+            will-change: opacity, transform;
         }
 
         .fullview-overlay.render-block { display: flex; }
-        .fullview-overlay.prepare-from-right { opacity: 0; transform: translateX(100%); }
-        .fullview-overlay.prepare-from-left  { opacity: 0; transform: translateX(-100%); }
+        .fullview-overlay.prepare-from-right { opacity: 0; transform: translateX(20px) translateZ(0); }
+        .fullview-overlay.prepare-from-left  { opacity: 0; transform: translateX(-20px) translateZ(0); }
         .fullview-overlay.active-page { 
             opacity: 1; 
-            transform: translateX(0) scale(1) !important;
+            transform: translateX(0) scale(1) translateZ(0) !important;
             pointer-events: auto !important; 
         }
-        .fullview-overlay.exit-to-left  { opacity: 0; transform: translateX(-100%) scale(0.96); pointer-events: none !important; }
-        .fullview-overlay.exit-to-right { opacity: 0; transform: translateX(100%) scale(0.96); pointer-events: none !important; }
+        .fullview-overlay.exit-to-left  { opacity: 0; transform: translateX(-20px) scale(0.99) translateZ(0); pointer-events: none !important; }
+        .fullview-overlay.exit-to-right { opacity: 0; transform: translateX(20px) scale(0.99) translateZ(0); pointer-events: none !important; }
 
         .fullview-overlay::-webkit-scrollbar, 
         .noti-sidebar-list::-webkit-scrollbar, 
         .generic-detail-panel::-webkit-scrollbar,
-        .media-grid-container::-webkit-scrollbar { width: 5px; }
+        .media-grid-container::-webkit-scrollbar { width: 4px; }
         .fullview-overlay::-webkit-scrollbar-thumb, 
         .noti-sidebar-list::-webkit-scrollbar-thumb, 
         .generic-detail-panel::-webkit-scrollbar-thumb,
-        .media-grid-container::-webkit-scrollbar-thumb { background: rgba(2, 132, 199, 0.2); border-radius: 4px; }
+        .media-grid-container::-webkit-scrollbar-thumb { background: rgba(2, 132, 199, 0.15); border-radius: 4px; }
 
-        .page-header-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid rgba(2, 132, 199, 0.15); padding-bottom: 12px; margin-bottom: 24px; flex-shrink: 0; }
-        .page-main-title { font-size: clamp(1.4rem, 2.2vw, 2.2rem); font-weight: 800; margin: 0; letter-spacing: 2px; color: #0f172a; }
-        .page-sub-title { font-size: 0.85rem; color: #0284c7; letter-spacing: 2px; margin-top: 5px; font-weight: 700; }
+        .page-header-area { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 24px; flex-shrink: 0; }
+        .page-main-title { font-size: clamp(1.3rem, 2vw, 1.8rem); font-weight: 700; margin: 0; letter-spacing: 1px; color: var(--text-main); }
+        .page-sub-title { font-size: 0.75rem; color: var(--primary); letter-spacing: 1px; margin-top: 4px; font-weight: 600; text-transform: uppercase; }
         
         .page-back-btn {
-            display: flex; align-items: center; gap: 8px; font-size: 0.9rem; font-weight: 700; color: #334155;
-            cursor: pointer; transition: all 0.25s ease; border: 1px solid rgba(2, 132, 199, 0.25); padding: 7px 18px; border-radius: 20px;
-            background: rgba(255, 255, 255, 0.8);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+            display: flex; align-items: center; gap: 6px; font-size: 0.85rem; font-weight: 500; color: var(--text-muted);
+            cursor: pointer; transition: color 0.2s ease, background 0.2s ease; border: 1px solid #cbd5e1; padding: 6px 16px; border-radius: 20px;
+            background: #ffffff;
+            transform: translateZ(0);
         }
-        .page-back-btn:active { transform: scale(0.93); background: rgba(2, 132, 199, 0.1); }
-        .page-back-btn:hover { color: #0284c7; border-color: #0284c7; box-shadow: 0 0 15px rgba(2, 132, 199, 0.2); }
+        .page-back-btn:active { transform: scale(0.95) translateZ(0); }
+        .page-back-btn:hover { color: var(--primary); border-color: var(--primary); }
 
         /* ================= 7. 世界观设定卡片轮播组件 ================= */
-        .slider-showcase-container { display: flex; align-items: center; justify-content: center; width: 100%; gap: 30px; position: relative; margin-top: 10px; flex-shrink: 0; }
-        .cards-viewport { display: flex; align-items: center; justify-content: center; width: 85%; height: clamp(240px, 32vh, 380px); position: relative; overflow: hidden; }
+        .slider-showcase-container { display: flex; align-items: center; justify-content: center; width: 100%; gap: 20px; position: relative; margin-top: 10px; flex-shrink: 0; }
+        .cards-viewport { display: flex; align-items: center; justify-content: center; width: 85%; height: clamp(220px, 30vh, 340px); position: relative; overflow: hidden; }
 
         .showcase-card {
             position: absolute; width: 55%; height: 100%; 
             background-size: cover; background-position: center; 
-            border: 2px solid rgba(255, 255, 255, 0.9);
-            border-radius: 16px; 
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 12px; 
             overflow: hidden; 
-            transition: all 0.45s var(--ark-bezier); 
+            transition: transform 0.3s var(--transition-smooth), opacity 0.3s var(--transition-smooth); 
             opacity: 0; pointer-events: none; z-index: 1;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            transform: translateZ(0);
+            will-change: transform, opacity;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
         }
         .showcase-card.active { 
             opacity: 1; 
             pointer-events: auto; 
-            transform: scale(1) translateX(0); 
+            transform: scale(1) translateX(0) translateZ(0); 
             z-index: 3; 
-            border-color: #0284c7; 
-            box-shadow: 0 15px 40px rgba(2, 132, 199, 0.2); 
+            border-color: rgba(2, 132, 199, 0.3); 
         }
-        .showcase-card.prev { opacity: 0.3; transform: scale(0.85) translateX(-70%); z-index: 2; }
-        .showcase-card.next { opacity: 0.3; transform: scale(0.85) translateX(70%); z-index: 2; }
+        .showcase-card.prev { opacity: 0.25; transform: scale(0.9) translateX(-60%) translateZ(0); z-index: 2; }
+        .showcase-card.next { opacity: 0.25; transform: scale(0.9) translateX(60%) translateZ(0); z-index: 2; }
         
-        .slide-arrow { font-size: 2rem; color: #0284c7; cursor: pointer; transition: all 0.25s ease; padding: 10px; z-index: 10; user-select: none; font-weight: bold; }
-        .slide-arrow:active { transform: scale(0.8); color: #0369a1; }
-        .slide-arrow:hover { color: #0369a1; text-shadow: 0 0 10px rgba(2, 132, 199, 0.4); }
+        .slide-arrow { font-size: 1.5rem; color: var(--text-muted); cursor: pointer; transition: color 0.2s ease; padding: 10px; z-index: 10; user-select: none; font-weight: bold; transform: translateZ(0); }
+        .slide-arrow:active { transform: scale(0.9) translateZ(0); }
+        .slide-arrow:hover { color: var(--primary); }
 
-        .indicator-dots { display: flex; justify-content: center; gap: 12px; margin: 20px 0; align-items: center; flex-shrink: 0; }
-        .indicator-dot { width: 8px; height: 8px; background: rgba(2, 132, 199, 0.2); border-radius: 50%; transition: 0.3s; cursor: pointer; }
-        .indicator-dot:active { transform: scale(1.5); }
-        .indicator-dot.active { background: #0284c7; transform: scale(1.4); box-shadow: 0 0 10px rgba(2, 132, 199, 0.5); }
+        .indicator-dots { display: flex; justify-content: center; gap: 8px; margin: 16px 0; align-items: center; flex-shrink: 0; }
+        .indicator-dot { width: 6px; height: 6px; background: #cbd5e1; border-radius: 50%; transition: transform 0.2s, background 0.2s; cursor: pointer; }
+        .indicator-dot.active { background: var(--primary); transform: scale(1.3); }
 
-        .content-display-panel { width: 100%; max-width: 900px; margin: 10px auto 0 auto; text-align: left; }
-        .dynamic-title-group { margin-bottom: 16px; }
-        .dynamic-main-title { font-size: 1.8rem; font-weight: 800; margin: 0 0 8px 0; color: #0f172a; letter-spacing: 1px; }
-        .dynamic-sub-quote { font-size: 1.05rem; color: #0284c7; font-weight: 700; letter-spacing: 1px; margin-bottom: 16px; display: block; }
-        .dynamic-body-text { font-size: 1rem; color: #334155; line-height: 1.9; text-align: justify; padding-bottom: 60px; font-weight: 600; }
+        .content-display-panel { width: 100%; max-width: 860px; margin: 5px auto 0 auto; text-align: left; }
+        .dynamic-title-group { margin-bottom: 12px; }
+        .dynamic-main-title { font-size: 1.5rem; font-weight: 700; margin: 0 0 6px 0; color: var(--text-main); letter-spacing: 0.5px; }
+        .dynamic-sub-quote { font-size: 0.95rem; color: var(--primary); font-weight: 600; letter-spacing: 0.5px; margin-bottom: 12px; display: block; }
+        .dynamic-body-text { font-size: 0.95rem; color: var(--text-muted); line-height: 1.8; text-align: justify; padding-bottom: 40px; font-weight: 400; }
 
         /* ================= 8. 告示与新闻分栏布局组件 ================= */
-        .page-layout-container { display: flex; gap: 30px; flex-grow: 1; height: calc(100vh - 210px); min-height: 400px; overflow: hidden; }
-        .noti-sidebar-list { width: 32%; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; padding-right: 6px; height: 100%; padding-bottom: 40px; }
+        .page-layout-container { display: flex; gap: 24px; flex-grow: 1; height: calc(100vh - 190px); min-height: 380px; overflow: hidden; }
+        .noti-sidebar-list { width: 32%; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; padding-right: 4px; height: 100%; padding-bottom: 30px; }
         
         .noti-item-card { 
-            background: rgba(255, 255, 255, 0.8); border: 1px solid rgba(2, 132, 199, 0.15); padding: 16px; border-radius: 10px; cursor: pointer; 
-            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); flex-shrink: 0; 
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+            background: #ffffff; border: 1px solid #e2e8f0; padding: 14px 16px; border-radius: 10px; cursor: pointer; 
+            transition: border-color 0.2s ease, background 0.2s ease; flex-shrink: 0; 
+            transform: translateZ(0);
         }
-        .noti-item-card:active { transform: scale(0.97); background: rgba(2, 132, 199, 0.05); }
-        .noti-item-card:hover { background: #ffffff; border-color: rgba(2, 132, 199, 0.4); box-shadow: 0 4px 15px rgba(2, 132, 199, 0.1); }
+        .noti-item-card:active { transform: scale(0.98) translateZ(0); }
+        .noti-item-card:hover { border-color: rgba(2, 132, 199, 0.4); }
         .noti-item-card.item-active { 
             background: #ffffff; 
-            border-color: #0284c7; 
-            box-shadow: 0 6px 20px rgba(2, 132, 199, 0.15); 
+            border-color: var(--primary); 
+            box-shadow: 0 2px 10px rgba(2, 132, 199, 0.08);
         }
-        .noti-item-date { font-size: 0.8rem; color: #0284c7; letter-spacing: 0.5px; font-weight: 700; }
-        .noti-item-title { font-size: 0.98rem; margin: 6px 0 0 0; font-weight: 700; color: #1e293b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .noti-item-card.item-active .noti-item-title { color: #0284c7; }
+        .noti-item-date { font-size: 0.75rem; color: var(--primary); letter-spacing: 0.5px; font-weight: 600; font-family: monospace; }
+        .noti-item-title { font-size: 0.9rem; margin: 4px 0 0 0; font-weight: 600; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .noti-item-card.item-active .noti-item-title { color: var(--primary); }
 
-        .generic-detail-panel { width: 68%; background: rgba(255, 255, 255, 0.85); border: 1px solid rgba(2, 132, 199, 0.15); border-radius: 12px; padding: 35px; overflow-y: auto; height: 100%; padding-bottom: 40px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03); }
-        .detail-title { font-size: 1.6rem; font-weight: 800; margin: 0 0 10px 0; color: #0f172a; letter-spacing: 0.5px; line-height: 1.4; }
-        .detail-meta { font-size: 0.85rem; color: #0284c7; border-bottom: 1px solid rgba(2, 132, 199, 0.15); padding-bottom: 14px; margin-bottom: 22px; font-weight: 700; }
-        .detail-content { line-height: 1.85; color: #334155; font-size: 1rem; text-align: justify; font-weight: 600; }
-        .detail-content p { margin: 0 0 16px 0; }
+        .generic-detail-panel { width: 68%; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 30px; overflow-y: auto; height: 100%; padding-bottom: 30px; }
+        .detail-title { font-size: 1.4rem; font-weight: 700; margin: 0 0 8px 0; color: var(--text-main); line-height: 1.35; }
+        .detail-meta { font-size: 0.8rem; color: var(--primary); border-bottom: 1px solid #f1f5f9; padding-bottom: 12px; margin-bottom: 18px; font-weight: 600; font-family: monospace; }
+        .detail-content { line-height: 1.8; color: var(--text-muted); font-size: 0.95rem; text-align: justify; font-weight: 400; }
+        .detail-content p { margin: 0 0 14px 0; }
 
         /* ================= 9. 媒体图集与视频矩阵网格组件 ================= */
-        .media-capsule-container { display: flex; gap: 14px; margin: 5px 0 20px 0; flex-shrink: 0; list-style: none; padding: 0; }
+        .media-capsule-container { display: flex; gap: 10px; margin: 2px 0 16px 0; flex-shrink: 0; list-style: none; padding: 0; }
         
         .media-capsule-btn {
-            padding: 7px 22px; font-size: 0.9rem; font-weight: 700; color: #475569;
-            background: rgba(255, 255, 255, 0.8); border: 1px solid rgba(2, 132, 199, 0.2); border-radius: 30px;
-            cursor: pointer; transition: all 0.3s var(--ark-bezier); letter-spacing: 1px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+            padding: 6px 18px; font-size: 0.85rem; font-weight: 500; color: var(--text-muted);
+            background: #ffffff; border: 1px solid #cbd5e1; border-radius: 20px;
+            cursor: pointer; transition: all 0.2s ease; letter-spacing: 0.5px;
+            transform: translateZ(0);
         }
-        .media-capsule-btn:active { transform: scale(0.92); }
+        .media-capsule-btn:active { transform: scale(0.95) translateZ(0); }
         .media-capsule-btn.capsule-active {
-            background: #0284c7; color: #ffffff; border-color: #0284c7;
-            box-shadow: 0 4px 15px rgba(2, 132, 199, 0.35); font-weight: 800;
+            background: var(--primary); color: #ffffff; border-color: var(--primary);
+            font-weight: 600;
         }
 
         .media-grid-container { 
             display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
-            gap: 20px; 
+            grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); 
+            gap: 16px; 
             overflow-y: auto; 
-            height: calc(100vh - 220px); 
-            padding-bottom: 40px; 
+            height: calc(100vh - 200px); 
+            padding-bottom: 30px; 
             width: 100%; 
             -webkit-overflow-scrolling: touch;
         }
 
         .media-matrix-card {
-            background: rgba(255, 255, 255, 0.9); 
-            border: 1px solid rgba(2, 132, 199, 0.2); 
-            padding: 0; border-radius: 12px; 
+            background: #ffffff; 
+            border: 1px solid #e2e8f0; 
+            padding: 0; border-radius: 10px; 
             cursor: pointer; position: relative; width: 100%;
             height: fit-content; 
             overflow: hidden; 
             opacity: 0; 
-            transform: translateY(30px);
+            transform: translateY(15px) translateZ(0);
             display: flex; flex-direction: column;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
-            transition: opacity 0.28s var(--domino-bezier), transform 0.28s var(--domino-bezier), box-shadow 0.4s var(--ark-bezier), border-color 0.4s var(--ark-bezier);
+            transition: opacity 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+            will-change: opacity, transform;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
         }
-        .media-matrix-card:active { transform: scale(0.96) !important; }
+        .media-matrix-card:active { transform: scale(0.97) translateZ(0) !important; }
 
         .media-matrix-card.reveal-manifest { 
             opacity: 1 !important; 
-            transform: translateY(0) !important; 
+            transform: translateY(0) translateZ(0) !important; 
         }
 
         .media-matrix-card:hover { 
-            border-color: #0284c7; 
-            box-shadow: 0 10px 30px rgba(2, 132, 199, 0.2); 
-            transform: translateY(-4px) !important;
+            border-color: var(--primary); 
+            transform: translateY(-2px) translateZ(0) !important;
         }
 
         .matrix-video-cover-wrap { 
-            width: 100%; aspect-ratio: 16 / 9; position: relative; overflow: hidden; background: #e2e8f0; flex-shrink: 0;
+            width: 100%; aspect-ratio: 16 / 9; position: relative; overflow: hidden; background: #f1f5f9; flex-shrink: 0;
         }
         .matrix-video-cover-wrap img {
-            width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.5s var(--ark-bezier);
+            width: 100%; height: 100%; object-fit: cover; display: block; 
         }
-        .media-matrix-card:hover .matrix-video-cover-wrap img { transform: scale(1.05); }
 
-        .matrix-play-indicator { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.1); transition: background 0.3s; z-index: 2; }
-        .media-matrix-card:hover .matrix-play-indicator { background: rgba(0,0,0,0.3); }
+        .matrix-play-indicator { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0, 0, 0, 0.1); transition: background 0.2s; z-index: 2; }
+        .media-matrix-card:hover .matrix-play-indicator { background: rgba(0, 0, 0, 0.25); }
 
         .matrix-play-icon {
-            width: 40px; height: 40px; background: #0284c7; border: 2px solid rgba(255,255,255,0.8); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff;
-            font-size: 0.85rem; padding-left: 3px; backdrop-filter: blur(8px); transition: all 0.3s var(--ark-bezier);
-            box-shadow: 0 4px 15px rgba(2, 132, 199, 0.4);
+            width: 36px; height: 36px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff;
+            font-size: 0.75rem; padding-left: 2px; 
         }
-        .media-matrix-card:hover .matrix-play-icon { transform: scale(1.1); background: #0369a1; box-shadow: 0 6px 20px rgba(2, 132, 199, 0.6); }
 
         .matrix-card-title { 
-            font-size: 0.9rem; font-weight: 700; color: #1e293b; margin: 0;
-            padding: 12px 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: 0.5px;
-            transition: color 0.3s; flex-shrink: 0;
+            font-size: 0.85rem; font-weight: 600; color: var(--text-main); margin: 0;
+            padding: 10px 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: 0.3px;
+            flex-shrink: 0;
         }
-        .media-matrix-card:hover .matrix-card-title { color: #0284c7; }
+        .media-matrix-card:hover .matrix-card-title { color: var(--primary); }
 
         /* ================= 10. 全局大荧幕影院弹窗组件 ================= */
         .cinema-theater-backdrop {
             position: fixed; inset: 0; width: 100%; height: 100%; 
-            background: rgba(15, 23, 42, 0); backdrop-filter: blur(0px); -webkit-backdrop-filter: blur(0px);
+            background: rgba(15, 23, 42, 0); 
             z-index: 6000; display: none; align-items: center; justify-content: center; opacity: 0;
-            transition: opacity 0.4s var(--ark-bezier), background 0.4s var(--ark-bezier), backdrop-filter 0.4s var(--ark-bezier);
+            transition: opacity 0.25s ease, background 0.25s ease;
+            transform: translateZ(0);
         }
         .cinema-theater-backdrop.theater-manifest {
             display: flex; opacity: 1;
-            background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            background: rgba(15, 23, 42, 0.8); 
         }
 
         .cinema-theater-window {
-            width: 90%; max-width: 1060px; aspect-ratio: 16 / 9; background: #000;
-            box-shadow: 0 30px 70px rgba(0,0,0,0.5), 0 0 1px rgba(255,255,255,0.2); position: relative; border-radius: 16px;
-            overflow: hidden; transform: translateY(50px) scale(0.96); border: 2px solid rgba(255,255,255,0.2);
-            transition: transform 0.4s var(--ark-bezier); will-change: transform;
+            width: 90%; max-width: 1000px; aspect-ratio: 16 / 9; background: #000;
+            position: relative; border-radius: 12px;
+            overflow: hidden; transform: translateY(20px) scale(0.98) translateZ(0); border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.25s var(--transition-smooth);
+            will-change: transform;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
         }
         .cinema-theater-backdrop.theater-manifest .cinema-theater-window {
-            transform: translateY(0) scale(1);
+            transform: translateY(0) scale(1) translateZ(0);
         }
 
         .cinema-close-trigger {
-            position: absolute; top: 16px; right: 16px; width: 38px; height: 38px; background: rgba(255, 255, 255, 0.9);
-            border: 1px solid rgba(0, 0, 0, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            color: #0f172a; font-size: 0.95rem; cursor: pointer; z-index: 100; backdrop-filter: blur(4px); transition: all 0.25s ease;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            position: absolute; top: 12px; right: 12px; width: 34px; height: 34px; background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            color: #0f172a; font-size: 0.85rem; cursor: pointer; z-index: 100; transition: transform 0.2s ease;
         }
-        .cinema-close-trigger:active { transform: scale(0.85) rotate(90deg); }
-        .cinema-close-trigger:hover { background: #ffffff; color: #0284c7; transform: scale(1.05) rotate(90deg); box-shadow: 0 0 15px rgba(2, 132, 199, 0.5); }
+        .cinema-close-trigger:active { transform: scale(0.9); }
+        .cinema-close-trigger:hover { background: #ffffff; color: var(--primary); }
 
         .cinema-iframe-core { width: 100%; height: 100%; border: none; display: block; background: #000; }
 
         .cinema-fallback-dock {
-            position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
-            display: flex; align-items: center; gap: 14px; background: rgba(255, 255, 255, 0.9);
-            padding: 8px 22px; border-radius: 30px; border: 1px solid rgba(2, 132, 199, 0.2);
-            backdrop-filter: blur(10px); z-index: 50; pointer-events: auto;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%) translateZ(0);
+            display: flex; align-items: center; gap: 12px; background: rgba(255, 255, 255, 0.95);
+            padding: 6px 18px; border-radius: 20px; border: 1px solid #cbd5e1;
+            z-index: 50; pointer-events: auto;
         }
-        .fallback-text { font-size: 0.8rem; color: #475569; letter-spacing: 0.5px; font-weight: 600; }
+        .fallback-text { font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.3px; font-weight: 500; }
         .fallback-action-btn {
-            font-size: 0.8rem; color: #0284c7; text-decoration: none; font-weight: 700;
-            border-bottom: 1px dashed #0284c7; padding-bottom: 1px; transition: opacity 0.2s;
+            font-size: 0.75rem; color: var(--primary); text-decoration: none; font-weight: 600;
+            border-bottom: 1px dashed var(--primary); padding-bottom: 1px;
         }
-        .fallback-action-btn:active { opacity: 0.5; }
-        .fallback-action-btn:hover { opacity: 0.8; }
     </style>
 </head>
 <body>
@@ -450,7 +438,7 @@
             <div class="loading-track-bar">
                 <div class="loading-fill-runner" id="load-bar-node"></div>
             </div>
-            <div class="loading-system-tip">Connecting to brilliant matrix...</div>
+            <div class="loading-system-tip">Loading view...</div>
         </div>
     </div>
 
@@ -499,7 +487,7 @@
     <!-- 严格保留外部JS依赖项 -->
     <script src="data.js"></script>
 
-    <!-- 核心业务逻辑与交互脚本 -->
+    <!-- 核心业务逻辑与轻量化动画引擎 -->
     <script>
         const safeData = window.WEBSITE_DATA || { siteInfo: {}, pages: [] };
         const pagesConfig = safeData.pages || [];
@@ -612,12 +600,12 @@
         const loaderContainer = document.getElementById('global-app-loading-container');
 
         const loadingInterval = setInterval(() => {
-            if (simulatedProgress < 85) {
-                simulatedProgress += Math.floor(Math.random() * 7) + 2;
-                if (simulatedProgress > 85) simulatedProgress = 85;
+            if (simulatedProgress < 90) {
+                simulatedProgress += Math.floor(Math.random() * 10) + 5;
+                if (simulatedProgress > 90) simulatedProgress = 90;
                 applyLoadingUpdate(simulatedProgress);
             }
-        }, 60);
+        }, 30);
 
         function applyLoadingUpdate(val) {
             if(progressNumNode) progressNumNode.innerText = `${val}%`;
@@ -626,24 +614,14 @@
 
         window.addEventListener('load', () => {
             clearInterval(loadingInterval);
-            let currentTrack = simulatedProgress;
-            const finishRunner = setInterval(() => {
-                currentTrack += 5;
-                if (currentTrack >= 100) {
-                    currentTrack = 100;
-                    clearInterval(finishRunner);
-                    applyLoadingUpdate(100);
+            applyLoadingUpdate(100);
 
-                    setTimeout(() => {
-                        if(loaderContainer) {
-                            loaderContainer.classList.add('loader-vanish');
-                        }
-                        if (currentPageId === 'media') triggerMediaStaggerAnimation();
-                    }, 200);
-                } else {
-                    applyLoadingUpdate(currentTrack);
+            setTimeout(() => {
+                if(loaderContainer) {
+                    loaderContainer.classList.add('loader-vanish');
                 }
-            }, 15);
+                if (currentPageId === 'media') triggerMediaStaggerAnimation();
+            }, 100);
         });
 
         // 页面路由跳转控制
@@ -696,18 +674,6 @@
             if (targetPageId === 'media') triggerMediaStaggerAnimation();
         }
 
-        function bindOverlayTransitions() {
-            document.querySelectorAll('.fullview-overlay').forEach(el => {
-                el.addEventListener('transitionend', (e) => {
-                    if (e.propertyName === 'transform' || e.propertyName === 'opacity') {
-                        if (!el.classList.contains('active-page')) {
-                            el.classList.remove('render-block', 'prepare-from-left', 'prepare-from-right', 'exit-to-left', 'exit-to-right');
-                        }
-                    }
-                });
-            });
-        }
-
         // 打开影院弹窗播放视频
         function openCinemaTheater() {
             const theaterLayer = document.getElementById('global-cinema-layer');
@@ -743,7 +709,7 @@
             setTimeout(() => {
                 theaterLayer.style.display = 'none';
                 injectionPoint.innerHTML = '';
-            }, 400);
+            }, 200);
         }
 
         // 构建轮播卡片页面
@@ -922,83 +888,43 @@
                 card.classList.remove('reveal-manifest');
                 setTimeout(() => { 
                     card.classList.add('reveal-manifest'); 
-                }, index * 35); 
+                }, index * 15); 
             });
         }
 
-        /* ================= 11. Canvas 背景星空与流光列车动画引擎 ================= */
+        /* ================= 11. Canvas 背景极简轻量动画引擎 ================= */
         const canvas = document.getElementById('star-canvas');
         const ctx = canvas.getContext('2d');
-        let stars = [], meteors = [], trainX = -1000;
-        const colors = ['rgba(2, 132, 199, ', 'rgba(56, 189, 248, ', 'rgba(37, 99, 235, '];
-
-        class Meteor {
-            constructor() { this.reset(); }
-            reset() {
-                this.x = Math.random() * canvas.width * 0.7; this.y = Math.random() * (canvas.height * 0.3);
-                this.len = Math.random() * 100 + 60; this.speed = Math.random() * 6 + 3;
-                this.color = colors[Math.floor(Math.random() * colors.length)];
-            }
-            update() { this.x += this.speed; this.y += this.speed * 0.4; if (this.x > canvas.width || this.y > canvas.height) this.reset(); }
-            draw() {
-                ctx.save(); ctx.beginPath();
-                let gradient = ctx.createLinearGradient(this.x, this.y, this.x - this.len, this.y - this.len * 0.4);
-                gradient.addColorStop(0, '#0284c7'); gradient.addColorStop(0.2, this.color + '0.4)'); gradient.addColorStop(1, 'transparent');
-                ctx.strokeStyle = gradient; ctx.lineWidth = 1.5;
-                ctx.moveTo(this.x, this.y); ctx.lineTo(this.x - this.len, this.y - this.len * 0.4);
-                ctx.stroke(); ctx.restore();
-            }
-        }
+        let stars = [];
 
         class Star {
             constructor() { this.reset(); }
             reset() {
                 this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height;
-                this.dist = Math.sqrt(Math.pow(this.x - canvas.width/2, 2) + Math.pow(this.y - canvas.height/2, 2));
-                this.angle = Math.atan2(this.y - canvas.height/2, this.x - canvas.width/2);
-                this.size = Math.random() * 1.5 + 0.5; this.speed = Math.random() * 0.0004 + 0.0001;
-                this.color = colors[Math.floor(Math.random() * colors.length)] + (Math.random() * 0.4 + 0.3) + ')';
+                this.size = Math.random() * 1.5 + 0.5; this.speed = Math.random() * 0.2 + 0.1;
+                this.alpha = Math.random() * 0.5 + 0.2;
             }
-            update() { this.angle += this.speed; }
+            update() { 
+                this.y -= this.speed; 
+                if (this.y < 0) { this.y = canvas.height; this.x = Math.random() * canvas.width; }
+            }
             draw() {
-                const x = canvas.width/2 + Math.cos(this.angle) * this.dist;
-                const y = canvas.height/2 + Math.sin(this.angle) * this.dist;
-                ctx.beginPath(); ctx.fillStyle = this.color; ctx.arc(x, y, this.size, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); 
+                ctx.fillStyle = `rgba(2, 132, 199, ${this.alpha})`; 
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); 
+                ctx.fill();
             }
-        }
-
-        function drawGhostTrain() {
-            ctx.save(); 
-            ctx.globalAlpha = 0.25; 
-            ctx.strokeStyle = "#0284c7"; 
-            ctx.lineWidth = 1.8; 
-            ctx.shadowBlur = 8; 
-            ctx.shadowColor = "rgba(2, 132, 199, 0.3)"; 
-
-            const trainY = canvas.height * 0.82; 
-            trainX += 1.2; 
-            if (trainX > canvas.width + 600) trainX = -800;
-
-            for(let i=0; i<6; i++) { 
-                let bx = trainX - (i * 125); 
-                ctx.strokeRect(bx, trainY, 115, 20);
-                for(let j=0; j<4; j++) { 
-                    ctx.strokeRect(bx + 8 + (j*26), trainY + 4, 18, 6); 
-                }
-            }
-            ctx.restore();
         }
 
         function initCanvas() {
             canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-            stars = []; meteors = [];
-            for (let i = 0; i < 150; i++) stars.push(new Star());
-            for (let i = 0; i < 3; i++) meteors.push(new Meteor());
+            stars = [];
+            for (let i = 0; i < 40; i++) stars.push(new Star()); // 极简数量，保证绝对不卡顿
         }
 
         function animate() {
-            ctx.fillStyle = 'rgba(240, 245, 255, 0.15)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-            drawGhostTrain(); stars.forEach(s => { s.update(); s.draw(); }); meteors.forEach(m => { m.update(); m.draw(); });
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            stars.forEach(s => { s.update(); s.draw(); });
             requestAnimationFrame(animate);
         }
 
@@ -1027,7 +953,7 @@
 
                 if (Math.abs(diffY) > Math.abs(diffX)) return;
 
-                if (Math.abs(diffX) > 50) {
+                if (Math.abs(diffX) > 60) {
                     const target = e.target;
                     if (target.closest('.slider-showcase-container') || 
                         target.closest('.noti-sidebar-list') || 
@@ -1057,7 +983,6 @@
         /* ================= 13. 页面生命周期挂载 ================= */
         window.addEventListener('DOMContentLoaded', () => {
             initDynamicStructure();
-            bindOverlayTransitions();
 
             pagesConfig.forEach(page => {
                 if (page.type === 'slider') buildSliderPage(page.id);
